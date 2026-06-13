@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Aula — Q-LIT Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --brand-indigo: #4f46e5;
+            --border-color: #e2e8f0;
+            --radius-xl: 24px;
+            --radius-md: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar Lateral Global */
+        aside {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 24px;
+            flex-shrink: 0;
+        }
+        .side-logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 48px; display: flex; align-items: center; gap: 10px; }
+        .side-logo .dot { width: 8px; height: 8px; background: var(--brand-indigo); border-radius: 50%; }
+        nav { flex: 1; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.95rem; border-radius: 12px; margin-bottom: 8px; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { background-color: #f1f5f9; color: var(--brand-indigo); }
+        .user-profile { padding-top: 24px; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--brand-indigo), #818cf8); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+
+        /* Contenedor de la Aplicación */
+        .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .breadcrumbs { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 600; }
+        .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumbs i { font-size: 0.8rem; color: #94a3b8; }
+        .breadcrumbs .current-class { color: var(--text-main); font-weight: 700; }
+        .code-badge { font-size: 0.85rem; font-weight: 700; color: var(--brand-indigo); background: #eef2ff; padding: 6px 14px; border-radius: 8px; font-family: monospace; }
+
+        /* Workspace Grid */
+        .workspace { flex: 1; display: grid; grid-template-columns: 1fr 340px; overflow: hidden; }
+        .main-panel { padding: 40px; overflow-y: auto; }
+        .panel-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
+        .panel-header p { font-size: 0.95rem; color: var(--text-muted); margin-top: 4px; }
+
+        .btn-action-master { background-color: var(--brand-indigo); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
+        /* Tarjetas de Gestión de Retos */
+        .manage-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .challenge-core h3 { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
+        .challenge-core p { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+        
+        .badge-alert { background: #fff7ed; color: #ea580c; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .btn-review { background: white; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-review:hover { border-color: var(--brand-indigo); color: var(--brand-indigo); }
+
+        /* Sidebar Panel Control */
+        .control-sidebar { background: #ffffff; border-left: 1px solid var(--border-color); padding: 40px 24px; overflow-y: auto; }
+        .stat-box { background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; }
+        .stat-box small { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-box h2 { font-size: 1.75rem; font-weight: 800; margin-top: 4px; color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="side-logo">Q-LIT<div class="dot"></div></div>
+        <nav>
+            <a href="dashboard-docente.html" class="nav-item active"><i class="fa-solid fa-folder-tree"></i> Aulas Controladas</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-book-atlas"></i> Catálogo de Prácticas</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-chart-line"></i> Telemetría Global</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-sliders"></i> Ajustes</a>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar">Prof</div>
+            <div class="user-info"><span>Panel Docente</span><small>Administrador</small></div>
+        </div>
+    </aside>
+
+    <div class="app-container">
+        <header>
+            <div class="breadcrumbs">
+                <a href="dashboard-docente.html">Aulas Controladas</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span class="current-class">Bases de Datos Relacionales</span>
+            </div>
+            <div class="code-badge">Código: BD-5A-QL</div>
+        </header>
+
+        <div class="workspace">
+            <main class="main-panel">
+                <div class="panel-header">
+                    <div>
+                        <h1>Estructura del Laboratorio</h1>
+                        <p>Controla las asignaciones activas, añade nuevos desafíos y evalúa el desempeño técnico.</p>
+                    </div>
+                    <button class="btn-action-master"><i class="fa-solid fa-plus"></i> Añadir Reto SQL</button>
+                </div>
+
+                <div class="manage-card">
+                    <div class="challenge-core">
+                        <h3>Reto 1.1: Búsqueda de patrones con LIKE</h3>
+                        <p>Módulo I • Base de Datos: eCommerce • 34 alumnos asignados</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="badge-alert">12 Por Revisar</span>
+                        <button class="btn-review">Revisar Entregas</button>
+                    </div>
+                </div>
+
+                <div class="manage-card">
+                    <div class="challenge-core">
+                        <h3>Reto 1.2: Delimitación de registros mediante LIMIT</h3>
+                        <p>Módulo I • Base de Datos: eCommerce • 34 alumnos asignados</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="badge-alert" style="background: #f1f5f9; color: var(--text-muted);">0 Pendientes</span>
+                        <button class="btn-review">Ver Reporte</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="control-sidebar">
+                <div class="stat-box">
+                    <small>Efectividad del Grupo</small>
+                    <h2>84.2%</h2>
+                </div>
+                <div class="stat-box">
+                    <small>Alumnos Activos</small>
+                    <h2>34 / 34</h2>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+</body>
+</html>

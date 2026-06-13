@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q-LIT — Revisión de Práctica</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent: #a855f7;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Superior Optimizada */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        /* Icono de atrás minimalista */
+        .btn-icon-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            transition: all 0.2s;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .btn-icon-back:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+            background-color: #f1f5f9;
+        }
+
+        /* Identificador Principal del Alumno como Título */
+        .student-header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .student-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .student-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background-color: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Botones */
+        .btn {
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .btn-primary {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #16a34a;
+        }
+
+        /* Layout Principal */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1.7fr 1.3fr;
+            gap: 2rem;
+            padding: 2.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        /* Paneles */
+        .panel {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Bloques de Código */
+        .code-block {
+            background-color: #0f172a;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #f8fafc;
+            border: 1px solid #1e293b;
+        }
+
+        .code-title {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Tabla de Resultados */
+        .table-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fafafa;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .result-table th, .result-table td {
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .result-table th {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .result-table td {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-main);
+        }
+
+        /* Caja de Calificación Directa */
+        .grade-box-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(99, 102, 241, 0.03);
+            border: 1px dashed var(--primary);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-top: auto; /* Empuja el cierre hacia el fondo del contenedor */
+        }
+
+        .grade-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .input-grade {
+            font-family: inherit;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 0.4rem;
+            border-radius: 6px;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            width: 80px;
+            background-color: var(--bg-card);
+        }
+
+        .input-grade:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .grade-label-text {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .ai-badge-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .ai-badge-info strong {
+            color: var(--primary);
+        }
+
+        /* Historial de Intentos (Lado Derecho) */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 28px;
+            bottom: -15px;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .badge-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-success {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .timeline-content {
+            background-color: #fafafa;
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            background-color: #f1f5f9;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+
+        .timeline-feedback {
+            font-size: 0.75rem;
+            color: var(--danger);
+            margin-top: 0.3rem;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="class-feed-docente.html" class="btn-icon-back" title="Volver al feed de la clase">
+                &larr;
+            </a>
+            <div class="student-header-title">
+                <h1 class="student-name">Yasleb Belen Macias Sanchez</h1>
+                <div class="student-meta">
+                    <span>Matrícula: 2409180</span>
+                    <span>&bull;</span>
+                    <span>Ingeniería de Software</span>
+                    <span>&bull;</span>
+                    <span class="status-tag">A tiempo</span>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="btn btn-secondary">Saltar Alumno</button>
+            <button class="btn btn-primary">Confirmar Calificación</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <section class="panel">
+            <h2 class="section-title">Resultados de la Práctica</h2>
+
+            <div class="form-group">
+                <label>Instrucción Asignada por la IA al Alumno</label>
+                <div style="background-color: #f1f5f9; padding: 1rem; border-radius: 8px; font-size: 0.95rem; line-height: 1.4; border-left: 4px solid var(--accent);">
+                    Muestra todos los campos de la tabla <strong>productos</strong> cuyo <strong>precio</strong> sea estrictamente superior a 150.00 pesos. El resultado debe presentarse ordenado de mayor a menor según el volumen de <strong>stock</strong> disponible, limitando el resultado a sus primeros 5 registros.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Query SQL Ejecutada por el Estudiante</label>
+                <div class="code-block">
+                    <div class="code-title" style="color: #22c55e;">Sentencia de Entrega</div>
+                    SELECT * FROM productos WHERE precio > 150 ORDER BY stock DESC LIMIT 5;
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Matriz de Datos Generada (Result Set)</label>
+                <div class="table-container">
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>sku</th>
+                                <th>articulo</th>
+                                <th>precio</th>
+                                <th>stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>104</td>
+                                <td>Monitor Gamer 27"</td>
+                                <td>4500.00</td>
+                                <td>85</td>
+                            </tr>
+                            <tr>
+                                <td>102</td>
+                                <td>Teclado Mecánico RGB</td>
+                                <td>1250.00</td>
+                                <td>42</td>
+                            </tr>
+                            <tr>
+                                <td>109</td>
+                                <td>Mouse Inalámbrico</td>
+                                <td>680.00</td>
+                                <td>15</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grade-box-container">
+                <div class="grade-input-wrapper">
+                    <span class="grade-label-text">Asentar Calificación:</span>
+                    <input type="number" class="input-grade" value="100" min="0" max="100">
+                    <span class="grade-label-text">/ 100</span>
+                </div>
+                <div class="ai-badge-info">
+                    Evaluación del sistema: <strong>Correcta (100/100)</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2 class="section-title">Historial de Consola e Interacciones IA</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -0.5rem;">
+                Consulta las consultas fallidas previas y las asistencias conceptuales otorgadas por Gemini durante la práctica.
+            </p>
+            
+            <div class="timeline">
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge badge-error">1</div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <span>Error de Sintaxis</span>
+                            <span>Hace 6 min</span>
+                        </div>
+                        <div class="timeline-code">SELECT * FROM productos WHERE precio > 150 HAVING stock DESC;</div>
+                        <div class="timeline-feedback">
+                            <strong>Gemini:</strong> Usaste 'HAVING' sin un bloque de agregación previo (GROUP BY). Si deseas ordenar registros, la cláusula correcta es 'ORDER BY'.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-badge badge-error">2</div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <span>Columna no encontrada</span>
+                            <span>Hace 4 min</span>
+                        </div>
+                        <div class="timeline-code">SELECT * FROM productos WHERE costo > 150 ORDER BY stock DESC;</div>
+                        <div class="timeline-feedback">
+                            <strong>Gemini:</strong> La columna 'costo' no existe en 'productos'. Revisa tu panel de diccionario de datos lateral, el campo correcto es 'precio'.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-badge badge-success">3</div>
+                    <div class="timeline-content">
+                        <div class="timeline-header" style="color: var(--success); font-weight: 500;">
+                            <span>Ejecución Exitosa</span>
+                            <span>Hace 1 min</span>
+                        </div>
+                        <div class="timeline-code">SELECT * FROM productos WHERE precio > 150 ORDER BY stock DESC LIMIT 5;</div>
+                        <div class="timeline-feedback" style="color: var(--success);">
+                            La consulta devolvió los registros correctos. El resultado coincide al 100% con la pauta esperada del esquema semilla.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
