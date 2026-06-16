@@ -1,0 +1,326 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+
+  .animate-scale-up {
+    animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+/* Isolated Stylesheet for Class Feed Alumno */
+
+.alumno-dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Sidebar Lateral */
+.alumno-sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  flex-shrink: 0;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.alumno-side-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0f172a;
+}
+
+.alumno-side-logo .dot {
+  width: 8px;
+  height: 8px;
+  background: #06b6d4;
+  border-radius: 50%;
+}
+
+.alumno-nav {
+  flex: 1;
+}
+
+.alumno-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+
+.alumno-nav-item:hover,
+.alumno-nav-item.active {
+  background-color: #f1f5f9;
+  color: #4f46e5;
+}
+
+.alumno-user-profile {
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alumno-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+
+.alumno-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.alumno-user-info span {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.alumno-user-info small {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* App Container */
+.alumno-app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.alumno-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.alumno-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.alumno-breadcrumbs a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.alumno-breadcrumbs a:hover {
+  color: #06b6d4;
+}
+
+.alumno-breadcrumbs i {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.alumno-breadcrumbs .current-class {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.alumno-env-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #06b6d4;
+  background: #ecfdf5;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+/* Workspace */
+.alumno-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+
+.alumno-main-panel {
+  padding: 40px 60px;
+  overflow-y: auto;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.alumno-panel-header {
+  margin-bottom: 32px;
+}
+
+.alumno-panel-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+
+.alumno-panel-header p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* Listado de Prácticas */
+.alumno-module-block {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.alumno-practice-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+}
+
+.alumno-practice-item:last-child {
+  margin-bottom: 0;
+}
+
+.alumno-practice-item:hover {
+  background: white;
+  border-color: #06b6d4;
+  transform: translateX(4px);
+  box-shadow: 0 8px 20px -8px rgba(6, 182, 212, 0.15);
+}
+
+.alumno-practice-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.alumno-practice-icon {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #06b6d4;
+  font-size: 1.1rem;
+}
+
+.alumno-practice-meta h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.alumno-practice-meta p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 3px;
+}
+
+.alumno-status-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.alumno-status-text.solved {
+  color: #10b981;
+}
+
+.alumno-status-text.overdue {
+  color: #ef4444; /* red-500 */
+  font-weight: 700;
+}
+
+.alumno-status-text.assigned {
+  color: #3b82f6; /* blue-500 */
+  font-weight: 700;
+}

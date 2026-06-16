@@ -1,0 +1,16 @@
+{
+  "studentInfo": {
+    "name": "Yasleb Belén Macías Sánchez",
+    "role": "Estudiante",
+    "avatar": "YM"
+  },
+  "classes": [
+    {
+      "id": 1,
+      "title": "Bases de Datos Relacionales",
+      "teacher": "Prof. Vázquez Cruz",
+      "practicesCount": 8,
+      "accuracy": "88%"
+    }
+  ]
+}

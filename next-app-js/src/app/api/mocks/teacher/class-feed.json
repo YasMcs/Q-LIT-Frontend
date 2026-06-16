@@ -1,0 +1,46 @@
+{
+  "classInfo": {
+    "id": 1,
+    "title": "Bases de Datos Relacionales",
+    "group": "A",
+    "code": "BDAAQL",
+    "studentsCount": 5,
+    "activeStudents": "5 / 5",
+    "effectiveness": "84.2%"
+  },
+  "practices": [
+    {
+      "id": 10,
+      "title": "Práctica 1: Filtros y Ordenamiento",
+      "objective": "Dominar el uso de cláusulas WHERE para filtrar registros específicos, organizar resultados con ORDER BY y limitar la cantidad de datos devueltos.",
+      "expectedFunctions": ["SELECT", "WHERE", "ORDER BY", "LIMIT"],
+      "pendingCount": 2,
+      "status": "vencida",
+      "fecha_asignacion": "2026-05-01T10:00:00",
+      "fecha_limite": "2026-05-15T23:59:00",
+      "puntaje_total": 100
+    },
+    {
+      "id": 11,
+      "title": "Práctica 2: Búsqueda de patrones con LIKE",
+      "objective": "Aprender a identificar cadenas de texto que coincidan con un patrón específico mediante el uso de comodines y la cláusula LIKE.",
+      "expectedFunctions": ["SELECT", "WHERE", "LIKE"],
+      "pendingCount": 0,
+      "status": "vencida",
+      "fecha_asignacion": "2026-05-16T10:00:00",
+      "fecha_limite": "2026-05-30T23:59:00",
+      "puntaje_total": 100
+    },
+    {
+      "id": 12,
+      "title": "Práctica 3: Agrupaciones y funciones de agregación",
+      "objective": "Agrupar conjuntos de resultados y aplicar funciones de agregación para calcular sumas, promedios y conteos estadísticos.",
+      "expectedFunctions": ["SELECT", "GROUP BY", "COUNT", "SUM", "AVG"],
+      "pendingCount": 4,
+      "status": "asignada",
+      "fecha_asignacion": "2026-06-01T10:00:00",
+      "fecha_limite": "2026-06-20T23:59:00",
+      "puntaje_total": 100
+    }
+  ]
+}

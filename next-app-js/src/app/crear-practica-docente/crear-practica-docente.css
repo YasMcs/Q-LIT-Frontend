@@ -1,0 +1,671 @@
+/* Restored Clean Light Q-LIT Theme with Google Classroom Structural Layout */
+
+.classroom-editor-body {
+  --bg-main: #f8fafc;
+  --bg-panel: #ffffff;
+  --bg-input: #fafafa;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-muted: #64748b;
+  --accent-blue: #4f46e5; /* Q-LIT Brand Indigo */
+  --accent-blue-hover: #4338ca;
+  --danger-red: #ef4444;
+
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.classroom-navbar {
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.navbar-left-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.btn-close-classroom {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-close-classroom:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.classroom-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.classroom-icon-logo {
+  color: var(--accent-blue);
+  font-size: 1.35rem;
+}
+
+.btn-create-task {
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.3);
+}
+
+.btn-create-task:hover {
+  background-color: var(--accent-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -2px rgba(79, 70, 229, 0.4);
+}
+
+.classroom-caret {
+  font-size: 0.75rem;
+}
+
+/* Layout */
+.classroom-layout-container {
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  flex-grow: 1;
+}
+
+/* Left Column */
+.classroom-main-column {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border-right: 1px solid var(--border-color);
+}
+
+.classroom-card-panel {
+  background-color: var(--bg-panel);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.02);
+}
+
+/* Classroom styled inputs */
+.classroom-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--bg-input);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.classroom-input-wrapper:focus-within {
+  background-color: #ffffff;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+}
+
+.classroom-input-field {
+  background: none;
+  border: none;
+  padding: 1.1rem 1.25rem 0.6rem 1.25rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-primary);
+  outline: none;
+  width: 100%;
+}
+
+.title-field {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.classroom-required-tag {
+  position: absolute;
+  bottom: 0.35rem;
+  right: 1.25rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.classroom-textarea-field {
+  background: none;
+  border: none;
+  padding: 1.1rem 1.25rem 0.6rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  outline: none;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+/* Rich editor formatting toolbar */
+.classroom-editor-formatting {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 1.25rem;
+  border-top: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.01);
+  border-radius: 0 0 12px 12px;
+}
+
+.classroom-editor-formatting button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.classroom-editor-formatting button:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+/* Objective wrapper adjustment */
+.objective-wrapper {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.objective-field {
+  padding: 1.25rem;
+  min-height: 100px;
+}
+
+/* Attachments Database Panel */
+.attachments-panel {
+  gap: 1rem;
+}
+
+.attachments-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.attachments-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.attachments-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.attachment-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+}
+
+.attachment-card:hover {
+  border-color: var(--accent-blue);
+  background-color: rgba(79, 70, 229, 0.01);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+.attachment-card.active {
+  border-color: var(--accent-blue);
+  background-color: rgba(79, 70, 229, 0.03);
+  box-shadow: 0 0 0 1px var(--accent-blue);
+}
+
+.attachment-icon-wrapper {
+  background-color: rgba(79, 70, 229, 0.06);
+  border-radius: 8px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.database-file-icon {
+  color: var(--accent-blue);
+  font-size: 1.35rem;
+}
+
+.attachment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.attachment-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.attachment-type {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.btn-inspect-attachment {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-inspect-attachment:hover {
+  background-color: #f1f5f9;
+  color: var(--accent-blue);
+}
+
+/* Right Sidebar */
+.classroom-sidebar {
+  padding: 2.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: var(--bg-main);
+  overflow-y: auto;
+}
+
+.sidebar-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+}
+
+.sidebar-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sidebar-select {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 0.8rem 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+  cursor: not-allowed;
+}
+
+.sidebar-number-input {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 0.8rem 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+}
+
+.sidebar-number-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+}
+
+/* Due datetime row */
+.due-datetime-inputs {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 0.6rem;
+}
+
+.sidebar-date-input, 
+.sidebar-time-input {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 0.8rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  width: 100%;
+}
+
+.sidebar-date-input:focus, 
+.sidebar-time-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+}
+
+.checkbox-control-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.sidebar-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent-blue);
+}
+
+.checkbox-control-wrapper label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* Rubric Toggle Button and Panel */
+.rubric-sidebar-section {
+  border-bottom: none;
+}
+
+.btn-rubric-toggle {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--accent-blue);
+  padding: 0.8rem 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+}
+
+.btn-rubric-toggle:hover {
+  background-color: rgba(79, 70, 229, 0.04);
+  border-color: var(--accent-blue);
+}
+
+.rubric-plus-icon {
+  font-size: 0.85rem;
+}
+
+/* Rubric drawer list */
+.rubric-drawer-panel {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  animation: slideDownClassroom 0.2s ease-out;
+}
+
+.rubric-drawer-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.rubric-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.6rem;
+}
+
+.btn-add-criterio-drawer {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--accent-blue);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.rubric-drawer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.rubric-drawer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rubric-drawer-input-text {
+  flex: 1;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 0.55rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.rubric-drawer-input-text:focus {
+  background-color: #ffffff;
+  border-color: var(--accent-blue);
+}
+
+.rubric-drawer-input-points {
+  width: 55px;
+  text-align: center;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 0.55rem 0.25rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.rubric-drawer-input-points:focus {
+  background-color: #ffffff;
+  border-color: var(--accent-blue);
+}
+
+.btn-delete-criterio-drawer {
+  background: none;
+  border: none;
+  color: var(--danger-red);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-delete-criterio-drawer:hover {
+  background-color: #fef2f2;
+}
+
+.rubric-drawer-unbalanced-alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.rubric-drawer-unbalanced-alert button {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: inherit;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.rubric-drawer-unbalanced-alert button:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* Modal light theme standard alignment */
+.modal-container-crear {
+  background-color: #ffffff !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-header-crear {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.modal-title-crear {
+  color: var(--text-primary) !important;
+}
+
+.btn-close-modal-crear {
+  color: var(--text-muted) !important;
+}
+
+.btn-close-modal-crear:hover {
+  color: var(--text-primary) !important;
+}
+
+.schema-table {
+  border-color: var(--border-color) !important;
+}
+
+.schema-table th {
+  background-color: #f1f5f9 !important;
+  color: var(--text-muted) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.schema-table td {
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Animations */
+@keyframes slideDownClassroom {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .classroom-layout-container {
+    grid-template-columns: 1fr;
+  }
+  .classroom-main-column {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .attachments-grid {
+    grid-template-columns: 1fr;
+  }
+}

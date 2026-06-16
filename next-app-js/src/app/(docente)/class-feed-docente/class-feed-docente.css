@@ -1,0 +1,310 @@
+/* Isolated Stylesheet for Class Feed Docente */
+
+.feed-dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Sidebar Lateral */
+.docente-sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  flex-shrink: 0;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.docente-side-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0f172a;
+}
+
+.docente-side-logo .dot {
+  width: 8px;
+  height: 8px;
+  background: #4f46e5;
+  border-radius: 50%;
+}
+
+.docente-nav {
+  flex: 1;
+}
+
+.docente-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+
+.docente-nav-item:hover,
+.docente-nav-item.active {
+  background-color: #f1f5f9;
+  color: #4f46e5;
+}
+
+.docente-user-profile {
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docente-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+
+.docente-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.docente-user-info span {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.docente-user-info small {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.feed-app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.feed-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.feed-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.feed-breadcrumbs a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.feed-breadcrumbs a:hover {
+  color: #4f46e5;
+}
+
+.feed-breadcrumbs i {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.feed-breadcrumbs .current-class {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.feed-code-badge {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  border: 1px solid #c7d2fe;
+}
+
+/* Workspace Grid */
+.feed-workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.feed-main-panel {
+  padding: 40px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.feed-panel-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feed-panel-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+
+.feed-panel-header p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.feed-btn-action-master {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.feed-btn-action-master:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(79, 70, 229, 0.3);
+}
+
+/* Tarjetas de Gestión de Retos */
+.feed-manage-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.feed-manage-card:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 10px 20px -10px rgba(79, 70, 229, 0.05);
+}
+
+.feed-challenge-core h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.feed-challenge-core p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.feed-badge-alert {
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.feed-badge-alert.closed {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.feed-btn-review {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #0f172a;
+}
+
+.feed-btn-review:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+  background-color: #fbfbfe;
+}
+
+/* Sidebar Panel Control */
+.feed-control-sidebar {
+  background: #ffffff;
+  border-left: 1px solid #e2e8f0;
+  padding: 40px 24px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.feed-stat-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.feed-stat-box small {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.feed-stat-box h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-top: 4px;
+  color: #0f172a;
+}
