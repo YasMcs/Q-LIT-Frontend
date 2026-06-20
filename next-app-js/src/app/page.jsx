@@ -11,11 +11,11 @@ export default function HomePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  // Controlador de Tráfico (Smart Redirect)
+  
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
       if (!session.user.role) {
-        // Usuario nuevo sin rol asignado
+        
         router.push("/onboarding");
       } else if (session.user.role === "teacher") {
         router.push("/dashboard-docente");
@@ -27,7 +27,6 @@ export default function HomePage() {
 
   return (
     <div className="home-page-container animate-fade-in animate-scale-up relative">
-      {/* Background Animated Orbs */}
       <div className="ambient-orb orb-1"></div>
       <div className="ambient-orb orb-2"></div>
       <div className="ambient-orb orb-3"></div>

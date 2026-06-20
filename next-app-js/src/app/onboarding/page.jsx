@@ -9,7 +9,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
 
-  // Seguridad: Si no está logueado, mandarlo al inicio. Si ya tiene rol, mandarlo a su dashboard.
+  
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/");
@@ -31,10 +31,8 @@ export default function OnboardingPage() {
       
       if (res.ok) {
         const data = await res.json();
-        // Forzar actualización de la sesión de NextAuth para reflejar el nuevo rol
         await update({ role: data.data.role });
         
-        // Redirigir al dashboard correcto
         const dest = role === "teacher" ? "/dashboard-docente" : "/class-feed-alumno";
         router.push(dest);
       } else {
