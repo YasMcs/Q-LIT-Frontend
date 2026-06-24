@@ -4,131 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import "./crear-practica-docente.css";
 
-const datosPorDB = {
-  punto_venta_db: {
-    prompt: "Filtrar los productos que tengan un precio mayor a 500 pesos, ordenando los resultados de manera descendente por stock.",
-    sql: "SELECT * FROM productos WHERE precio > 500 ORDER BY stock DESC;",
-    tablasHTML: (
-      <>
-        <p className="schema-description">Diccionario de campos disponibles en punto_venta_db:</p>
-        <h3 className="schema-table-title">Tabla: productos</h3>
-        <table className="schema-table">
-          <thead>
-            <tr>
-              <th>Campo</th>
-              <th>Tipo</th>
-              <th>Restricción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="mono">sku</td>
-              <td className="mono">INT</td>
-              <td className="constraint-pk">PRIMARY KEY</td>
-            </tr>
-            <tr>
-              <td className="mono">articulo</td>
-              <td className="mono">VARCHAR(100)</td>
-              <td>NOT NULL</td>
-            </tr>
-            <tr>
-              <td className="mono">precio</td>
-              <td className="mono">NUMERIC</td>
-              <td>DEFAULT 0.0</td>
-            </tr>
-            <tr>
-              <td className="mono">stock</td>
-              <td className="mono">INT</td>
-              <td>NOT NULL</td>
-            </tr>
-          </tbody>
-        </table>
-      </>
-    )
-  },
-  control_escolar_db: {
-    prompt: "Obtener la lista de alumnos inscritos en la materia de Matemáticas de forma alfabética y filtrando solo a los del grupo B.",
-    sql: "SELECT * FROM alumnos WHERE materia = 'Matemáticas' AND grupo = 'B' ORDER BY nombre ASC;",
-    tablasHTML: (
-      <>
-        <p className="schema-description">Diccionario de campos disponibles en control_escolar_db:</p>
-        <h3 className="schema-table-title">Tabla: alumnos</h3>
-        <table className="schema-table">
-          <thead>
-            <tr>
-              <th>Campo</th>
-              <th>Tipo</th>
-              <th>Restricción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="mono">id_alumno</td>
-              <td className="mono">INT</td>
-              <td className="constraint-pk">PRIMARY KEY</td>
-            </tr>
-            <tr>
-              <td className="mono">nombre</td>
-              <td className="mono">VARCHAR(150)</td>
-              <td>NOT NULL</td>
-            </tr>
-            <tr>
-              <td className="mono">materia</td>
-              <td className="mono">VARCHAR(50)</td>
-              <td>NOT NULL</td>
-            </tr>
-            <tr>
-              <td className="mono">grupo</td>
-              <td className="mono">CHAR(1)</td>
-              <td>NOT NULL</td>
-            </tr>
-          </tbody>
-        </table>
-      </>
-    )
-  },
-  hospital_central_db: {
-    prompt: "Mostrar las citas médicas programadas para el día de hoy, ordenadas por la hora de atención y filtrando solo las de la especialidad Cardiología.",
-    sql: "SELECT * FROM citas WHERE fecha = CURRENT_DATE AND especialidad = 'Cardiología' ORDER BY hora ASC;",
-    tablasHTML: (
-      <>
-        <p className="schema-description">Diccionario de campos disponibles en hospital_central_db:</p>
-        <h3 className="schema-table-title">Tabla: citas</h3>
-        <table className="schema-table">
-          <thead>
-            <tr>
-              <th>Campo</th>
-              <th>Tipo</th>
-              <th>Restricción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="mono">id_cita</td>
-              <td className="mono">INT</td>
-              <td className="constraint-pk">PRIMARY KEY</td>
-            </tr>
-            <tr>
-              <td className="mono">fecha</td>
-              <td className="mono">DATE</td>
-              <td>NOT NULL</td>
-            </tr>
-            <tr>
-              <td className="mono">hora</td>
-              <td className="mono">TIME</td>
-              <td>NOT NULL</td>
-            </tr>
-            <tr>
-              <td className="mono">especialidad</td>
-              <td className="mono">VARCHAR(50)</td>
-              <td>NOT NULL</td>
-            </tr>
-          </tbody>
-        </table>
-      </>
-    )
-  }
-};
+// Los datosPorDB hardcodeados han sido eliminados.
+// Ahora se usarán los catálogos obtenidos dinámicamente desde el backend.
 
 export default function CrearPracticaDocentePage() {
   const router = useRouter();
@@ -143,7 +20,9 @@ export default function CrearPracticaDocentePage() {
   const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState("");
   const [modalDb, setModalDb] = useState(null);
+  const [activeModalTable, setActiveModalTable] = useState(null);
   
+  const [catalogs, setCatalogs] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
   // Obtener parámetros de la URL
@@ -154,11 +33,20 @@ export default function CrearPracticaDocentePage() {
   const [practiceToSave, setPracticeToSave] = useState(null);
 
   useEffect(() => {
+    // Cargar catálogos dinámicamente
+    fetch('/api/proxy/catalogs')
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === 'success') {
+          setCatalogs(res.data);
+          if (res.data.length > 0) {
+            setActiveDb(res.data[0].name);
+          }
+        }
+      })
+      .catch(err => console.error("Error cargando catálogos", err));
+
     if (editId) {
-      fetch(`/api/proxy/practices/classroom/all`) // Actually we don't have a getPracticeById endpoint easily accessible here if we don't know the classroom. 
-      // Wait, we can just fetch the specific practice if we have an endpoint, or fetch from classroom if we pass it.
-      // Let's create an endpoint or just fetch it. Actually, we might need a GET /api/practices/:id.
-      // Let me just fetch the specific practice using a proxy endpoint.
       fetch(`/api/proxy/practices/${editId}`)
         .then(res => res.json())
         .then(data => {
@@ -204,10 +92,15 @@ export default function CrearPracticaDocentePage() {
   const handleOpenModal = (e, dbName) => {
     e.stopPropagation();
     setModalDb(dbName);
+    const dbData = catalogs.find(c => c.name === dbName);
+    if (dbData && dbData.tables && dbData.tables.length > 0) {
+      setActiveModalTable(dbData.tables[0].name);
+    }
   };
 
   const handleCloseModal = () => {
     setModalDb(null);
+    setActiveModalTable(null);
   };
 
   const handleAddCriteria = () => {
@@ -383,71 +276,33 @@ export default function CrearPracticaDocentePage() {
             <p className="attachments-subtitle">Elige el esquema de datos semilla que servirá de base interactiva para esta práctica.</p>
 
             <div className="attachments-grid">
-              {/* Attachment Card: punto_venta_db */}
-              <div
-                className={`attachment-card ${activeDb === "punto_venta_db" ? "active" : ""}`}
-                onClick={() => setActiveDb("punto_venta_db")}
-              >
-                <div className="attachment-icon-wrapper">
-                  <i className="fa-solid fa-database database-file-icon" />
-                </div>
-                <div className="attachment-details">
-                  <span className="attachment-name">punto_venta_db.sql</span>
-                  <span className="attachment-type">Esquema • productos, categorias, ventas</span>
-                </div>
-                <button
-                  type="button"
-                  className="btn-inspect-attachment"
-                  onClick={(e) => handleOpenModal(e, "punto_venta_db")}
-                  title="Ver esquema"
-                >
-                  <i className="fa-solid fa-eye" />
-                </button>
-              </div>
-
-              {/* Attachment Card: control_escolar_db */}
-              <div
-                className={`attachment-card ${activeDb === "control_escolar_db" ? "active" : ""}`}
-                onClick={() => setActiveDb("control_escolar_db")}
-              >
-                <div className="attachment-icon-wrapper">
-                  <i className="fa-solid fa-database database-file-icon" />
-                </div>
-                <div className="attachment-details">
-                  <span className="attachment-name">control_escolar_db.sql</span>
-                  <span className="attachment-type">Esquema • alumnos, materias, inscripciones</span>
-                </div>
-                <button
-                  type="button"
-                  className="btn-inspect-attachment"
-                  onClick={(e) => handleOpenModal(e, "control_escolar_db")}
-                  title="Ver esquema"
-                >
-                  <i className="fa-solid fa-eye" />
-                </button>
-              </div>
-
-              {/* Attachment Card: hospital_central_db */}
-              <div
-                className={`attachment-card ${activeDb === "hospital_central_db" ? "active" : ""}`}
-                onClick={() => setActiveDb("hospital_central_db")}
-              >
-                <div className="attachment-icon-wrapper">
-                  <i className="fa-solid fa-database database-file-icon" />
-                </div>
-                <div className="attachment-details">
-                  <span className="attachment-name">hospital_central_db.sql</span>
-                  <span className="attachment-type">Esquema • pacientes, medicos, citas</span>
-                </div>
-                <button
-                  type="button"
-                  className="btn-inspect-attachment"
-                  onClick={(e) => handleOpenModal(e, "hospital_central_db")}
-                  title="Ver esquema"
-                >
-                  <i className="fa-solid fa-eye" />
-                </button>
-              </div>
+              {catalogs.length === 0 ? (
+                <p>Cargando bases de datos reales...</p>
+              ) : (
+                catalogs.map(catalog => (
+                  <div
+                    key={catalog.name}
+                    className={`attachment-card ${activeDb === catalog.name ? "active" : ""}`}
+                    onClick={() => setActiveDb(catalog.name)}
+                  >
+                    <div className="attachment-icon-wrapper">
+                      <i className="fa-solid fa-database database-file-icon" />
+                    </div>
+                    <div className="attachment-details">
+                      <span className="attachment-name">{catalog.name}.sql</span>
+                      <span className="attachment-type">Esquema dinámico • {catalog.tables.length} tablas</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-inspect-attachment"
+                      onClick={(e) => handleOpenModal(e, catalog.name)}
+                      title="Ver esquema"
+                    >
+                      <i className="fa-solid fa-eye" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </main>
@@ -548,16 +403,68 @@ export default function CrearPracticaDocentePage() {
 
       {/* Schema Detail Modal */}
       {modalDb && (
-        <div className="modal-overlay-crear" onClick={handleCloseModal}>
-          <div className="modal-container-crear" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header-crear">
-              <span className="modal-title-crear">Esquema: {modalDb}</span>
-              <button className="btn-close-modal-crear" onClick={handleCloseModal}>
+        <div className="fixed inset-0 bg-slate-900/60 z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+            <div className="px-8 py-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+              <span className="text-xl font-bold text-slate-800">Esquema: {modalDb}</span>
+              <button className="text-slate-400 hover:text-slate-600 transition-colors text-2xl" onClick={handleCloseModal}>
                 &times;
               </button>
             </div>
-            <div className="modal-body-crear">
-              {datosPorDB[modalDb]?.tablasHTML}
+            <div className="flex flex-1 min-h-0">
+              {/* Sidebar: Table List */}
+              <div className="w-64 border-r border-slate-100 bg-slate-50 overflow-y-auto p-4 shrink-0">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-3">Tablas ({catalogs.find(c => c.name === modalDb)?.tables?.length || 0})</p>
+                <div className="flex flex-col gap-1">
+                  {catalogs.find(c => c.name === modalDb)?.tables?.map(table => (
+                    <button
+                      key={table.name}
+                      onClick={() => setActiveModalTable(table.name)}
+                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-indigo-100 text-indigo-700' : 'text-slate-600 hover:bg-slate-200/50'}`}
+                    >
+                      <i className="fa-solid fa-table mr-2 opacity-70"></i>
+                      {table.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Main Content: Table Columns */}
+              <div className="flex-1 overflow-y-auto p-8 bg-white">
+                {activeModalTable ? (
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                      <i className="fa-solid fa-table text-indigo-500"></i> Tabla: {activeModalTable}
+                    </h3>
+                    <table className="w-full text-sm text-left border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                      <thead className="bg-slate-50 text-slate-600">
+                        <tr>
+                          <th className="px-4 py-3 font-semibold border-b border-slate-200">Campo</th>
+                          <th className="px-4 py-3 font-semibold border-b border-slate-200">Tipo</th>
+                          <th className="px-4 py-3 font-semibold border-b border-slate-200">Restricción</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {catalogs.find(c => c.name === modalDb)?.tables?.find(t => t.name === activeModalTable)?.columns?.map(col => (
+                          <tr key={col.field} className="hover:bg-slate-50 transition-colors">
+                            <td className="px-4 py-3 font-mono text-slate-700 font-medium">{col.field}</td>
+                            <td className="px-4 py-3 font-mono text-slate-500">{col.type}</td>
+                            <td className={`px-4 py-3 font-medium ${col.key === 'PRI' ? 'text-indigo-600' : 'text-slate-400'}`}>
+                              {col.key === 'PRI' ? (
+                                <span className="inline-flex items-center gap-1"><i className="fa-solid fa-key text-xs"></i> PRIMARY KEY</span>
+                              ) : col.null === 'NO' ? 'NOT NULL' : ''}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-slate-400">
+                    Selecciona una tabla para ver sus columnas
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
