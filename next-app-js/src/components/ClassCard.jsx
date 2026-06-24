@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 
-export default function ClassCard({ title, group, inviteCode, studentsCount, pendingReviews, isArchived, onClick, onArchive, onEdit }) {
+export default function ClassCard({ title, group, inviteCode, studentsCount, pendingReviews, isArchived, onClick, onArchive, onEdit, onUnarchive }) {
   const cardClass = isArchived ? "docente-class-card archived animate-fade-in" : "docente-class-card animate-fade-in";
   
   const [showMenu, setShowMenu] = useState(false);
@@ -27,7 +27,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
       
       <div className="flex justify-between items-start gap-2">
         <h3 className="m-0 leading-tight truncate">{title}</h3>
-        {!isArchived && (onArchive || onEdit) && (
+        {((!isArchived && (onArchive || onEdit)) || (isArchived && onUnarchive)) && (
           <div className="relative -mt-1 -mr-2" ref={menuRef}>
             <button 
               onClick={(e) => {
@@ -42,7 +42,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
             
             {showMenu && (
               <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-100 py-1 z-10 animate-fade-in">
-                {onEdit && (
+                {!isArchived && onEdit && (
                   <button
                     className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 flex items-center gap-2 transition-colors"
                     onClick={(e) => {
@@ -54,7 +54,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
                     <i className="fa-solid fa-pen fa-fw"></i> Editar datos
                   </button>
                 )}
-                {onArchive && (
+                {!isArchived && onArchive && (
                   <button
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
                     onClick={(e) => {
@@ -64,6 +64,18 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
                     }}
                   >
                     <i className="fa-solid fa-box-archive fa-fw"></i> Archivar
+                  </button>
+                )}
+                {isArchived && onUnarchive && (
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 flex items-center gap-2 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowMenu(false);
+                      onUnarchive();
+                    }}
+                  >
+                    <i className="fa-solid fa-box-open fa-fw"></i> Desarchivar
                   </button>
                 )}
               </div>

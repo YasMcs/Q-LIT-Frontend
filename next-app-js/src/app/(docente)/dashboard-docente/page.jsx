@@ -101,14 +101,42 @@ export default function DashboardDocentePage() {
                 onClick={() => {
                   router.push(`/class-feed-docente?classroomId=${cls.id}`);
                 }}
-                onArchive={() => {
-                  // Mantenemos la lógica local de archivar por ahora
-                  setClasses(classes.filter(c => c.id !== cls.id));
+                onArchive={async () => {
+                  if (!window.confirm(`¿Estás seguro de que deseas archivar el laboratorio "${cls.title}"?`)) return;
+                  try {
+                    const response = await fetch(`http://localhost:4000/api/classrooms/${cls.id}`, {
+                      method: "DELETE"
+                    });
+                    if (response.ok) {
+                      setClasses(classes.filter(c => c.id !== cls.id));
+                    } else {
+                      const data = await response.json();
+                      alert(data.error?.message || "Error al archivar el laboratorio");
+                    }
+                  } catch (error) {
+                    console.error("Error al archivar el laboratorio:", error);
+                    alert("Error de conexión");
+                  }
                 }}
-                onEdit={() => {
+                onEdit={async () => {
                   const newTitle = window.prompt("Editar nombre del laboratorio:", cls.title);
-                  if (newTitle) {
-                    setClasses(classes.map(c => c.id === cls.id ? { ...c, title: newTitle } : c));
+                  if (newTitle && newTitle !== cls.title) {
+                    try {
+                      const response = await fetch(`http://localhost:4000/api/classrooms/${cls.id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name: newTitle })
+                      });
+                      if (response.ok) {
+                        setClasses(classes.map(c => c.id === cls.id ? { ...c, title: newTitle } : c));
+                      } else {
+                        const data = await response.json();
+                        alert(data.error?.message || "Error al actualizar el laboratorio");
+                      }
+                    } catch (error) {
+                      console.error("Error al actualizar el laboratorio:", error);
+                      alert("Error de conexión");
+                    }
                   }
                 }}
               />
