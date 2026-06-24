@@ -99,7 +99,7 @@ export default function DashboardDocentePage() {
                 studentsCount={cls.studentsCount}
                 pendingReviews={cls.pendingReviews}
                 onClick={() => {
-                  router.push(`/class-feed-docente?classroomId=${cls.id}`);
+                  router.push(`/class-feed-docente?classroomId=${cls.id}&code=${cls.inviteCode}&title=${encodeURIComponent(cls.title)}`);
                 }}
                 onArchive={async () => {
                   if (!window.confirm(`¿Estás seguro de que deseas archivar el laboratorio "${cls.title}"?`)) return;

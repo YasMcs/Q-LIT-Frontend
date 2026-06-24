@@ -16,8 +16,13 @@ export default function ClassFeedDocentePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const classroomId = searchParams.get("classroomId");
+  const codeParam = searchParams.get("code");
+  const titleParam = searchParams.get("title");
   
-  const [classInfo] = useState(mockData.classInfo);
+  const [classInfo] = useState({
+    title: titleParam || mockData.classInfo.title,
+    code: codeParam || mockData.classInfo.code
+  });
   const [challenges, setChallenges] = useState([]);
   const [selectedPractice, setSelectedPractice] = useState(null);
   
