@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "./ThemeToggle";
 import { useSession, signOut } from "next-auth/react";
 
 export default function SidebarDocente() {
@@ -56,7 +55,6 @@ export default function SidebarDocente() {
               <span className="whitespace-nowrap">{isCollapsed ? "Q" : "Q-LIT"}</span>
               <div className="dot" style={isCollapsed ? { width: '8px', height: '8px', borderRadius: '50%' } : {}} />
             </div>
-            {!isCollapsed && <ThemeToggle />}
           </div>
 
           {/* Overlapping Toggle Button */}
@@ -100,11 +98,6 @@ export default function SidebarDocente() {
         {/* Profile */}
         <div className="w-full flex flex-col gap-4">
           <div className="docente-user-profile w-full items-center">
-            {isCollapsed && (
-              <div className="mb-4">
-                <ThemeToggle />
-              </div>
-            )}
             <div className="docente-avatar shrink-0" style={{ overflow: 'hidden', padding: 0 }}>
               {session?.user?.image ? (
                 <img src={session.user.image} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

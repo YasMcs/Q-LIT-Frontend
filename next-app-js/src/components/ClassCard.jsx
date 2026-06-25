@@ -2,8 +2,8 @@
 import React, { useState, useRef, useEffect } from "react";
 
 export default function ClassCard({ title, group, inviteCode, studentsCount, pendingReviews, isArchived, onClick, onArchive, onEdit, onUnarchive }) {
-  const baseCardClass = "border rounded-[24px] p-7 transition-all duration-300 cursor-pointer relative animate-fade-in";
-  const activeCardClass = "bg-panel border-border hover:border-accent hover:-translate-y-1 hover:shadow-[0_20px_40px_-12px_rgba(88,101,242,0.15)]";
+  const baseCardClass = "class-card-premium border rounded-[24px] p-7 cursor-pointer relative animate-fade-in";
+  const activeCardClass = "bg-panel border-border";
   const archivedCardClass = "bg-main border-border opacity-80 hover:border-[#cbd5e1] hover:-translate-y-1";
   
   const cardClass = isArchived ? `${baseCardClass} ${archivedCardClass}` : `${baseCardClass} ${activeCardClass}`;
@@ -22,7 +22,37 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
   }, []);
 
   return (
-    <div className={cardClass} onClick={onClick}>
+    <>
+      <style>{`
+        .class-card-premium {
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          overflow: hidden;
+        }
+        .class-card-premium::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: linear-gradient(135deg, rgba(103, 103, 234, 0.08) 0%, transparent 60%);
+          opacity: 0;
+          transition: opacity 0.4s ease;
+          pointer-events: none;
+          z-index: 0;
+          border-radius: inherit;
+        }
+        .class-card-premium:not(.opacity-80):hover {
+          transform: translateY(-4px) scale(1.01);
+          border-color: rgba(103, 103, 234, 0.5);
+          box-shadow: 0 16px 32px -12px rgba(103, 103, 234, 0.25), 0 4px 12px -4px rgba(0,0,0,0.4);
+          background: var(--bg-input);
+        }
+        .class-card-premium:not(.opacity-80):hover::before {
+          opacity: 1;
+        }
+        .class-card-premium:not(.opacity-80):hover .class-card-title {
+          color: #818cf8;
+        }
+      `}</style>
+      <div className={cardClass} onClick={onClick}>
       {isArchived && (
         <div className="mb-2">
           <span className="docente-role-badge m-0">Archivado</span>
@@ -31,7 +61,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
       
       <div className="flex justify-between items-start gap-2">
         <div>
-           <h3 className="m-0 text-lg font-bold leading-tight truncate">{title}</h3>
+           <h3 className="m-0 text-lg font-bold leading-tight truncate class-card-title transition-colors duration-300 relative z-10">{title}</h3>
            <p className="mt-1 text-sm text-muted">Grupo: <span className="text-foreground font-medium">{group}</span></p>
         </div>
         {((!isArchived && (onArchive || onEdit)) || (isArchived && onUnarchive)) && (
@@ -112,6 +142,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
