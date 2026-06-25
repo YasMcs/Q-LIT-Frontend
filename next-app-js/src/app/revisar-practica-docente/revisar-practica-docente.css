@@ -699,3 +699,30 @@ button.group-title-revisar:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Grid Card Premium Hover */
+.student-review-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.student-review-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(103, 103, 234, 0.08) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.student-review-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(103, 103, 234, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(103, 103, 234, 0.2);
+}
+.student-review-card:hover::before {
+  opacity: 1;
+}
+.student-review-card > * {
+  position: relative;
+  z-index: 1;
+}

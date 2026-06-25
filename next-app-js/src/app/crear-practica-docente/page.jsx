@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import "./crear-practica-docente.css";
@@ -8,6 +8,14 @@ import "./crear-practica-docente.css";
 // Ahora se usarán los catálogos obtenidos dinámicamente desde el backend.
 
 export default function CrearPracticaDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center flex items-center justify-center h-screen">Cargando...</div>}>
+      <CrearPracticaDocenteContent />
+    </Suspense>
+  );
+}
+
+function CrearPracticaDocenteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
@@ -15,12 +23,13 @@ export default function CrearPracticaDocentePage() {
   const [activeDb, setActiveDb] = useState("punto_venta_db");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [requiredFunctionsStr, setRequiredFunctionsStr] = useState("");
+  const [selectedFunctions, setSelectedFunctions] = useState([]);
   const [maxScore, setMaxScore] = useState(100);
   const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState("");
   const [modalDb, setModalDb] = useState(null);
   const [activeModalTable, setActiveModalTable] = useState(null);
+  const [isFunctionsModalOpen, setIsFunctionsModalOpen] = useState(false);
   
   const [catalogs, setCatalogs] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -53,13 +62,20 @@ export default function CrearPracticaDocentePage() {
           if (data && data.id) {
             setTitle(data.title || "");
             setDescription(data.description || "");
-            setRequiredFunctionsStr(data.requiredFunctions?.keywords?.join(", ") || "");
+            setSelectedFunctions(data.requiredFunctions?.keywords || []);
             setMaxScore(data.totalPoints || 100);
             setActiveDb(data.requiredFunctions?.db || "punto_venta_db");
             if (data.deadline) {
               const dt = new Date(data.deadline);
               setDueDate(dt.toISOString().split("T")[0]);
               setDueTime(dt.toISOString().split("T")[1].substring(0, 5));
+            }
+            if (data.checklistItems && data.checklistItems.length > 0) {
+              setCriteria(data.checklistItems.map((item, index) => ({
+                id: item.id || index + 1,
+                text: item.criterion,
+                points: item.maxPoints
+              })));
             }
           }
         })
@@ -147,7 +163,7 @@ export default function CrearPracticaDocentePage() {
         body: JSON.stringify({
           title,
           description,
-          requiredFunctionsStr,
+          requiredFunctionsStr: selectedFunctions.join(","),
           maxScore,
           dueDate,
           dueTime,
@@ -249,24 +265,40 @@ export default function CrearPracticaDocentePage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
-              <div className="classroom-editor-formatting">
-                <button type="button" title="Negrita"><i className="fa-solid fa-bold" /></button>
-                <button type="button" title="Cursiva"><i className="fa-solid fa-italic" /></button>
-                <button type="button" title="Subrayado"><i className="fa-solid fa-underline" /></button>
-                <button type="button" title="Lista"><i className="fa-solid fa-list-ul" /></button>
-                <button type="button" title="Limpiar"><i className="fa-solid fa-text-slash" /></button>
-              </div>
             </div>
 
-            {/* Required SQL Functions */}
-            <div className="classroom-input-wrapper mt-4">
-              <input
-                type="text"
-                className="classroom-input-field"
-                placeholder="Funciones SQL Esperadas (Ej. SELECT, WHERE, ORDER BY)"
-                value={requiredFunctionsStr}
-                onChange={(e) => setRequiredFunctionsStr(e.target.value)}
-              />
+            {/* Required SQL Functions (Pills + Button) */}
+            {/* Required SQL Functions (Pills + Button) */}
+            <div className="mt-4 flex flex-col gap-3">
+              <label className="text-sm font-bold text-foreground px-1">
+                Funciones y Cláusulas SQL Esperadas
+              </label>
+              
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setIsFunctionsModalOpen(true)}
+                  className="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent text-white hover:opacity-90 shadow-lg border border-transparent transition-all flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-list-check"></i> Seleccionar Funciones
+                </button>
+                
+                {selectedFunctions.length === 0 ? (
+                  <span className="text-muted text-sm italic px-2">Ninguna función seleccionada</span>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedFunctions.map(func => (
+                      <span key={func} className="px-3 py-1.5 rounded-lg text-xs font-bold bg-accent/20 text-white border border-accent/50 flex items-center gap-2 shadow-sm">
+                        {func}
+                        <i 
+                          className="fa-solid fa-xmark cursor-pointer hover:text-[var(--danger-red)] transition-colors p-1" 
+                          onClick={() => setSelectedFunctions(prev => prev.filter(f => f !== func))}
+                        ></i>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -403,7 +435,7 @@ export default function CrearPracticaDocentePage() {
       {/* Schema Detail Modal */}
       {modalDb && (
         <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
-          <div className="bg-panel rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[85vh] border border-border" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-panel rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col h-[75vh] border border-border" onClick={(e) => e.stopPropagation()}>
             <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex justify-between items-center shrink-0">
               <span className="text-xl font-bold text-foreground">Esquema: {modalDb}</span>
               <button className="text-muted hover:text-foreground transition-colors text-2xl" onClick={handleCloseModal}>
@@ -464,6 +496,70 @@ export default function CrearPracticaDocentePage() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SQL Functions Modal */}
+      {isFunctionsModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center animate-fade-in p-4" onClick={() => setIsFunctionsModalOpen(false)}>
+          <div className="bg-[var(--bg-panel)] rounded-2xl w-full max-w-2xl shadow-2xl border border-[var(--border-color)] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-[var(--border-color)] flex justify-between items-center">
+              <h2 className="text-xl font-bold text-foreground">Seleccionar Funciones SQL</h2>
+              <button onClick={() => setIsFunctionsModalOpen(false)} className="text-muted hover:text-foreground">
+                <i className="fa-solid fa-xmark text-xl"></i>
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="flex flex-col gap-6">
+                {[
+                  { category: "DML (Manipulación)", options: ["SELECT", "INSERT", "UPDATE", "DELETE"] },
+                  { category: "Cláusulas Básicas", options: ["WHERE", "ORDER BY", "GROUP BY", "HAVING", "LIMIT", "DISTINCT"] },
+                  { category: "Joins (Relaciones)", options: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN"] },
+                  { category: "Operadores y Filtros", options: ["IN", "LIKE", "BETWEEN", "AND", "OR", "NOT", "IS NULL"] },
+                  { category: "Agregación", options: ["COUNT", "SUM", "AVG", "MAX", "MIN"] }
+                ].map(group => (
+                  <div key={group.category}>
+                    <h4 className="text-sm font-bold text-accent uppercase tracking-wider mb-3">{group.category}</h4>
+                    <div className="flex flex-wrap gap-3">
+                      {group.options.map(opt => {
+                        const isSelected = selectedFunctions.includes(opt);
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => {
+                              if (isSelected) {
+                                setSelectedFunctions(prev => prev.filter(f => f !== opt));
+                              } else {
+                                setSelectedFunctions(prev => [...prev, opt]);
+                              }
+                            }}
+                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                              isSelected 
+                                ? 'bg-accent text-white border-accent shadow-md scale-105' 
+                                : 'bg-[var(--bg-main)] border-[var(--border-color)] text-muted hover:border-accent/50 hover:text-foreground'
+                            }`}
+                          >
+                            {opt} {isSelected && <i className="fa-solid fa-check ml-1"></i>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-[var(--border-color)] bg-[var(--bg-main)] flex justify-end">
+              <button
+                className="px-6 py-2.5 rounded-xl font-bold bg-accent text-white hover:opacity-90 shadow-md transition-all"
+                onClick={() => setIsFunctionsModalOpen(false)}
+              >
+                Aceptar
+              </button>
             </div>
           </div>
         </div>
