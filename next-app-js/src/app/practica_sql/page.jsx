@@ -61,6 +61,7 @@ function PracticaSQLContent() {
 
   const [loading, setLoading] = useState(true);
   const [practiceData, setPracticeData] = useState(null);
+  const [dbSchemas, setDbSchemas] = useState(DB_SCHEMAS);
   const [generatedStatement, setGeneratedStatement] = useState("");
   const [requiredFunctions, setRequiredFunctions] = useState([]);
 
@@ -195,6 +196,38 @@ function PracticaSQLContent() {
   }, []);
 
   useEffect(() => {
+    fetch('/api/proxy/catalogs')
+      .then(res => res.json())
+      .then(resData => {
+        if (resData.data) {
+          const schemas = {};
+          resData.data.forEach(db => {
+            schemas[db.name] = {};
+            db.tables.forEach(table => {
+              schemas[db.name][table.name] = table.columns.map(col => ({
+                name: col.field,
+                type: col.type,
+                pk: col.key === "PRI"
+              }));
+            });
+          });
+          setDbSchemas(schemas);
+        }
+      })
+      .catch(err => console.error("Error cargando catálogos dinámicos:", err));
+  }, []);
+
+  useEffect(() => {
+    if (practiceData) {
+      const dbName = practiceData.requiredFunctions?.db || "punto_venta_db";
+      const firstTable = Object.keys(dbSchemas[dbName] || {})[0];
+      if (firstTable) {
+        setAccordions({ [firstTable]: true });
+      }
+    }
+  }, [practiceData, dbSchemas]);
+
+  useEffect(() => {
     if (practiceId) {
       fetch(`/api/proxy/practices/${practiceId}/start`, { method: "POST" })
         .then(res => res.json())
@@ -203,13 +236,6 @@ function PracticaSQLContent() {
             setPracticeData(data.data.practice);
             setGeneratedStatement(data.data.submission.generatedStatement);
             setRequiredFunctions(data.data.practice.requiredFunctions?.keywords || []);
-            
-            // Expandir automáticamente la tabla principal correspondiente a la base de datos asignada
-            const dbName = data.data.practice.requiredFunctions?.db || "punto_venta_db";
-            const firstTable = Object.keys(DB_SCHEMAS[dbName] || {})[0];
-            if (firstTable) {
-              setAccordions({ [firstTable]: true });
-            }
           }
           setLoading(false);
         })
@@ -273,7 +299,7 @@ function PracticaSQLContent() {
           <div className="schema-container-sql">
             <h3>Diccionario de Entidades</h3>
 
-            {Object.entries(DB_SCHEMAS[practiceData?.requiredFunctions?.db || "punto_venta_db"] || {}).map(([tableName, fields]) => (
+            {Object.entries(dbSchemas[practiceData?.requiredFunctions?.db || "punto_venta_db"] || {}).map(([tableName, fields]) => (
               <div key={tableName} className={`accordion-table-item-sql ${accordions[tableName] ? "open" : ""}`}>
                 <div className="table-toggle-header-sql" onClick={() => toggleAccordion(tableName)}>
                   <div className="table-name-sql">
@@ -339,9 +365,21 @@ function PracticaSQLContent() {
             <Editor
               height="100%"
               language="sql"
-              theme="light"
+              theme="qlit-theme"
               value={sqlQuery}
               onChange={(value) => setSqlQuery(value || "")}
+              beforeMount={(monaco) => {
+                monaco.editor.defineTheme('qlit-theme', {
+                  base: 'vs-dark',
+                  inherit: true,
+                  rules: [],
+                  colors: {
+                    'editor.background': '#18181b', // Gris suave premium (zinc-900)
+                    'editor.lineHighlightBackground': '#222226',
+                    'editorCursor.foreground': '#6767ea',
+                  }
+                });
+              }}
               options={{
                 minimap: { enabled: false },
                 fontSize: 15,
@@ -354,7 +392,7 @@ function PracticaSQLContent() {
                 cursorStyle: "line",
                 automaticLayout: true,
               }}
-              loading={<div className="flex items-center justify-center h-full text-muted font-mono text-sm"><i className="fa-solid fa-spinner fa-spin mr-2" /> Cargando entorno SQL...</div>}
+              loading={<div className="flex items-center justify-center h-full text-muted font-mono text-sm bg-[#18181b]"><i className="fa-solid fa-spinner fa-spin mr-2" /> Cargando entorno SQL...</div>}
             />
             </div>
           </div>

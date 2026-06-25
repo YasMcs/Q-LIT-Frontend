@@ -34,6 +34,28 @@
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+
+  /* Estilos para el scrollbar en Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #27272a var(--bg-panel);
+}
+
+/* Estilos para el scrollbar en Webkit (Chrome, Safari, Edge) */
+.panel-sidebar-sql::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-sidebar-sql::-webkit-scrollbar-track {
+  background: var(--bg-panel);
+}
+
+.panel-sidebar-sql::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+}
+
+.panel-sidebar-sql::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
 }
 
 .sidebar-section-sql {
