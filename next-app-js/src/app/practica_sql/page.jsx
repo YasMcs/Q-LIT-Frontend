@@ -50,7 +50,7 @@ const DB_SCHEMAS = {
   }
 };
 
-// Componente interno que usa useSearchParams
+// Componente principal del entorno SQL
 function PracticaSQLContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -171,7 +171,7 @@ function PracticaSQLContent() {
             setGeneratedStatement(data.data.submission.generatedStatement);
             setRequiredFunctions(data.data.practice.requiredFunctions?.keywords || []);
             
-            // Auto-open the first table matching the DB
+            // Expandir automáticamente la tabla principal correspondiente a la base de datos asignada
             const dbName = data.data.practice.requiredFunctions?.db || "punto_venta_db";
             const firstTable = Object.keys(DB_SCHEMAS[dbName] || {})[0];
             if (firstTable) {

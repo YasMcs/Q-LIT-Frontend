@@ -1,16 +1,6 @@
 /* Restored Clean Light Q-LIT Theme with Google Classroom Structural Layout */
 
 .classroom-editor-body {
-  --bg-main: #f8fafc;
-  --bg-panel: #ffffff;
-  --bg-input: #fafafa;
-  --border-color: #e2e8f0;
-  --text-primary: #0f172a;
-  --text-muted: #64748b;
-  --accent-blue: #4f46e5; /* Q-LIT Brand Indigo */
-  --accent-blue-hover: #4338ca;
-  --danger-red: #ef4444;
-
   background-color: var(--bg-main);
   color: var(--text-primary);
   min-height: 100vh;
@@ -55,7 +45,7 @@
 }
 
 .btn-close-classroom:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-input);
   color: var(--text-primary);
 }
 
@@ -142,7 +132,7 @@
 }
 
 .classroom-input-wrapper:focus-within {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border-color: var(--accent-blue);
   box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
 }
@@ -211,7 +201,7 @@
 }
 
 .classroom-editor-formatting button:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-input);
   color: var(--text-primary);
 }
 
@@ -252,7 +242,7 @@
 }
 
 .attachment-card {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1rem 1.2rem;
@@ -333,7 +323,7 @@
 }
 
 .btn-inspect-attachment:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-input);
   color: var(--accent-blue);
 }
 
@@ -364,7 +354,7 @@
 }
 
 .sidebar-select {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   color: var(--text-primary);
@@ -377,7 +367,7 @@
 }
 
 .sidebar-number-input {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   color: var(--text-primary);
@@ -402,7 +392,7 @@
 
 .sidebar-date-input, 
 .sidebar-time-input {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   color: var(--text-primary);
@@ -445,7 +435,7 @@
 }
 
 .btn-rubric-toggle {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   color: var(--accent-blue);
@@ -474,7 +464,7 @@
 
 /* Rubric drawer list */
 .rubric-drawer-panel {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.25rem;
@@ -541,7 +531,7 @@
 }
 
 .rubric-drawer-input-text:focus {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border-color: var(--accent-blue);
 }
 
@@ -560,7 +550,7 @@
 }
 
 .rubric-drawer-input-points:focus {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border-color: var(--accent-blue);
 }
 
@@ -579,7 +569,8 @@
 }
 
 .btn-delete-criterio-drawer:hover {
-  background-color: #fef2f2;
+  background-color: var(--danger-red);
+  color: white;
 }
 
 .rubric-drawer-unbalanced-alert {
@@ -587,16 +578,16 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.78rem;
-  background-color: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #9a3412;
+  background-color: var(--bg-input);
+  border: 1px solid var(--accent-blue);
+  color: var(--accent-blue);
   padding: 0.6rem;
   border-radius: 6px;
   font-weight: 600;
 }
 
 .rubric-drawer-unbalanced-alert button {
-  background-color: #ffffff;
+  background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 0.25rem 0.5rem;
@@ -615,7 +606,7 @@
 
 /* Modal light theme standard alignment */
 .modal-container-crear {
-  background-color: #ffffff !important;
+  background-color: var(--bg-panel) !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
@@ -641,7 +632,7 @@
 }
 
 .schema-table th {
-  background-color: #f1f5f9 !important;
+  background-color: var(--bg-input) !important;
   color: var(--text-muted) !important;
   border-bottom-color: var(--border-color) !important;
 }

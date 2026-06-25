@@ -15,33 +15,31 @@ export default function PracticeDetailModal({
 
   const isStudent = role === "student";
 
-  // Quitamos por completo el backdrop-filter (blur) porque es el causante del bug visual crónico en Chrome.
-  // En su lugar, oscurecemos un poco más el fondo (0.6 en vez de 0.4) para mantener buen contraste.
+  // Overlay con desenfoque para el modal
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[100] animate-fade-in p-4"
-         style={{ background: "rgba(15, 23, 42, 0.6)" }}>
+    <div className="fixed inset-0 flex items-center justify-center z-[100] animate-fade-in p-4 bg-black/40 backdrop-blur-sm">
       
       {/* Background click to close */}
       <div className="absolute inset-0" onClick={onClose}></div>
 
       {/* Modal Container */}
-      <div className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl">
+      <div className="relative bg-[var(--bg-panel)] border border-[var(--border-color)] w-full max-w-2xl rounded-3xl shadow-2xl">
         
         {/* Header */}
-        <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-start bg-slate-50 rounded-t-3xl">
+        <div className="px-8 py-6 border-b border-[var(--border-color)] flex justify-between items-start bg-[var(--bg-main)] rounded-t-3xl">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] text-[var(--accent-blue)] flex items-center justify-center">
                 <i className="fa-solid fa-database text-sm"></i>
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent-blue)]">
                 Detalle de Práctica
               </span>
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-800 leading-tight">
+            <h2 className="text-2xl font-extrabold text-[var(--text-primary)] leading-tight">
               {practice.title}
             </h2>
-            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm font-medium text-slate-500">
+            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm font-medium text-[var(--text-muted)]">
               <span className="flex items-center gap-1.5">
                 <i className="fa-regular fa-calendar-plus" /> Publicado: {practice.assignDate || (practice.fecha_asignacion ? new Date(practice.fecha_asignacion).toLocaleDateString() : (practice.createdAt ? new Date(practice.createdAt).toLocaleDateString() : "N/A"))}
               </span>
@@ -63,7 +61,7 @@ export default function PracticeDetailModal({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 hover:bg-slate-200 p-2 rounded-full transition-colors flex-shrink-0"
+            className="text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-input)] p-2 rounded-full transition-colors flex-shrink-0"
           >
             <i className="fa-solid fa-xmark text-xl"></i>
           </button>
@@ -73,17 +71,17 @@ export default function PracticeDetailModal({
         <div className="px-8 py-6 max-h-[60vh] overflow-y-auto">
           {/* Objective */}
           <div className="mb-8">
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">
+            <h3 className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
               Objetivo
             </h3>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-[var(--text-primary)] leading-relaxed">
               {practice.description || "No hay un objetivo definido para esta práctica."}
             </p>
           </div>
 
           {/* Expected Functions */}
           <div>
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">
+            <h3 className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
               Funciones Esperadas
             </h3>
             {practice.requiredFunctions && practice.requiredFunctions.keywords && practice.requiredFunctions.keywords.length > 0 ? (
@@ -91,51 +89,51 @@ export default function PracticeDetailModal({
                 {practice.requiredFunctions.keywords.map((func, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-sm font-mono font-bold text-slate-600"
+                    className="px-3 py-1.5 bg-[var(--bg-input)] border border-[var(--border-color)] rounded-lg text-sm font-mono font-bold text-[var(--text-primary)]"
                   >
                     {func}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500 italic text-sm">No se especificaron funciones.</p>
+              <p className="text-[var(--text-muted)] italic text-sm">No se especificaron funciones.</p>
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-slate-100 bg-white flex justify-between items-center rounded-b-3xl">
+        <div className="px-8 py-5 border-t border-[var(--border-color)] bg-[var(--bg-panel)] flex justify-between items-center rounded-b-3xl">
           
           <div className="flex items-center gap-2">
             {!isStudent && (
               <>
                 <button
-                  className="p-2.5 rounded-xl text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                  className="p-2.5 rounded-xl text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--accent-blue)] transition-colors"
                   title="Editar práctica"
                   onClick={onEdit}
                 >
                   <i className="fa-solid fa-pen"></i>
                 </button>
                 <button
-                  className="p-2.5 rounded-xl text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                  className="p-2.5 rounded-xl text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--accent-blue)] transition-colors"
                   title="Cambiar fecha límite"
                   onClick={onChangeDate}
                 >
                   <i className="fa-regular fa-calendar"></i>
                 </button>
                 <button
-                  className="p-2.5 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  className="p-2.5 rounded-xl text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--danger-red)] transition-colors"
                   title="Eliminar práctica"
                   onClick={onDelete}
                 >
                   <i className="fa-regular fa-trash-can"></i>
                 </button>
-                <div className="w-px h-6 bg-slate-200 mx-2"></div>
+                <div className="w-px h-6 bg-[var(--border-color)] mx-2"></div>
               </>
             )}
             
             <button
-              className="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-all"
+              className="px-5 py-2.5 rounded-xl font-bold text-[var(--text-primary)] hover:bg-[var(--bg-input)] hover:text-[var(--text-primary)] transition-all"
               onClick={onClose}
             >
               Cerrar
@@ -143,7 +141,7 @@ export default function PracticeDetailModal({
           </div>
           
           <button
-            className="px-6 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 transition-all flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:opacity-90 hover:shadow-lg transition-all flex items-center gap-2"
             onClick={() => {
               onClose();
               if (onAction) onAction(practice.id);

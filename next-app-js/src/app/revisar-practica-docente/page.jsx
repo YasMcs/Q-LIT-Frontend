@@ -5,7 +5,7 @@ import "./revisar-practica-docente.css";
 
 import mockData from "@/app/api/mocks/teacher/revisar-practica.json";
 
-// Adapter to keep the frontend working while we finish refactoring the UI
+// Adaptador de datos simulados para la UI
 const mockStudents = mockData.entregas_alumnos.map(student => ({
   id: student.id,
   name: student.name,
@@ -24,7 +24,7 @@ const mockChecklist = mockData.lista_cotejo.map(c => ({
 export default function RevisarPracticaDocentePage() {
   const router = useRouter();
   
-  // Initialize editable checklist state from mock data
+  // Estado de la rúbrica de evaluación
   const [checklist, setChecklist] = useState(
     mockChecklist.map((c) => ({ ...c, teacherPoints: c.iaPoints }))
   );
@@ -34,10 +34,10 @@ export default function RevisarPracticaDocentePage() {
   const totalIaScore = checklist.reduce((sum, item) => sum + item.iaPoints, 0);
   const totalTeacherScore = checklist.reduce((sum, item) => sum + item.teacherPoints, 0);
 
-  // Synchronize overall grade with the sum of the checklist points
+  // Calificación general sincronizada con la rúbrica
   const [grade, setGrade] = useState(totalTeacherScore);
   
-  // Update grade whenever checklist changes
+  // Actualización automática de la calificación
   React.useEffect(() => {
     setGrade(checklist.reduce((sum, item) => sum + item.teacherPoints, 0));
   }, [checklist]);
@@ -55,7 +55,7 @@ export default function RevisarPracticaDocentePage() {
   const [isEntregadosOpen, setIsEntregadosOpen] = useState(true);
   const [isNoEntregadosOpen, setIsNoEntregadosOpen] = useState(false);
 
-  // Reset checklist to match IA suggestion whenever the selected student changes
+  // Restaurar rúbrica sugerida al cambiar de alumno
   React.useEffect(() => {
     setChecklist(mockChecklist.map((c) => ({ ...c, teacherPoints: c.iaPoints })));
   }, [selectedStudent]);

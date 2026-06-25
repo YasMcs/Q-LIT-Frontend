@@ -403,24 +403,24 @@ export default function CrearPracticaDocentePage() {
 
       {/* Schema Detail Modal */}
       {modalDb && (
-        <div className="fixed inset-0 bg-slate-900/60 z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
-            <div className="px-8 py-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
-              <span className="text-xl font-bold text-slate-800">Esquema: {modalDb}</span>
-              <button className="text-slate-400 hover:text-slate-600 transition-colors text-2xl" onClick={handleCloseModal}>
+        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
+          <div className="bg-[var(--bg-panel)] rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[85vh] border border-[var(--border-color)]" onClick={(e) => e.stopPropagation()}>
+            <div className="px-8 py-6 border-b border-[var(--border-color)] bg-[var(--bg-main)] flex justify-between items-center shrink-0">
+              <span className="text-xl font-bold text-[var(--text-primary)]">Esquema: {modalDb}</span>
+              <button className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors text-2xl" onClick={handleCloseModal}>
                 &times;
               </button>
             </div>
             <div className="flex flex-1 min-h-0">
               {/* Sidebar: Table List */}
-              <div className="w-64 border-r border-slate-100 bg-slate-50 overflow-y-auto p-4 shrink-0">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-3">Tablas ({catalogs.find(c => c.name === modalDb)?.tables?.length || 0})</p>
+              <div className="w-64 border-r border-[var(--border-color)] bg-[var(--bg-main)] overflow-y-auto p-4 shrink-0">
+                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4 px-3">Tablas ({catalogs.find(c => c.name === modalDb)?.tables?.length || 0})</p>
                 <div className="flex flex-col gap-1">
                   {catalogs.find(c => c.name === modalDb)?.tables?.map(table => (
                     <button
                       key={table.name}
                       onClick={() => setActiveModalTable(table.name)}
-                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-indigo-100 text-indigo-700' : 'text-slate-600 hover:bg-slate-200/50'}`}
+                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-[var(--accent-blue)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--bg-input)]'}`}
                     >
                       <i className="fa-solid fa-table mr-2 opacity-70"></i>
                       {table.name}
@@ -430,26 +430,26 @@ export default function CrearPracticaDocentePage() {
               </div>
               
               {/* Main Content: Table Columns */}
-              <div className="flex-1 overflow-y-auto p-8 bg-white">
+              <div className="flex-1 overflow-y-auto p-8 bg-[var(--bg-panel)]">
                 {activeModalTable ? (
                   <div>
-                    <h3 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-                      <i className="fa-solid fa-table text-indigo-500"></i> Tabla: {activeModalTable}
+                    <h3 className="text-lg font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                      <i className="fa-solid fa-table text-[var(--accent-blue)]"></i> Tabla: {activeModalTable}
                     </h3>
-                    <table className="w-full text-sm text-left border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                      <thead className="bg-slate-50 text-slate-600">
+                    <table className="w-full text-sm text-left border border-[var(--border-color)] rounded-lg overflow-hidden shadow-sm">
+                      <thead className="bg-[var(--bg-input)] text-[var(--text-muted)]">
                         <tr>
-                          <th className="px-4 py-3 font-semibold border-b border-slate-200">Campo</th>
-                          <th className="px-4 py-3 font-semibold border-b border-slate-200">Tipo</th>
-                          <th className="px-4 py-3 font-semibold border-b border-slate-200">Restricción</th>
+                          <th className="px-4 py-3 font-semibold border-b border-[var(--border-color)]">Campo</th>
+                          <th className="px-4 py-3 font-semibold border-b border-[var(--border-color)]">Tipo</th>
+                          <th className="px-4 py-3 font-semibold border-b border-[var(--border-color)]">Restricción</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-[var(--border-color)]">
                         {catalogs.find(c => c.name === modalDb)?.tables?.find(t => t.name === activeModalTable)?.columns?.map(col => (
-                          <tr key={col.field} className="hover:bg-slate-50 transition-colors">
-                            <td className="px-4 py-3 font-mono text-slate-700 font-medium">{col.field}</td>
-                            <td className="px-4 py-3 font-mono text-slate-500">{col.type}</td>
-                            <td className={`px-4 py-3 font-medium ${col.key === 'PRI' ? 'text-indigo-600' : 'text-slate-400'}`}>
+                          <tr key={col.field} className="hover:bg-[var(--bg-main)] transition-colors">
+                            <td className="px-4 py-3 font-mono text-[var(--text-primary)] font-medium">{col.field}</td>
+                            <td className="px-4 py-3 font-mono text-[var(--text-muted)]">{col.type}</td>
+                            <td className={`px-4 py-3 font-medium ${col.key === 'PRI' ? 'text-[var(--accent-blue)]' : 'text-[var(--text-muted)]'}`}>
                               {col.key === 'PRI' ? (
                                 <span className="inline-flex items-center gap-1"><i className="fa-solid fa-key text-xs"></i> PRIMARY KEY</span>
                               ) : col.null === 'NO' ? 'NOT NULL' : ''}
@@ -460,7 +460,7 @@ export default function CrearPracticaDocentePage() {
                     </table>
                   </div>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-slate-400">
+                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
                     Selecciona una tabla para ver sus columnas
                   </div>
                 )}
@@ -472,38 +472,38 @@ export default function CrearPracticaDocentePage() {
 
       {/* Confirmation Modal for Edit */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
-            <div className="px-8 py-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="px-8 py-6 border-b border-[var(--border-color)] bg-[var(--bg-main)] flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center">
                 <i className="fa-solid fa-triangle-exclamation text-lg"></i>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Actualizar Práctica</h2>
-                <p className="text-sm text-slate-500">Hay estudiantes trabajando en esta asignación</p>
+                <h2 className="text-xl font-bold text-[var(--text-primary)]">Actualizar Práctica</h2>
+                <p className="text-sm text-[var(--text-muted)]">Hay estudiantes trabajando en esta asignación</p>
               </div>
             </div>
             <div className="p-8">
-              <p className="text-slate-600 mb-6 leading-relaxed">
+              <p className="text-[var(--text-muted)] mb-6 leading-relaxed">
                 ¿Deseas regenerar los enunciados de los alumnos que aún no terminan la práctica? <br/><br/>
                 <strong>Si regeneras:</strong> La IA leerá el nuevo objetivo y les generará un problema nuevo (perderán el código que llevan).<br/>
                 <strong>Si mantienes:</strong> Los alumnos actuales conservarán su problema original, y el nuevo objetivo solo aplicará para estudiantes nuevos.
               </p>
               <div className="flex flex-col gap-3 mt-8">
                 <button 
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:bg-[var(--accent-blue-hover)] transition-colors flex justify-center items-center gap-2"
                   onClick={() => executeSave(false)}
                 >
                   <i className="fa-solid fa-clock-rotate-left"></i> Mantener enunciados actuales
                 </button>
                 <button 
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-[var(--danger-red)] bg-red-500/10 hover:bg-red-500/20 transition-colors flex justify-center items-center gap-2"
                   onClick={() => executeSave(true)}
                 >
                   <i className="fa-solid fa-rotate-right"></i> Regenerar enunciados (Reiniciar progreso)
                 </button>
                 <button 
-                  className="w-full py-3 px-4 rounded-xl font-bold text-slate-500 bg-white hover:bg-slate-50 border border-slate-200 mt-2 transition-colors"
+                  className="w-full py-3 px-4 rounded-xl font-bold text-[var(--text-muted)] bg-[var(--bg-main)] hover:bg-[var(--bg-input)] border border-[var(--border-color)] mt-2 transition-colors"
                   onClick={() => setShowConfirmModal(false)}
                 >
                   Cancelar edición

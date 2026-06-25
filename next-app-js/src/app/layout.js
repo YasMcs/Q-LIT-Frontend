@@ -17,12 +17,14 @@ export const metadata = {
 };
 
 import AuthProvider from "@/components/AuthProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({ children }) {
   return (
   <html
     lang="en"
     className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
+    suppressHydrationWarning
   >
     <head>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -31,9 +33,11 @@ export default function RootLayout({ children }) {
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
     </head>
     <body className="min-h-full flex flex-col" suppressHydrationWarning>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </ThemeProvider>
     </body>
   </html>
   );

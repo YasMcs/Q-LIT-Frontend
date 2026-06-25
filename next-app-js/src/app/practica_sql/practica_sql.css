@@ -1,13 +1,13 @@
 /* Stylesheet for Practica SQL Student Sandbox */
 
 .sql-page-body {
-  --bg-body: #f4f6f8;
-  --sidebar-bg: #fafbfc;
-  --editor-bg: #ffffff;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --brand-indigo: #4338ca;
-  --border-color: #e2e8f0;
+  --bg-body: var(--bg-main);
+  --sidebar-bg: var(--bg-panel);
+  --editor-bg: var(--bg-panel);
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-muted);
+  --brand-indigo: var(--accent-blue);
+  --border-color: var(--border-color);
   --radius-md: 12px;
 
   background-color: var(--bg-body);
@@ -45,7 +45,7 @@
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #475569;
+  color: var(--text-muted);
   text-transform: uppercase;
   margin-bottom: 16px;
 }
@@ -71,7 +71,7 @@
 
 .instruction-box-sql p {
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-primary);
   line-height: 1.6;
 }
 
@@ -92,7 +92,7 @@
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #475569;
+  color: var(--text-muted);
   text-transform: uppercase;
   margin-bottom: 16px;
 }
@@ -101,7 +101,7 @@
   margin-bottom: 10px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--bg-panel);
   overflow: hidden;
   transition: border-color 0.2s ease;
 }
@@ -113,19 +113,19 @@
   padding: 12px 14px;
   cursor: pointer;
   user-select: none;
-  background: #ffffff;
+  background: var(--bg-panel);
   transition: background 0.2s ease;
 }
 
 .table-toggle-header-sql:hover {
-  background: #f8fafc;
+  background: var(--bg-main);
 }
 
 .table-name-sql {
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.82rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -153,11 +153,11 @@
 
 /* Fields list hidden by default */
 .fields-list-sql {
-  background: #ffffff;
+  background: var(--bg-panel);
   padding: 4px 14px 12px 14px;
   list-style: none;
   display: none;
-  border-top: 1px dashed #f1f5f9;
+  border-top: 1px dashed var(--border-color);
 }
 
 .accordion-table-item-sql.open .fields-list-sql {
@@ -170,7 +170,7 @@
   padding: 8px 0;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.78rem;
-  border-bottom: 1px dashed #f1f5f9;
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .field-row-sql:last-child {
@@ -200,7 +200,7 @@
 
 /* Top bar with buttons */
 .editor-top-bar-sql {
-  background: #ffffff;
+  background: var(--bg-panel);
   border-bottom: 1px solid var(--border-color);
   padding: 16px 32px;
   display: flex;
@@ -248,12 +248,12 @@
 }
 
 .btn-secondary-sql {
-  background: #e2e8f0;
-  color: #334155;
+  background: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .btn-secondary-sql:hover {
-  background: #cbd5e1;
+  background: var(--border-color);
 }
 
 .btn-primary-sql {
@@ -293,8 +293,8 @@
   padding: 18px;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.96rem;
-  color: #0f172a;
-  background: #ffffff;
+  color: var(--text-primary);
+  background: var(--bg-panel);
   resize: none;
   line-height: 1.6;
   outline: none;
@@ -309,7 +309,7 @@
 
 /* Resizable Console panel */
 .terminal-zone-sql {
-  background: #ffffff;
+  background: var(--bg-panel);
   border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -360,7 +360,7 @@
   flex: 1;
   padding: 24px 32px;
   overflow: auto;
-  background: #ffffff;
+  background: var(--bg-panel);
 }
 
 .terminal-placeholder-sql {
@@ -392,7 +392,7 @@
   border-collapse: collapse;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.82rem;
-  background: #ffffff;
+  background: var(--bg-panel);
   color: var(--text-main);
   border-radius: 8px;
   border: 1px solid var(--border-color);

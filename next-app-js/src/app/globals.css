@@ -1,28 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-main: #f8fafc;
+  --bg-panel: #ffffff;
+  --bg-input: #f1f5f9;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-muted: #64748b;
+  --accent-blue: #4f46e5;
+  --accent-blue-hover: #4338ca;
+  --danger-red: #ef4444;
+}
+
+.dark {
+  --bg-main: #111214;
+  --bg-panel: #1e1f22;
+  --bg-input: #0b0c0d;
+  --border-color: rgba(255, 255, 255, 0.04);
+  --text-primary: #dbdee1;
+  --text-muted: #949ba4;
+  --accent-blue: #5865F2;
+  --accent-blue-hover: #4752C4;
+  --danger-red: #da373c;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-main);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @layer utilities {
@@ -52,16 +65,16 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* Sidebar Lateral */
 .alumno-sidebar {
   width: 280px;
-  background-color: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--bg-panel);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   padding: 32px 24px;
@@ -78,7 +91,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .alumno-side-logo .dot {
@@ -97,7 +110,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: #64748b;
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -108,13 +121,13 @@ body {
 
 .alumno-nav-item:hover,
 .alumno-nav-item.active {
-  background-color: #f1f5f9;
-  color: #4f46e5;
+  background-color: var(--bg-input);
+  color: var(--accent-blue);
 }
 
 .alumno-user-profile {
   padding-top: 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -140,12 +153,12 @@ body {
 .alumno-user-info span {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .alumno-user-info small {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 /* App Container */
@@ -158,8 +171,8 @@ body {
 }
 
 .alumno-header {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
   padding: 18px 40px;
   display: flex;
   justify-content: space-between;
@@ -176,7 +189,7 @@ body {
 }
 
 .alumno-breadcrumbs a {
-  color: #64748b;
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -187,11 +200,11 @@ body {
 
 .alumno-breadcrumbs i {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .alumno-breadcrumbs .current-class {
-  color: #0f172a;
+  color: var(--text-primary);
   font-weight: 700;
 }
 
@@ -229,19 +242,19 @@ body {
   font-size: 1.8rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .alumno-panel-header p {
   font-size: 0.95rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
 /* Listado de Prácticas */
 .alumno-module-block {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
   border-radius: 24px;
   padding: 24px;
   margin-bottom: 24px;
@@ -252,7 +265,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  background: #f8fafc;
+  background: var(--bg-main);
   border: 1px solid transparent;
   border-radius: 12px;
   cursor: pointer;
@@ -265,8 +278,8 @@ body {
 }
 
 .alumno-practice-item:hover {
-  background: white;
-  border-color: #06b6d4;
+  background: var(--bg-panel);
+  border-color: var(--accent-blue);
   transform: translateX(4px);
   box-shadow: 0 8px 20px -8px rgba(6, 182, 212, 0.15);
 }
@@ -280,8 +293,8 @@ body {
 .alumno-practice-icon {
   width: 40px;
   height: 40px;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -293,12 +306,12 @@ body {
 .alumno-practice-meta h4 {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .alumno-practice-meta p {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin-top: 3px;
 }
 

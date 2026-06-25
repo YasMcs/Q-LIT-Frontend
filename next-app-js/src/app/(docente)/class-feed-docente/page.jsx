@@ -132,7 +132,7 @@ export default function ClassFeedDocentePage() {
             <div className="feed-code-badge">Código: {classInfo.code}</div>
             <button 
               onClick={toggleSidebar}
-              className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="p-2 text-[var(--text-muted)] hover:text-[var(--accent-blue)] hover:bg-[var(--bg-input)] rounded-lg transition-colors"
               title={isSidebarOpen ? "Ocultar panel de estudiantes" : "Mostrar panel de estudiantes"}
             >
               <i className="fa-solid fa-users text-xl"></i>
@@ -179,20 +179,20 @@ export default function ClassFeedDocentePage() {
 
           {/* Right Sidebar for Students */}
           {isSidebarOpen && (
-            <aside className="w-80 flex-shrink-0 border-l border-slate-200 bg-white p-6 overflow-y-auto animate-fade-in hidden lg:block">
+            <aside className="w-80 flex-shrink-0 border-l border-[var(--border-color)] bg-[var(--bg-panel)] p-6 overflow-y-auto animate-fade-in hidden lg:block">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-bold text-slate-800">Estudiantes ({mockStudents.length})</h2>
-                <button onClick={toggleSidebar} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <h2 className="text-lg font-bold text-[var(--text-primary)]">Estudiantes ({mockStudents.length})</h2>
+                <button onClick={toggleSidebar} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
                   <i className="fa-solid fa-xmark text-lg"></i>
                 </button>
               </div>
               <div className="space-y-3">
                 {mockStudents.map(student => (
-                  <div key={student.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+                  <div key={student.id} className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border-color)] hover:bg-[var(--bg-main)] transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-[var(--bg-input)] text-[var(--accent-blue)] flex items-center justify-center font-bold text-sm shrink-0">
                       {student.name.charAt(0)}
                     </div>
-                    <span className="text-sm font-medium text-slate-700 truncate">{student.name}</span>
+                    <span className="text-sm font-medium text-[var(--text-primary)] truncate">{student.name}</span>
                   </div>
                 ))}
               </div>
@@ -203,13 +203,13 @@ export default function ClassFeedDocentePage() {
 
       {/* Date Picker Modal */}
       {isDateModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center animate-fade-in p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-100">
-            <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h2 className="text-lg font-bold text-slate-800">Cambiar Fecha Límite</h2>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center animate-fade-in p-4">
+          <div className="bg-[var(--bg-panel)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-[var(--border-color)]">
+            <div className="px-6 py-5 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-main)]">
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">Cambiar Fecha Límite</h2>
               <button 
                 onClick={() => setIsDateModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
+                className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <i className="fa-solid fa-xmark text-xl"></i>
               </button>
@@ -218,42 +218,42 @@ export default function ClassFeedDocentePage() {
             <div className="p-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="block text-sm font-bold text-[var(--text-primary)] mb-2">
                     Fecha de Entrega
                   </label>
                   <input 
                     type="date" 
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium text-slate-700"
+                    className="w-full px-4 py-3 border border-[var(--border-color)] bg-[var(--bg-main)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] transition-all font-medium text-[var(--text-primary)]"
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="block text-sm font-bold text-[var(--text-primary)] mb-2">
                     Hora Límite
                   </label>
                   <input 
                     type="time" 
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium text-slate-700"
+                    className="w-full px-4 py-3 border border-[var(--border-color)] bg-[var(--bg-main)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] transition-all font-medium text-[var(--text-primary)]"
                     value={newTime}
                     onChange={(e) => setNewTime(e.target.value)}
                   />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 mt-4">
+              <p className="text-sm text-[var(--text-muted)] mt-4">
                 Al establecer una nueva fecha, la asignación se reabrirá automáticamente si estaba vencida.
               </p>
             </div>
 
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div className="px-6 py-4 bg-[var(--bg-main)] border-t border-[var(--border-color)] flex justify-end gap-3">
               <button 
-                className="px-5 py-2.5 rounded-xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-all"
+                className="px-5 py-2.5 rounded-xl font-bold text-[var(--text-primary)] bg-[var(--bg-panel)] border border-[var(--border-color)] hover:bg-[var(--bg-input)] transition-all"
                 onClick={() => setIsDateModalOpen(false)}
               >
                 Cancelar
               </button>
               <button 
-                className="px-5 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 transition-all"
+                className="px-5 py-2.5 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:opacity-90 hover:shadow-lg transition-all"
                 onClick={submitDateChange}
               >
                 Actualizar Límite

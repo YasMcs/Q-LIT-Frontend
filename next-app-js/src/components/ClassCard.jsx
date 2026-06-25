@@ -34,17 +34,17 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
                 e.stopPropagation();
                 setShowMenu(!showMenu);
               }}
-              className="flex items-center justify-center w-8 h-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+              className="flex items-center justify-center w-8 h-8 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-input)] rounded-full transition-colors flex-shrink-0"
               title="Opciones"
             >
               <i className="fa-solid fa-ellipsis-vertical"></i>
             </button>
             
             {showMenu && (
-              <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-100 py-1 z-10 animate-fade-in">
+              <div className="absolute right-0 mt-1 w-48 bg-[var(--bg-panel)] rounded-lg shadow-lg border border-[var(--border-color)] py-1 z-10 animate-fade-in">
                 {!isArchived && onEdit && (
                   <button
-                    className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 flex items-center gap-2 transition-colors"
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-input)] hover:text-[var(--accent-blue)] flex items-center gap-2 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowMenu(false);
@@ -56,7 +56,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
                 )}
                 {!isArchived && onArchive && (
                   <button
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--danger-red)] hover:bg-[var(--bg-input)] flex items-center gap-2 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowMenu(false);
@@ -68,7 +68,7 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
                 )}
                 {isArchived && onUnarchive && (
                   <button
-                    className="w-full text-left px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 flex items-center gap-2 transition-colors"
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--accent-blue)] hover:bg-[var(--bg-input)] flex items-center gap-2 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowMenu(false);
@@ -87,9 +87,15 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
       <p className="mt-2 truncate">{group}</p>
       
       {inviteCode && (
-        <div className="mt-3 flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-2">
-          <span className="text-xs font-medium text-slate-500">Código de clase:</span>
-          <span className="text-sm font-extrabold text-indigo-600 tracking-wider font-mono">{inviteCode}</span>
+        <div className="mt-3 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-[0.7rem] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+               <i className="fa-solid fa-key" /> Código de acceso
+            </div>
+            <div className="text-sm font-black text-[var(--accent-blue)] font-mono tracking-widest bg-[var(--bg-input)] px-2 py-1 rounded-md border border-[var(--border-color)] shadow-sm">
+              {inviteCode}
+            </div>
+          </div>
         </div>
       )}
       

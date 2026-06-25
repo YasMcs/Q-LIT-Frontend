@@ -1,4 +1,3 @@
-
 /* Isolated Stylesheet for Revisar Práctica Docente */
 
 .revisar-practica-wrapper {
@@ -100,7 +99,7 @@
 }
 
 .students-list li:hover {
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
   color: var(--text-main);
 }
 
@@ -155,7 +154,7 @@
 .btn-icon-back-revisar:hover {
   color: var(--text-main);
   border-color: var(--text-muted);
-  background-color: #f1f5f9;
+  background-color: var(--bg-main);
 }
 
 .student-header-title-revisar {
@@ -208,13 +207,13 @@
 }
 
 .btn-secondary-revisar {
-  background-color: #f1f5f9;
+  background-color: var(--border-color);
   color: var(--text-muted);
 }
 
 .btn-secondary-revisar:hover {
-  background-color: #e2e8f0;
-  color: var(--text-main);
+  background-color: var(--text-muted);
+  color: var(--bg-card);
 }
 
 .btn-primary-revisar {
@@ -248,7 +247,7 @@
 
 .grading-sidebar-revisar {
   width: 400px;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-left: 1px solid var(--border-color);
   padding: 2.5rem 2rem;
   display: flex;
@@ -306,7 +305,7 @@
 }
 
 .instruction-display-box {
-  background-color: #f1f5f9;
+  background-color: var(--bg-main);
   padding: 1.25rem;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -316,18 +315,18 @@
 
 /* Code block styles */
 .code-block-revisar {
-  background-color: #0f172a;
+  background-color: var(--text-main);
   border-radius: 10px;
   padding: 1.2rem;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.88rem;
-  color: #f8fafc;
-  border: 1px solid #1e293b;
+  color: var(--bg-main);
+  border: 1px solid var(--text-muted);
 }
 
 .code-title-revisar {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.5rem;
@@ -346,7 +345,7 @@
   border: 1px solid var(--border-color);
   border-radius: 10px;
   overflow: hidden;
-  background-color: #fafafa;
+  background-color: var(--bg-main);
 }
 
 .result-table-revisar {
@@ -363,7 +362,7 @@
 }
 
 .result-table-revisar th {
-  background-color: #f1f5f9;
+  background-color: var(--bg-main);
   color: var(--text-muted);
   font-weight: 700;
   font-size: 0.75rem;
@@ -479,7 +478,7 @@
 }
 
 .timeline-content-revisar {
-  background-color: #fafafa;
+  background-color: var(--bg-main);
   border: 1px solid var(--border-color);
   padding: 1rem 1.2rem;
   border-radius: 10px;
@@ -499,7 +498,7 @@
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.82rem;
   color: var(--text-main);
-  background-color: #f1f5f9;
+  background-color: var(--bg-main);
   padding: 0.4rem 0.6rem;
   border-radius: 6px;
   word-break: break-all;
@@ -581,7 +580,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #cbd5e1;
+  background-color: var(--border-color);
   transition: .3s;
   border-radius: 24px;
 }
@@ -625,7 +624,7 @@
   flex: 1;
   text-align: center;
   padding: 4rem;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
   margin: 2.5rem;
@@ -635,7 +634,7 @@
 
 .empty-state-not-submitted i {
   font-size: 4rem;
-  color: #cbd5e1;
+  color: var(--border-color);
   margin-bottom: 0.5rem;
 }
 
