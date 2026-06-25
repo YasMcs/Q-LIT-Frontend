@@ -104,31 +104,63 @@ export default function ClassFeedDocentePage() {
   const handleChangeDateClick = (id) => {
     const challenge = challenges.find(c => c.id === id);
 
-    const deadlineStr = challenge?.deadline || "2024-06-15T23:59";
-    const [datePart, timePart] = deadlineStr.split("T");
-    setNewDate(datePart || "");
-    setNewTime(timePart || "");
+    let dPart = "";
+    let tPart = "";
+    if (challenge?.deadline) {
+      try {
+        const dt = new Date(challenge.deadline);
+        if (!isNaN(dt.getTime())) {
+          dPart = dt.toISOString().split("T")[0];
+          tPart = dt.toISOString().split("T")[1].substring(0, 5);
+        }
+      } catch(e) {
+        // ignore
+      }
+    }
+    if (!dPart || !tPart) {
+      dPart = "2024-06-15";
+      tPart = "23:59";
+    }
+
+    setNewDate(dPart);
+    setNewTime(tPart);
     
     setSelectedChallengeId(id);
     setIsDateModalOpen(true);
   };
 
-  const submitDateChange = () => {
+  const submitDateChange = async () => {
     if (!newDate || !newTime) {
       alert("Por favor selecciona una fecha y hora válidas.");
       return;
     }
-    setChallenges(challenges.map(c => {
-      if (c.id === selectedChallengeId) {
 
+    const isoDateTime = new Date(`${newDate}T${newTime}:00`).toISOString();
 
-        return { ...c, status: "active" };
+    try {
+      const res = await fetch(`/api/proxy/practices/${selectedChallengeId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deadline: isoDateTime })
+      });
+
+      if (!res.ok) {
+        throw new Error("Error al guardar la nueva fecha en el servidor");
       }
-      return c;
-    }));
-    setIsDateModalOpen(false);
-    setNewDate("");
-    alert("Fecha límite actualizada con éxito.");
+
+      setChallenges(challenges.map(c => {
+        if (c.id === selectedChallengeId) {
+          return { ...c, status: "active", deadline: isoDateTime };
+        }
+        return c;
+      }));
+      setIsDateModalOpen(false);
+      setNewDate("");
+      setNewTime("");
+      alert("Fecha límite actualizada con éxito.");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleDelete = (id) => {

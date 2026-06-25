@@ -338,7 +338,6 @@ export default function CrearPracticaDocentePage() {
                 className="sidebar-time-input"
                 value={dueTime}
                 onChange={(e) => setDueTime(e.target.value)}
-                placeholder="23:59"
               />
             </div>
             <div className="checkbox-control-wrapper">

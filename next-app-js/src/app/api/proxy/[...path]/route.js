@@ -10,6 +10,18 @@ export async function GET(req, { params }) {
   return handleProxyRequest(req, params, "GET");
 }
 
+export async function PATCH(req, { params }) {
+  return handleProxyRequest(req, params, "PATCH");
+}
+
+export async function PUT(req, { params }) {
+  return handleProxyRequest(req, params, "PUT");
+}
+
+export async function DELETE(req, { params }) {
+  return handleProxyRequest(req, params, "DELETE");
+}
+
 async function handleProxyRequest(req, params, method) {
   // 1. Validar sesión de usuario (Asegura que el frontend está logueado)
   const session = await getServerSession(authOptions);
