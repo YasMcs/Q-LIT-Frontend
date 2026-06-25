@@ -1,44 +1,73 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import "./revisar-practica-docente.css";
-
-import mockData from "@/app/api/mocks/teacher/revisar-practica.json";
-
-// Adaptador de datos simulados para la UI
-const mockStudents = mockData.entregas_alumnos.map(student => ({
-  id: student.id,
-  name: student.name,
-  email: student.email,
-  submitted: student.submitted,
-  sqlQuery: student.entrega ? student.entrega.codigo_sql_alumno : ""
-}));
-
-const mockChecklist = mockData.lista_cotejo.map(c => ({
-  id: c.id,
-  text: c.criterio,
-  maxPoints: c.puntos_maximos,
-  iaPoints: c.puntos_maximos
-}));
 
 export default function RevisarPracticaDocentePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const challengeId = searchParams.get("challengeId");
   
-  // Estado de la rúbrica de evaluación
-  const [checklist, setChecklist] = useState(
-    mockChecklist.map((c) => ({ ...c, teacherPoints: c.iaPoints }))
-  );
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [checklist, setChecklist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isEntregadosOpen, setIsEntregadosOpen] = useState(true);
+  const [isNoEntregadosOpen, setIsNoEntregadosOpen] = useState(false);
+
+  useEffect(() => {
+    if (challengeId) {
+      fetch(`/api/proxy/practices/${challengeId}/submissions`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            const fetchedStudents = data.data.map(sub => ({
+              id: sub.studentId,
+              submissionId: sub.submissionId,
+              name: sub.studentName,
+              submitted: sub.status !== "IN_PROGRESS",
+              sqlQuery: sub.sqlQuery || "",
+              executionResult: sub.executionResult,
+              checklist: sub.checklist || []
+            }));
+            setStudents(fetchedStudents);
+            if (fetchedStudents.length > 0) {
+              setSelectedStudent(fetchedStudents[0]);
+            }
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [challengeId]);
+
+  // Restaurar rúbrica sugerida al cambiar de alumno
+  useEffect(() => {
+    if (selectedStudent) {
+      setChecklist(selectedStudent.checklist.map((c) => ({
+        ...c,
+        teacherPoints: c.teacherPoints // Inicializa con iaPoints o lo que ya tenia el profe
+      })));
+    } else {
+      setChecklist([]);
+    }
+  }, [selectedStudent]);
 
   const totalMaxScore = checklist.reduce((sum, item) => sum + item.maxPoints, 0);
   const totalIaScore = checklist.reduce((sum, item) => sum + item.iaPoints, 0);
   const totalTeacherScore = checklist.reduce((sum, item) => sum + item.teacherPoints, 0);
 
   // Calificación general sincronizada con la rúbrica
-  const [grade, setGrade] = useState(totalTeacherScore);
+  const [grade, setGrade] = useState(0);
   
   // Actualización automática de la calificación
-  React.useEffect(() => {
+  useEffect(() => {
     setGrade(checklist.reduce((sum, item) => sum + item.teacherPoints, 0));
   }, [checklist]);
 
@@ -49,39 +78,62 @@ export default function RevisarPracticaDocentePage() {
       prev.map(item => item.id === id ? { ...item, teacherPoints: val } : item)
     );
   };
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState(mockStudents[0]);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isEntregadosOpen, setIsEntregadosOpen] = useState(true);
-  const [isNoEntregadosOpen, setIsNoEntregadosOpen] = useState(false);
 
-  // Restaurar rúbrica sugerida al cambiar de alumno
-  React.useEffect(() => {
-    setChecklist(mockChecklist.map((c) => ({ ...c, teacherPoints: c.iaPoints })));
-  }, [selectedStudent]);
-
-  const filteredStudents = mockStudents.filter((s) =>
+  const filteredStudents = students.filter((s) =>
     s.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const entregados = filteredStudents.filter(s => s.submitted);
   const noEntregados = filteredStudents.filter(s => !s.submitted);
 
-  const handleConfirmGrade = () => {
-    alert(`Calificación de ${grade}/100 confirmada con éxito.`);
-    router.push("/class-feed-docente");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleConfirmGrade = async () => {
+    if (!selectedStudent || !selectedStudent.submissionId) return;
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        submissionId: selectedStudent.submissionId,
+        evaluations: checklist.map(c => ({
+          checklistItemId: c.id,
+          teacherComplies: c.teacherPoints === c.maxPoints
+        }))
+      };
+
+      const res = await fetch('/api/proxy/evaluations/teacher-grade', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      if (res.ok) {
+        alert(`Calificación de ${grade}/${totalMaxScore} confirmada con éxito.`);
+        router.push("/class-feed-docente");
+      } else {
+        alert("Error al confirmar calificación");
+      }
+    } catch (error) {
+      alert("Error de conexión");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSkipStudent = () => {
-    alert("Cargando el siguiente estudiante asignado...");
-    const currentIndex = mockStudents.findIndex((s) => s.id === selectedStudent.id);
-    const nextIndex = (currentIndex + 1) % mockStudents.length;
-    setSelectedStudent(mockStudents[nextIndex]);
+    const currentIndex = students.findIndex((s) => s.id === selectedStudent?.id);
+    if (currentIndex !== -1) {
+      const nextIndex = (currentIndex + 1) % students.length;
+      setSelectedStudent(students[nextIndex]);
+    }
   };
 
   const handleBack = () => {
     router.push("/class-feed-docente");
   };
+
+  if (loading) {
+    return <div className="h-screen flex items-center justify-center text-indigo-600 bg-main"><i className="fa-solid fa-spinner fa-spin mr-2"></i> Cargando entregas...</div>;
+  }
 
   return (
     <div className="revisar-practica-wrapper animate-fade-in animate-scale-up relative">
@@ -188,8 +240,16 @@ export default function RevisarPracticaDocentePage() {
             <button className="btn-revisar btn-secondary-revisar" onClick={handleSkipStudent}>
               Siguiente Alumno
             </button>
-            <button className="btn-revisar btn-primary-revisar" onClick={handleConfirmGrade}>
-              Confirmar Calificación
+            <button 
+              className={`btn-revisar btn-primary-revisar ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`} 
+              onClick={handleConfirmGrade}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <><i className="fa-solid fa-circle-notch fa-spin mr-2" /> Guardando...</>
+              ) : (
+                "Confirmar Calificación"
+              )}
             </button>
           </div>
         </header>
@@ -221,36 +281,31 @@ export default function RevisarPracticaDocentePage() {
                   <div className="form-group-revisar">
                     <label>Tabla de resultados</label>
                     <div className="table-wrapper-revisar overflow-auto border border-border rounded-xl mt-2 max-h-[400px]">
-                      <table className="result-table-revisar w-full text-left">
-                        <thead className="bg-main sticky top-0 z-10">
-                          <tr>
-                            <th className="p-4 border-b border-border">sku</th>
-                            <th className="p-4 border-b border-border">articulo</th>
-                            <th className="p-4 border-b border-border">precio</th>
-                            <th className="p-4 border-b border-border">stock</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          <tr className="hover:bg-main transition-colors">
-                            <td className="p-4 font-mono">104</td>
-                            <td className="p-4">Monitor Gamer 27"</td>
-                            <td className="p-4 font-mono">4500.00</td>
-                            <td className="p-4 font-mono">85</td>
-                          </tr>
-                          <tr className="hover:bg-main transition-colors">
-                            <td className="p-4 font-mono">102</td>
-                            <td className="p-4">Teclado Mecánico RGB</td>
-                            <td className="p-4 font-mono">1250.00</td>
-                            <td className="p-4 font-mono">42</td>
-                          </tr>
-                          <tr className="hover:bg-main transition-colors">
-                            <td className="p-4 font-mono">109</td>
-                            <td className="p-4">Mouse Inalámbrico</td>
-                            <td className="p-4 font-mono">680.00</td>
-                            <td className="p-4 font-mono">15</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      {selectedStudent.executionResult && selectedStudent.executionResult.columns ? (
+                        <table className="result-table-revisar w-full text-left">
+                          <thead className="bg-main sticky top-0 z-10">
+                            <tr>
+                              {selectedStudent.executionResult.columns.map((col, idx) => (
+                                <th key={idx} className="p-4 border-b border-border">{col}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {selectedStudent.executionResult.rows && selectedStudent.executionResult.rows.map((row, rowIdx) => (
+                              <tr key={rowIdx} className="hover:bg-main transition-colors">
+                                {selectedStudent.executionResult.columns.map((col, colIdx) => (
+                                  <td key={colIdx} className="p-4 font-mono">{row[col]}</td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className="p-8 text-center text-muted">
+                          <i className="fa-solid fa-table border border-border p-3 rounded-xl mb-3 text-2xl"></i>
+                          <p>No hay resultados de ejecución para mostrar</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </section>

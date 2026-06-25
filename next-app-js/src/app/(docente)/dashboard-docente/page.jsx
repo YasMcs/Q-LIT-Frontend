@@ -17,7 +17,7 @@ export default function DashboardDocentePage() {
   // Cargar las clases desde el backend real
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
-      fetch(`http://localhost:4000/api/classrooms?teacherId=${session.user.id}`)
+      fetch(`/api/proxy/classrooms?teacherId=${session.user.id}`)
         .then(res => res.json())
         .then(data => {
           if (data.data) {
@@ -38,7 +38,7 @@ export default function DashboardDocentePage() {
     if (!session?.user?.id) return;
 
     try {
-      const response = await fetch("http://localhost:4000/api/classrooms", {
+      const response = await fetch("/api/proxy/classrooms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -104,7 +104,7 @@ export default function DashboardDocentePage() {
                 onArchive={async () => {
                   if (!window.confirm(`¿Estás seguro de que deseas archivar el laboratorio "${cls.title}"?`)) return;
                   try {
-                    const response = await fetch(`http://localhost:4000/api/classrooms/${cls.id}`, {
+                    const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
                       method: "DELETE"
                     });
                     if (response.ok) {
@@ -122,7 +122,7 @@ export default function DashboardDocentePage() {
                   const newTitle = window.prompt("Editar nombre del laboratorio:", cls.title);
                   if (newTitle && newTitle !== cls.title) {
                     try {
-                      const response = await fetch(`http://localhost:4000/api/classrooms/${cls.id}`, {
+                      const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ name: newTitle })

@@ -70,6 +70,7 @@ function PracticaSQLContent() {
   const [terminalState, setTerminalState] = useState("placeholder");
   const [executionResult, setExecutionResult] = useState(null);
   const [executionError, setExecutionError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Resizable terminal height state
   const [terminalHeight, setTerminalHeight] = useState(300);
@@ -120,9 +121,41 @@ function PracticaSQLContent() {
     }
   };
 
-  const handleSubmit = () => {
-    alert("¡Felicidades! Tu entrega ha sido registrada con éxito.");
-    router.push("/class-feed-alumno");
+  const handleSubmit = async () => {
+    if (!sqlQuery.trim()) {
+      alert("No has escrito ninguna consulta SQL.");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        studentSqlCode: sqlQuery,
+        practiceObjective: practiceData?.description || "Objetivo general",
+        checklist: practiceData?.checklistItems || [],
+        practiceId: practiceId,
+        submissionId: practiceData?.submissionId,
+        executionResult: executionResult
+      };
+
+      const res = await fetch('/api/proxy/evaluations', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        alert("¡Felicidades! Tu código ha sido evaluado y la calificación se ha guardado.");
+        router.push("/class-feed-alumno");
+      } else {
+        alert(data.error?.message || "Hubo un error al evaluar tu práctica.");
+      }
+    } catch (err) {
+      alert("Error de conexión al enviar la evaluación.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBack = () => {
@@ -267,8 +300,16 @@ function PracticaSQLContent() {
             <button className="back-btn-sql" onClick={handleBack}>
               <i className="fa-solid fa-arrow-left" /> Volver al laboratorio
             </button>
-              <button className="btn-sql btn-success-sql" onClick={handleSubmit}>
-                <i className="fa-solid fa-paper-plane" /> Entregar Práctica
+              <button 
+                className={`btn-sql btn-success-sql ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`} 
+                onClick={handleSubmit} 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <><i className="fa-solid fa-circle-notch fa-spin" /> Evaluando...</>
+                ) : (
+                  <><i className="fa-solid fa-paper-plane" /> Entregar Práctica</>
+                )}
               </button>
           </div>
 

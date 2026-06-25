@@ -5,12 +5,9 @@ import Link from "next/link";
 import ChallengeManageCard from "@/components/ChallengeManageCard";
 import PracticeDetailModal from "@/components/PracticeDetailModal";
 import StatBox from "@/components/StatBox";
-import mockData from "@/app/api/mocks/teacher/class-feed.json";
+
+
 import "./class-feed-docente.css";
-
-import studentMocks from "@/app/api/mocks/teacher/class-students.json";
-
-const mockStudents = studentMocks.students;
 
 export default function ClassFeedDocentePage() {
   const router = useRouter();
@@ -19,10 +16,11 @@ export default function ClassFeedDocentePage() {
   const codeParam = searchParams.get("code");
   const titleParam = searchParams.get("title");
   
-  const [classInfo] = useState({
-    title: titleParam || mockData.classInfo.title,
-    code: codeParam || mockData.classInfo.code
+  const [classInfo, setClassInfo] = useState({
+    title: titleParam || "Cargando...",
+    code: codeParam || "..."
   });
+  const [students, setStudents] = useState([]);
   const [challenges, setChallenges] = useState([]);
   const [selectedPractice, setSelectedPractice] = useState(null);
   
@@ -35,6 +33,28 @@ export default function ClassFeedDocentePage() {
     }
 
     if (classroomId) {
+      // Fetch classroom and students
+      fetch(`/api/proxy/classrooms/${classroomId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            const cls = data.data;
+            if (!titleParam) setClassInfo(prev => ({ ...prev, title: cls.name }));
+            if (!codeParam) setClassInfo(prev => ({ ...prev, code: cls.inviteCode }));
+            
+            // Map enrollments to students
+            if (cls.enrollments) {
+              const mappedStudents = cls.enrollments.map(e => ({
+                id: e.user.id,
+                name: e.user.name || "Sin Nombre"
+              }));
+              setStudents(mappedStudents);
+            }
+          }
+        })
+        .catch(err => console.error("Error al cargar datos del laboratorio:", err));
+
+      // Fetch practices
       fetch(`/api/proxy/practices/classroom/${classroomId}`)
         .then(res => res.json())
         .then(data => {
@@ -51,7 +71,7 @@ export default function ClassFeedDocentePage() {
         })
         .catch(err => console.error("Error al cargar prácticas:", err));
     }
-  }, [classroomId]);
+  }, [classroomId, titleParam, codeParam]);
 
   const toggleSidebar = () => {
     const newState = !isSidebarOpen;
@@ -181,15 +201,15 @@ export default function ClassFeedDocentePage() {
           {isSidebarOpen && (
             <aside className="w-80 flex-shrink-0 border-l border-border bg-panel p-6 overflow-y-auto animate-fade-in hidden lg:block">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-bold text-foreground">Estudiantes ({mockStudents.length})</h2>
+                <h2 className="text-lg font-bold text-foreground">Estudiantes ({students.length})</h2>
                 <button onClick={toggleSidebar} className="text-muted hover:text-foreground transition-colors">
                   <i className="fa-solid fa-xmark text-lg"></i>
                 </button>
               </div>
               <div className="space-y-3">
-                {mockStudents.map(student => (
+                {students.map(student => (
                   <div key={student.id} className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-[var(--bg-main)] transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-input text-accent flex items-center justify-center font-bold text-sm shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-input text-accent flex items-center justify-center font-bold text-sm shrink-0 uppercase">
                       {student.name.charAt(0)}
                     </div>
                     <span className="text-sm font-medium text-foreground truncate">{student.name}</span>
