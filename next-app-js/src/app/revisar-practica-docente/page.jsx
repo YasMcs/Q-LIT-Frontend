@@ -9,9 +9,15 @@ export default function RevisarPracticaDocentePage() {
   const challengeId = searchParams.get("challengeId");
   
   const [students, setStudents] = useState([]);
+  const [practiceInfo, setPracticeInfo] = useState({ title: '', description: '', deadline: null });
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [checklist, setChecklist] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // 'list' or 'review'
+  const [viewMode, setViewMode] = useState('list');
+  // 'ENTREGADOS' or 'ASIGNADOS'
+  const [filterMode, setFilterMode] = useState('ENTREGADOS');
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -24,19 +30,23 @@ export default function RevisarPracticaDocentePage() {
         .then(res => res.json())
         .then(data => {
           if (data.data) {
-            const fetchedStudents = data.data.map(sub => ({
+            setPracticeInfo({
+              title: data.data.practiceTitle || "Práctica",
+              description: data.data.practiceDescription || "Sin descripción asignada.",
+              deadline: data.data.deadline || null
+            });
+            const fetchedStudents = data.data.students.map(sub => ({
               id: sub.studentId,
               submissionId: sub.submissionId,
               name: sub.studentName,
-              submitted: sub.status !== "IN_PROGRESS",
+              email: sub.studentEmail,
+              status: sub.status,
+              submitted: sub.status !== "NOT_STARTED",
               sqlQuery: sub.sqlQuery || "",
               executionResult: sub.executionResult,
               checklist: sub.checklist || []
             }));
             setStudents(fetchedStudents);
-            if (fetchedStudents.length > 0) {
-              setSelectedStudent(fetchedStudents[0]);
-            }
           }
           setLoading(false);
         })
@@ -60,13 +70,8 @@ export default function RevisarPracticaDocentePage() {
   }, [selectedStudent]);
 
   const totalMaxScore = checklist.reduce((sum, item) => sum + item.maxPoints, 0);
-  const totalIaScore = checklist.reduce((sum, item) => sum + item.iaPoints, 0);
-  const totalTeacherScore = checklist.reduce((sum, item) => sum + item.teacherPoints, 0);
-
-  // Calificación general sincronizada con la rúbrica
   const [grade, setGrade] = useState(0);
   
-  // Actualización automática de la calificación
   useEffect(() => {
     setGrade(checklist.reduce((sum, item) => sum + item.teacherPoints, 0));
   }, [checklist]);
@@ -79,12 +84,14 @@ export default function RevisarPracticaDocentePage() {
     );
   };
 
-  const filteredStudents = students.filter((s) =>
+  const isClosed = practiceInfo.deadline ? new Date(practiceInfo.deadline) < new Date() : false;
+  
+  const entregados = students.filter(s => s.submitted);
+  const noEntregados = students.filter(s => !s.submitted);
+
+  const displayedStudents = (filterMode === 'ENTREGADOS' ? entregados : noEntregados).filter(s => 
     s.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const entregados = filteredStudents.filter(s => s.submitted);
-  const noEntregados = filteredStudents.filter(s => !s.submitted);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -108,7 +115,7 @@ export default function RevisarPracticaDocentePage() {
       
       if (res.ok) {
         alert(`Calificación de ${grade}/${totalMaxScore} confirmada con éxito.`);
-        router.push("/class-feed-docente");
+        setViewMode('list');
       } else {
         alert("Error al confirmar calificación");
       }
@@ -120,29 +127,163 @@ export default function RevisarPracticaDocentePage() {
   };
 
   const handleSkipStudent = () => {
-    const currentIndex = students.findIndex((s) => s.id === selectedStudent?.id);
+    // Busca el siguiente alumno en la misma lista
+    const currentIndex = displayedStudents.findIndex((s) => s.id === selectedStudent?.id);
     if (currentIndex !== -1) {
-      const nextIndex = (currentIndex + 1) % students.length;
-      setSelectedStudent(students[nextIndex]);
+      const nextIndex = (currentIndex + 1) % displayedStudents.length;
+      setSelectedStudent(displayedStudents[nextIndex]);
+    } else if (displayedStudents.length > 0) {
+      setSelectedStudent(displayedStudents[0]);
+    } else {
+      setViewMode('list');
     }
   };
 
-  const handleBack = () => {
-    router.push("/class-feed-docente");
+  const handleBackToFeed = () => {
+    router.back();
+  };
+
+  const openReview = (student) => {
+    setSelectedStudent(student);
+    setViewMode('review');
   };
 
   if (loading) {
     return <div className="h-screen flex items-center justify-center text-indigo-600 bg-main"><i className="fa-solid fa-spinner fa-spin mr-2"></i> Cargando entregas...</div>;
   }
 
+  // --- MODO LISTA (GRID) ---
+  if (viewMode === 'list') {
+    return (
+      <div className="animate-fade-in relative p-8 h-screen overflow-y-auto bg-main text-foreground flex flex-col">
+        <header className="mb-8 flex items-center justify-between bg-panel p-6 rounded-2xl border border-border shadow-sm shrink-0">
+          <div className="flex items-center gap-4">
+            <button
+              className="btn-icon-back-revisar hover:bg-input p-3 rounded-full transition-colors"
+              onClick={handleBackToFeed}
+              title="Volver al feed del laboratorio"
+            >
+              <i className="fa-solid fa-arrow-left text-xl text-foreground" />
+            </button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">{practiceInfo.title}</h1>
+              <p className="text-muted">Revisión de entregas de los estudiantes</p>
+            </div>
+          </div>
+        </header>
+
+        {/* Filtros */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <button 
+            className={`flex-1 p-6 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer hover:-translate-y-1 ${filterMode === 'ENTREGADOS' ? 'border-accent bg-accent/5 ring-2 ring-accent shadow-md' : 'border-border bg-panel hover:border-accent/50'}`}
+            onClick={() => setFilterMode('ENTREGADOS')}
+          >
+            <div className="text-left">
+              <h3 className={`font-bold text-xl mb-1 ${filterMode === 'ENTREGADOS' ? 'text-accent' : 'text-foreground group-hover:text-accent/80'}`}>
+                Entregados
+              </h3>
+              <p className="text-sm text-muted">Alumnos que han enviado su práctica</p>
+            </div>
+            <div className={`text-5xl font-black ${filterMode === 'ENTREGADOS' ? 'text-accent' : 'text-muted/50'}`}>
+              {entregados.length}
+            </div>
+          </button>
+
+          <button 
+            className={`flex-1 p-6 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer hover:-translate-y-1 ${filterMode === 'ASIGNADOS' ? 'border-[var(--danger-red)] bg-[var(--danger-red)]/5 ring-2 ring-[var(--danger-red)] shadow-md' : 'border-border bg-panel hover:border-[var(--danger-red)]/50'}`}
+            onClick={() => setFilterMode('ASIGNADOS')}
+          >
+            <div className="text-left">
+              <h3 className={`font-bold text-xl mb-1 ${filterMode === 'ASIGNADOS' ? 'text-[var(--danger-red)]' : 'text-foreground group-hover:text-[var(--danger-red)]/80'}`}>
+                {isClosed ? 'Sin Entregar' : 'Asignados'}
+              </h3>
+              <p className="text-sm text-muted">
+                {isClosed ? 'Alumnos que no enviaron a tiempo' : 'Alumnos que aún no han entregado'}
+              </p>
+            </div>
+            <div className={`text-5xl font-black ${filterMode === 'ASIGNADOS' ? 'text-[var(--danger-red)]' : 'text-muted/50'}`}>
+              {noEntregados.length}
+            </div>
+          </button>
+        </div>
+
+        {/* Búsqueda */}
+        <div className="mb-6 relative max-w-md mx-auto sm:mx-0">
+          <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-panel border border-border rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+          />
+        </div>
+
+        {/* Grid de Tarjetas */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-12">
+          {displayedStudents.map(student => (
+            <div key={student.id} className="student-review-card bg-panel border border-border rounded-2xl p-6 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:-translate-y-1">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-accent/20 to-accent/40 flex items-center justify-center text-accent text-2xl font-bold mb-4 shadow-inner">
+                {student.name.charAt(0).toUpperCase()}
+              </div>
+              <h3 className="font-bold text-foreground mb-1 w-full truncate px-2" title={student.name}>{student.name}</h3>
+              <p className="text-xs text-muted mb-4 truncate w-full px-2" title={student.email}>{student.email || "Sin correo"}</p>
+              
+              <div className="mb-6">
+                {student.status === 'COMPLETED' && (
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-bold border border-emerald-500/20">
+                    <i className="fa-solid fa-check-double mr-1"></i> Calificado
+                  </span>
+                )}
+                {student.status === 'PENDING' && (
+                  <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold border border-accent/20">
+                    <i className="fa-solid fa-clock mr-1"></i> Entregado
+                  </span>
+                )}
+                {student.status === 'NOT_STARTED' && (
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${isClosed ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
+                    <i className={`fa-solid ${isClosed ? 'fa-xmark' : 'fa-hourglass-start'} mr-1`}></i> 
+                    {isClosed ? 'Sin Entregar' : 'Pendiente'}
+                  </span>
+                )}
+              </div>
+
+              {student.status !== 'NOT_STARTED' ? (
+                <button 
+                  onClick={() => openReview(student)}
+                  className="w-full mt-auto py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <i className="fa-regular fa-eye"></i> Ver entrega
+                </button>
+              ) : (
+                <button 
+                  disabled
+                  className="w-full mt-auto py-2.5 rounded-xl bg-input text-muted font-semibold cursor-not-allowed border border-border border-dashed"
+                >
+                  <i className="fa-solid fa-ban"></i> Sin contenido
+                </button>
+              )}
+            </div>
+          ))}
+
+          {displayedStudents.length === 0 && (
+            <div className="col-span-full py-16 text-center text-muted bg-panel border border-border border-dashed rounded-3xl">
+              <i className="fa-solid fa-user-slash text-5xl mb-4 opacity-50 text-indigo-500"></i>
+              <p className="text-lg">No se encontraron alumnos en esta categoría.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // --- MODO REVIEW ---
   return (
     <div className="revisar-practica-wrapper animate-fade-in animate-scale-up relative">
-      
-      {/* Toggle Tab */}
       <button 
         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
         className={`absolute top-[100px] z-[200] group text-muted hover:text-indigo-600 w-8 h-8 flex items-center justify-center rounded-full bg-panel border border-border shadow-md hover:shadow-lg hover:border-indigo-300 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'left-4' : 'left-[304px]'}`}
-        title={isSidebarCollapsed ? "Expandir lista de alumnos" : "Contraer lista de alumnos"}
+        title={isSidebarCollapsed ? "Expandir lista" : "Contraer lista"}
       >
         <i className={`fa-solid ${isSidebarCollapsed ? "fa-chevron-right" : "fa-chevron-left"} text-sm transition-transform duration-300 group-hover:scale-110`}></i>
       </button>
@@ -164,7 +305,7 @@ export default function RevisarPracticaDocentePage() {
             </div>
           </div>
         
-        {entregados.length > 0 && (
+        {entregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 && (
           <div className="students-group-revisar">
             <button 
               className="group-title-revisar collapsible-title-revisar" 
@@ -175,10 +316,10 @@ export default function RevisarPracticaDocentePage() {
             </button>
             {isEntregadosOpen && (
               <ul className="students-list">
-                {entregados.map((student) => (
+                {entregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((student) => (
                   <li
                     key={student.id}
-                    className={selectedStudent.id === student.id ? "selected" : ""}
+                    className={selectedStudent?.id === student.id ? "selected" : ""}
                     onClick={() => setSelectedStudent(student)}
                   >
                     {student.name}
@@ -189,21 +330,21 @@ export default function RevisarPracticaDocentePage() {
           </div>
         )}
 
-        {noEntregados.length > 0 && (
+        {noEntregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 && (
           <div className="students-group-revisar">
             <button 
               className="group-title-revisar collapsible-title-revisar" 
               onClick={() => setIsNoEntregadosOpen(!isNoEntregadosOpen)}
             >
-              <span>No Entregaron</span>
+              <span>{isClosed ? 'Sin Entregar' : 'Asignados'}</span>
               <i className={`fa-solid fa-chevron-down transition-transform ${!isNoEntregadosOpen ? 'rotate-180' : ''}`}></i>
             </button>
             {isNoEntregadosOpen && (
               <ul className="students-list">
-                {noEntregados.map((student) => (
+                {noEntregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((student) => (
                   <li
                     key={student.id}
-                    className={selectedStudent.id === student.id ? "selected" : ""}
+                    className={selectedStudent?.id === student.id ? "selected" : ""}
                     onClick={() => setSelectedStudent(student)}
                   >
                     {student.name}
@@ -222,17 +363,17 @@ export default function RevisarPracticaDocentePage() {
           <div className="nav-left-revisar">
             <button
               className="btn-icon-back-revisar"
-              onClick={handleBack}
-              title="Volver al feed del laboratorio"
+              onClick={() => setViewMode('list')}
+              title="Volver a la cuadrícula de alumnos"
             >
               <i className="fa-solid fa-arrow-left" />
             </button>
             <div className="student-header-title-revisar">
-              <h1 className="student-name-revisar">Práctica 1: SELECT Básico</h1>
+              <h1 className="student-name-revisar">{practiceInfo.title}</h1>
               <div className="student-meta-revisar">
                 <span className="font-semibold text-indigo-600 uppercase text-xs tracking-wider">Evaluando a:</span>
-                <span className="text-foreground font-bold">{selectedStudent.name}</span>
-                <span className="text-muted">({selectedStudent.email})</span>
+                <span className="text-foreground font-bold">{selectedStudent?.name}</span>
+                <span className="text-muted">({selectedStudent?.email})</span>
               </div>
             </div>
           </div>
@@ -243,7 +384,7 @@ export default function RevisarPracticaDocentePage() {
             <button 
               className={`btn-revisar btn-primary-revisar ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`} 
               onClick={handleConfirmGrade}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !selectedStudent?.submitted}
             >
               {isSubmitting ? (
                 <><i className="fa-solid fa-circle-notch fa-spin mr-2" /> Guardando...</>
@@ -255,7 +396,7 @@ export default function RevisarPracticaDocentePage() {
         </header>
 
         <main className="main-container-revisar">
-          {selectedStudent.submitted ? (
+          {selectedStudent?.submitted ? (
             <>
               {/* Left Side: Results */}
               <div className="left-panel-revisar gap-6">
@@ -265,7 +406,7 @@ export default function RevisarPracticaDocentePage() {
                   <div className="form-group-revisar">
                     <label>Reto asignado al alumno</label>
                     <div className="instruction-display-box">
-                      <p>Muestra todos los campos de la tabla <strong>productos</strong> cuyo <strong>precio</strong> sea estrictamente superior a 150.00 pesos. El resultado debe presentarse ordenado de mayor a menor según el volumen de <strong>stock</strong> disponible, limitando el resultado a sus primeros 5 registros.</p>
+                      <p>{practiceInfo.description}</p>
                     </div>
                   </div>
 
@@ -361,12 +502,14 @@ export default function RevisarPracticaDocentePage() {
               </aside>
             </>
           ) : (
-            <div className="empty-state-not-submitted">
-              <i className="fa-solid fa-file-excel"></i>
-              <h2>No Entregó</h2>
-              <p>El estudiante <strong>{selectedStudent.name}</strong> no envió la práctica a tiempo.</p>
-              <button className="btn-revisar btn-primary-revisar" onClick={() => alert("Se asignó 0. Pasando al siguiente...") || handleSkipStudent()}>
-                Asignar 0 y Siguiente
+            <div className="empty-state-not-submitted w-full h-full flex flex-col items-center justify-center bg-panel border border-border border-dashed rounded-3xl p-12 mt-4 max-w-4xl mx-auto shadow-sm">
+              <div className="w-24 h-24 rounded-full bg-input flex items-center justify-center mb-6">
+                <i className="fa-solid fa-file-excel text-5xl text-muted/50"></i>
+              </div>
+              <h2 className="text-3xl font-bold mb-3 text-foreground">No Entregó</h2>
+              <p className="text-muted text-center max-w-md mb-8 text-lg">El estudiante <strong className="text-foreground">{selectedStudent?.name}</strong> no ha enviado la práctica o no la entregó a tiempo.</p>
+              <button className="btn-revisar btn-primary-revisar px-8 py-4 rounded-xl shadow-md text-lg transition-transform hover:-translate-y-1" onClick={() => alert("Se asignó 0. Pasando al siguiente...") || handleSkipStudent()}>
+                <i className="fa-solid fa-forward-step mr-2"></i> Asignar 0 y Siguiente
               </button>
             </div>
           )}
