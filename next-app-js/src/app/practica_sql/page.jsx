@@ -191,10 +191,10 @@ function PracticaSQLContent() {
 
   if (loading) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center bg-slate-50 text-indigo-600">
+      <div className="h-screen flex flex-col items-center justify-center bg-main text-indigo-600">
         <i className="fa-solid fa-wand-magic-sparkles fa-bounce text-4xl mb-4"></i>
-        <h2 className="font-bold text-lg text-slate-700">La IA está generando tu reto único...</h2>
-        <p className="text-sm text-slate-500 mt-2">Personalizando variables y conectando esquema</p>
+        <h2 className="font-bold text-lg text-foreground">La IA está generando tu reto único...</h2>
+        <p className="text-sm text-muted mt-2">Personalizando variables y conectando esquema</p>
       </div>
     );
   }
@@ -206,31 +206,31 @@ function PracticaSQLContent() {
         <aside className="panel-sidebar-sql">
           <div className="sidebar-section-sql">
             <h3>Asignación Activa</h3>
-            <div className="bg-white rounded-2xl border border-indigo-100 shadow-sm p-6 mb-6">
+            <div className="bg-panel rounded-2xl border border-border shadow-sm p-6 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
                   <i className="fa-solid fa-wand-magic-sparkles text-sm" />
                 </div>
-                <h4 className="font-bold text-slate-800 text-sm">
+                <h4 className="font-bold text-foreground text-sm">
                   {practiceData?.title || "Enunciado asignado"}
                 </h4>
               </div>
               
-              <div className="text-slate-600 text-[13px] leading-relaxed mb-5 whitespace-pre-wrap">
+              <div className="text-muted text-[13px] leading-relaxed mb-5 whitespace-pre-wrap">
                 {generatedStatement || "Cargando enunciado generado por IA..."}
               </div>
               
-              <div className="pt-4 border-t border-slate-100">
-                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                  <i className="fa-solid fa-code text-slate-300" /> Funciones requeridas
+              <div className="pt-4 border-t border-border">
+                <h4 className="text-[11px] font-bold text-muted uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <i className="fa-solid fa-code text-muted" /> Funciones requeridas
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {requiredFunctions.length > 0 ? requiredFunctions.map((func, idx) => (
-                    <span key={idx} className="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-mono font-bold text-slate-600 shadow-sm">
+                    <span key={idx} className="px-2.5 py-1 bg-main border border-border rounded text-xs font-mono font-bold text-muted shadow-sm">
                       {func}
                     </span>
                   )) : (
-                    <span className="text-xs text-slate-400 italic">No hay funciones específicas requeridas.</span>
+                    <span className="text-xs text-muted italic">No hay funciones específicas requeridas.</span>
                   )}
                 </div>
               </div>
@@ -272,15 +272,15 @@ function PracticaSQLContent() {
               </button>
           </div>
 
-          <div className="workspace-upper-body-sql !p-0 border-b border-slate-100 flex flex-col">
+          <div className="workspace-upper-body-sql !p-0 border-b border-border flex flex-col">
             {/* Editor Toolbar */}
-            <div className="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center z-10">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-main px-4 py-2 border-b border-border flex justify-between items-center z-10">
+              <span className="text-[11px] font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                 <i className="fa-solid fa-code" /> Editor SQL
               </span>
               <div className="flex gap-2">
                 <button 
-                  className="px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-md shadow-sm hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-1.5" 
+                  className="px-3 py-1.5 text-xs font-bold text-muted bg-panel border border-border rounded-md shadow-sm hover:bg-input hover:text-foreground transition-colors flex items-center gap-1.5" 
                   onClick={handleClear}
                 >
                   <i className="fa-solid fa-eraser" /> Limpiar
@@ -313,7 +313,7 @@ function PracticaSQLContent() {
                 cursorStyle: "line",
                 automaticLayout: true,
               }}
-              loading={<div className="flex items-center justify-center h-full text-slate-400 font-mono text-sm"><i className="fa-solid fa-spinner fa-spin mr-2" /> Cargando entorno SQL...</div>}
+              loading={<div className="flex items-center justify-center h-full text-muted font-mono text-sm"><i className="fa-solid fa-spinner fa-spin mr-2" /> Cargando entorno SQL...</div>}
             />
             </div>
           </div>

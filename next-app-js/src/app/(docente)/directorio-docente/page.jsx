@@ -69,7 +69,7 @@ export default function DirectorioDocentePage() {
                   <div className="detail-header-info">
                     <h2>{selectedStudent.name}</h2>
                     <p>Grupo {selectedStudent.group}</p>
-                    <span className="text-sm text-slate-500 mt-1">{selectedStudent.email}</span>
+                    <span className="text-sm text-muted mt-1">{selectedStudent.email}</span>
                   </div>
                 </div>
 
@@ -97,7 +97,7 @@ export default function DirectorioDocentePage() {
           <div className="directorio-list-panel">
             <div className="directorio-list-wrap">
               {filteredStudents.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 text-sm">
+                <div className="text-center py-8 text-muted text-sm">
                   No se encontraron alumnos.
                 </div>
               ) : (

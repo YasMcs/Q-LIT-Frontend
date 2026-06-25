@@ -404,23 +404,23 @@ export default function CrearPracticaDocentePage() {
       {/* Schema Detail Modal */}
       {modalDb && (
         <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
-          <div className="bg-[var(--bg-panel)] rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[85vh] border border-[var(--border-color)]" onClick={(e) => e.stopPropagation()}>
-            <div className="px-8 py-6 border-b border-[var(--border-color)] bg-[var(--bg-main)] flex justify-between items-center shrink-0">
-              <span className="text-xl font-bold text-[var(--text-primary)]">Esquema: {modalDb}</span>
-              <button className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors text-2xl" onClick={handleCloseModal}>
+          <div className="bg-panel rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[85vh] border border-border" onClick={(e) => e.stopPropagation()}>
+            <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex justify-between items-center shrink-0">
+              <span className="text-xl font-bold text-foreground">Esquema: {modalDb}</span>
+              <button className="text-muted hover:text-foreground transition-colors text-2xl" onClick={handleCloseModal}>
                 &times;
               </button>
             </div>
             <div className="flex flex-1 min-h-0">
               {/* Sidebar: Table List */}
-              <div className="w-64 border-r border-[var(--border-color)] bg-[var(--bg-main)] overflow-y-auto p-4 shrink-0">
-                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4 px-3">Tablas ({catalogs.find(c => c.name === modalDb)?.tables?.length || 0})</p>
+              <div className="w-64 border-r border-border bg-[var(--bg-main)] overflow-y-auto p-4 shrink-0">
+                <p className="text-xs font-bold text-muted uppercase tracking-wider mb-4 px-3">Tablas ({catalogs.find(c => c.name === modalDb)?.tables?.length || 0})</p>
                 <div className="flex flex-col gap-1">
                   {catalogs.find(c => c.name === modalDb)?.tables?.map(table => (
                     <button
                       key={table.name}
                       onClick={() => setActiveModalTable(table.name)}
-                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-[var(--accent-blue)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--bg-input)]'}`}
+                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-[var(--accent-blue)] text-white' : 'text-muted hover:bg-input'}`}
                     >
                       <i className="fa-solid fa-table mr-2 opacity-70"></i>
                       {table.name}
@@ -430,26 +430,26 @@ export default function CrearPracticaDocentePage() {
               </div>
               
               {/* Main Content: Table Columns */}
-              <div className="flex-1 overflow-y-auto p-8 bg-[var(--bg-panel)]">
+              <div className="flex-1 overflow-y-auto p-8 bg-panel">
                 {activeModalTable ? (
                   <div>
-                    <h3 className="text-lg font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                      <i className="fa-solid fa-table text-[var(--accent-blue)]"></i> Tabla: {activeModalTable}
+                    <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                      <i className="fa-solid fa-table text-accent"></i> Tabla: {activeModalTable}
                     </h3>
-                    <table className="w-full text-sm text-left border border-[var(--border-color)] rounded-lg overflow-hidden shadow-sm">
-                      <thead className="bg-[var(--bg-input)] text-[var(--text-muted)]">
+                    <table className="w-full text-sm text-left border border-border rounded-lg overflow-hidden shadow-sm">
+                      <thead className="bg-input text-muted">
                         <tr>
-                          <th className="px-4 py-3 font-semibold border-b border-[var(--border-color)]">Campo</th>
-                          <th className="px-4 py-3 font-semibold border-b border-[var(--border-color)]">Tipo</th>
-                          <th className="px-4 py-3 font-semibold border-b border-[var(--border-color)]">Restricción</th>
+                          <th className="px-4 py-3 font-semibold border-b border-border">Campo</th>
+                          <th className="px-4 py-3 font-semibold border-b border-border">Tipo</th>
+                          <th className="px-4 py-3 font-semibold border-b border-border">Restricción</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--border-color)]">
                         {catalogs.find(c => c.name === modalDb)?.tables?.find(t => t.name === activeModalTable)?.columns?.map(col => (
                           <tr key={col.field} className="hover:bg-[var(--bg-main)] transition-colors">
-                            <td className="px-4 py-3 font-mono text-[var(--text-primary)] font-medium">{col.field}</td>
-                            <td className="px-4 py-3 font-mono text-[var(--text-muted)]">{col.type}</td>
-                            <td className={`px-4 py-3 font-medium ${col.key === 'PRI' ? 'text-[var(--accent-blue)]' : 'text-[var(--text-muted)]'}`}>
+                            <td className="px-4 py-3 font-mono text-foreground font-medium">{col.field}</td>
+                            <td className="px-4 py-3 font-mono text-muted">{col.type}</td>
+                            <td className={`px-4 py-3 font-medium ${col.key === 'PRI' ? 'text-accent' : 'text-muted'}`}>
                               {col.key === 'PRI' ? (
                                 <span className="inline-flex items-center gap-1"><i className="fa-solid fa-key text-xs"></i> PRIMARY KEY</span>
                               ) : col.null === 'NO' ? 'NOT NULL' : ''}
@@ -460,7 +460,7 @@ export default function CrearPracticaDocentePage() {
                     </table>
                   </div>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
+                  <div className="h-full flex items-center justify-center text-muted">
                     Selecciona una tabla para ver sus columnas
                   </div>
                 )}
@@ -473,18 +473,18 @@ export default function CrearPracticaDocentePage() {
       {/* Confirmation Modal for Edit */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
-            <div className="px-8 py-6 border-b border-[var(--border-color)] bg-[var(--bg-main)] flex items-center gap-3">
+          <div className="bg-panel border border-border rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center">
                 <i className="fa-solid fa-triangle-exclamation text-lg"></i>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)]">Actualizar Práctica</h2>
-                <p className="text-sm text-[var(--text-muted)]">Hay estudiantes trabajando en esta asignación</p>
+                <h2 className="text-xl font-bold text-foreground">Actualizar Práctica</h2>
+                <p className="text-sm text-muted">Hay estudiantes trabajando en esta asignación</p>
               </div>
             </div>
             <div className="p-8">
-              <p className="text-[var(--text-muted)] mb-6 leading-relaxed">
+              <p className="text-muted mb-6 leading-relaxed">
                 ¿Deseas regenerar los enunciados de los alumnos que aún no terminan la práctica? <br/><br/>
                 <strong>Si regeneras:</strong> La IA leerá el nuevo objetivo y les generará un problema nuevo (perderán el código que llevan).<br/>
                 <strong>Si mantienes:</strong> Los alumnos actuales conservarán su problema original, y el nuevo objetivo solo aplicará para estudiantes nuevos.
@@ -503,7 +503,7 @@ export default function CrearPracticaDocentePage() {
                   <i className="fa-solid fa-rotate-right"></i> Regenerar enunciados (Reiniciar progreso)
                 </button>
                 <button 
-                  className="w-full py-3 px-4 rounded-xl font-bold text-[var(--text-muted)] bg-[var(--bg-main)] hover:bg-[var(--bg-input)] border border-[var(--border-color)] mt-2 transition-colors"
+                  className="w-full py-3 px-4 rounded-xl font-bold text-muted bg-[var(--bg-main)] hover:bg-input border border-border mt-2 transition-colors"
                   onClick={() => setShowConfirmModal(false)}
                 >
                   Cancelar edición

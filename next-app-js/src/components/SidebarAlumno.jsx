@@ -53,7 +53,7 @@ export default function SidebarAlumno({ activeKey = "laboratorios" }) {
           {/* Overlapping Toggle Button */}
           <button 
             onClick={toggleSidebar} 
-            className="absolute -right-4 top-[36px] group text-[var(--text-muted)] hover:text-[var(--accent-blue)] w-8 h-8 flex items-center justify-center rounded-full bg-[var(--bg-panel)] border border-[var(--border-color)] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out z-50"
+            className="absolute -right-4 top-[36px] group text-muted hover:text-accent w-8 h-8 flex items-center justify-center rounded-full bg-panel border border-border shadow-md hover:shadow-lg transition-all duration-300 ease-in-out z-50"
             title={isCollapsed ? "Expandir menú" : "Contraer menú"}
           >
             <i className={`fa-solid ${isCollapsed ? "fa-chevron-right" : "fa-chevron-left"} text-sm transition-transform duration-300 group-hover:scale-110`}></i>
@@ -75,11 +75,11 @@ export default function SidebarAlumno({ activeKey = "laboratorios" }) {
                   {/* Expanding Unified Pill for Collapsed State */}
                   {isCollapsed && (
                     <div 
-                      className="absolute left-0 top-0 bottom-0 rounded-xl z-0 overflow-hidden transition-all duration-300 ease-in-out max-w-[56px] group-hover:max-w-[250px] bg-transparent group-hover:bg-[var(--bg-input)] flex items-center shadow-none group-hover:shadow-md" 
+                      className="absolute left-0 top-0 bottom-0 rounded-xl z-0 overflow-hidden transition-all duration-300 ease-in-out max-w-[56px] group-hover:max-w-[250px] bg-transparent group-hover:bg-input flex items-center shadow-none group-hover:shadow-md" 
                     >
                       {/* Spacer to align text after the icon */}
                       <div className="w-[56px] shrink-0 h-full"></div>
-                      <span className="font-bold text-[13px] text-[var(--accent-blue)] whitespace-nowrap pr-6">{item.label}</span>
+                      <span className="font-bold text-[13px] text-accent whitespace-nowrap pr-6">{item.label}</span>
                     </div>
                   )}
                 </Link>

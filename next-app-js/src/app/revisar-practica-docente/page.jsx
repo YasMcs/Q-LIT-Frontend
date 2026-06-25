@@ -89,7 +89,7 @@ export default function RevisarPracticaDocentePage() {
       {/* Toggle Tab */}
       <button 
         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-        className={`absolute top-[100px] z-[200] group text-slate-400 hover:text-indigo-600 w-8 h-8 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-md hover:shadow-lg hover:border-indigo-300 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'left-4' : 'left-[304px]'}`}
+        className={`absolute top-[100px] z-[200] group text-muted hover:text-indigo-600 w-8 h-8 flex items-center justify-center rounded-full bg-panel border border-border shadow-md hover:shadow-lg hover:border-indigo-300 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'left-4' : 'left-[304px]'}`}
         title={isSidebarCollapsed ? "Expandir lista de alumnos" : "Contraer lista de alumnos"}
       >
         <i className={`fa-solid ${isSidebarCollapsed ? "fa-chevron-right" : "fa-chevron-left"} text-sm transition-transform duration-300 group-hover:scale-110`}></i>
@@ -101,7 +101,7 @@ export default function RevisarPracticaDocentePage() {
           <div className="sidebar-header">
             <h2>Lista de Laboratorio</h2>
             <div className="relative flex items-center w-full">
-              <i className="fa-solid fa-magnifying-glass absolute left-3 text-slate-400 text-sm"></i>
+              <i className="fa-solid fa-magnifying-glass absolute left-3 text-muted text-sm"></i>
               <input
                 type="text"
                 placeholder="Buscar estudiante..."
@@ -179,8 +179,8 @@ export default function RevisarPracticaDocentePage() {
               <h1 className="student-name-revisar">Práctica 1: SELECT Básico</h1>
               <div className="student-meta-revisar">
                 <span className="font-semibold text-indigo-600 uppercase text-xs tracking-wider">Evaluando a:</span>
-                <span className="text-slate-700 font-bold">{selectedStudent.name}</span>
-                <span className="text-slate-400">({selectedStudent.email})</span>
+                <span className="text-foreground font-bold">{selectedStudent.name}</span>
+                <span className="text-muted">({selectedStudent.email})</span>
               </div>
             </div>
           </div>
@@ -220,30 +220,30 @@ export default function RevisarPracticaDocentePage() {
                 <section className="panel-revisar">
                   <div className="form-group-revisar">
                     <label>Tabla de resultados</label>
-                    <div className="table-wrapper-revisar overflow-auto border border-slate-200 rounded-xl mt-2 max-h-[400px]">
+                    <div className="table-wrapper-revisar overflow-auto border border-border rounded-xl mt-2 max-h-[400px]">
                       <table className="result-table-revisar w-full text-left">
-                        <thead className="bg-slate-50 sticky top-0 z-10">
+                        <thead className="bg-main sticky top-0 z-10">
                           <tr>
-                            <th className="p-4 border-b border-slate-200">sku</th>
-                            <th className="p-4 border-b border-slate-200">articulo</th>
-                            <th className="p-4 border-b border-slate-200">precio</th>
-                            <th className="p-4 border-b border-slate-200">stock</th>
+                            <th className="p-4 border-b border-border">sku</th>
+                            <th className="p-4 border-b border-border">articulo</th>
+                            <th className="p-4 border-b border-border">precio</th>
+                            <th className="p-4 border-b border-border">stock</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          <tr className="hover:bg-slate-50 transition-colors">
+                          <tr className="hover:bg-main transition-colors">
                             <td className="p-4 font-mono">104</td>
                             <td className="p-4">Monitor Gamer 27"</td>
                             <td className="p-4 font-mono">4500.00</td>
                             <td className="p-4 font-mono">85</td>
                           </tr>
-                          <tr className="hover:bg-slate-50 transition-colors">
+                          <tr className="hover:bg-main transition-colors">
                             <td className="p-4 font-mono">102</td>
                             <td className="p-4">Teclado Mecánico RGB</td>
                             <td className="p-4 font-mono">1250.00</td>
                             <td className="p-4 font-mono">42</td>
                           </tr>
-                          <tr className="hover:bg-slate-50 transition-colors">
+                          <tr className="hover:bg-main transition-colors">
                             <td className="p-4 font-mono">109</td>
                             <td className="p-4">Mouse Inalámbrico</td>
                             <td className="p-4 font-mono">680.00</td>

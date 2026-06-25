@@ -17,12 +17,12 @@ export default function PracticeItemCard({ id, title, status, dueDate, assignDat
       }
     }}>
       <div className="alumno-practice-meta">
-        <div className="alumno-practice-icon docente-class-card animate-fade-in">
+        <div className="alumno-practice-icon animate-fade-in">
           <i className="fa-solid fa-database" />
         </div>
         <div>
           <h4>{title}</h4>
-          <div className="flex items-center gap-4 mt-2 text-xs font-semibold text-slate-400">
+          <div className="flex items-center gap-4 mt-2 text-xs font-semibold text-muted">
             <span className="flex items-center gap-1">
               <i className="fa-regular fa-calendar-plus" /> Publicado: {assignDate}
             </span>

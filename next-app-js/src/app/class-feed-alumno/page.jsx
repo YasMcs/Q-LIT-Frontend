@@ -101,28 +101,28 @@ export default function ClassFeedAlumnoPage() {
   const pendingPractices = practices.filter(p => p.status === "assigned");
 
   if (loading) {
-    return <div className="h-screen flex items-center justify-center bg-slate-50 text-slate-500">Cargando...</div>;
+    return <div className="h-screen flex items-center justify-center bg-main text-muted">Cargando...</div>;
   }
 
   return (
-    <div className="alumno-dashboard-container flex flex-col h-screen bg-slate-50 animate-fade-in">
+    <div className="alumno-dashboard-container flex flex-col h-screen bg-main animate-fade-in">
       
       {/* Top Navbar Estudiante */}
-      <header className="bg-white border-b border-slate-200 shrink-0 shadow-sm z-10 w-full">
+      <header className="bg-panel border-b border-border shrink-0 shadow-sm z-10 w-full">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="text-xl font-extrabold tracking-tight text-slate-800 flex items-center gap-2">
+            <div className="text-xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
               Q-LIT <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
             </div>
-            <div className="h-6 w-px bg-slate-200 hidden md:block"></div>
-            <span className="font-bold text-slate-600 hidden md:block">
+            <div className="h-6 w-px bg-border hidden md:block"></div>
+            <span className="font-bold text-muted hidden md:block">
               {isEnrolled ? classInfo.title : "Mi Laboratorio"}
             </span>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="text-sm font-bold text-slate-500 hidden sm:flex flex-col items-end mr-2">
-              <span className="text-slate-800">{session?.user?.name || "Alumno"}</span>
+            <div className="text-sm font-bold text-muted hidden sm:flex flex-col items-end mr-2">
+              <span className="text-foreground">{session?.user?.name || "Alumno"}</span>
               <span className="text-xs font-normal opacity-80">{session?.user?.email}</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden">
@@ -153,8 +153,8 @@ export default function ClassFeedAlumnoPage() {
                 <div className="w-24 h-24 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner">
                   <i className="fa-solid fa-laptop-code"></i>
                 </div>
-                <h1 className="text-3xl font-extrabold text-slate-800 mb-3">Aún no estás inscrito</h1>
-                <p className="text-slate-500 mb-8 text-lg">
+                <h1 className="text-3xl font-extrabold text-foreground mb-3">Aún no estás inscrito</h1>
+                <p className="text-muted mb-8 text-lg">
                   Para poder resolver prácticas y usar el entorno interactivo, necesitas unirte al laboratorio con el código de tu profesor.
                 </p>
                 <button
@@ -171,8 +171,8 @@ export default function ClassFeedAlumnoPage() {
                 {/* Columna Principal (Feed) */}
                 <div className="xl:col-span-3">
                   <div className="mb-8">
-                    <h1 className="text-3xl font-extrabold text-slate-800 mb-2">Tus Prácticas</h1>
-                    <p className="text-slate-500 font-medium">
+                    <h1 className="text-3xl font-extrabold text-foreground mb-2">Tus Prácticas</h1>
+                    <p className="text-muted font-medium">
                       Selecciona una asignación para abrir el entorno interactivo y ejecutar tus consultas.
                     </p>
                   </div>
@@ -181,25 +181,25 @@ export default function ClassFeedAlumnoPage() {
                   <div className="flex flex-wrap gap-2 mb-6">
                     <button 
                       onClick={() => setFilter("all")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'all' ? 'bg-slate-800 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'all' ? 'bg-accent text-white shadow-md' : 'bg-panel text-muted border border-border hover:bg-main'}`}
                     >
                       Todas
                     </button>
                     <button 
                       onClick={() => setFilter("assigned")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'assigned' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'assigned' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
                     >
                       <i className="fa-regular fa-clock mr-1.5"></i> Asignadas
                     </button>
                     <button 
                       onClick={() => setFilter("solved")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'solved' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'solved' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
                     >
                       <i className="fa-solid fa-check mr-1.5"></i> Entregadas
                     </button>
                     <button 
                       onClick={() => setFilter("overdue")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'overdue' ? 'bg-red-500 text-white shadow-md shadow-red-500/20' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'overdue' ? 'bg-red-500 text-white shadow-md shadow-red-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
                     >
                       <i className="fa-solid fa-triangle-exclamation mr-1.5"></i> Sin entregar
                     </button>
@@ -222,9 +222,9 @@ export default function ClassFeedAlumnoPage() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-16 text-slate-500 animate-fade-in">
-                        <i className="fa-solid fa-folder-open text-5xl mb-4 text-slate-300"></i>
-                        <p className="font-bold text-lg text-slate-600 mb-1">Nada por aquí</p>
+                      <div className="text-center py-16 text-muted animate-fade-in">
+                        <i className="fa-solid fa-folder-open text-5xl mb-4 text-muted"></i>
+                        <p className="font-bold text-lg text-muted mb-1">Nada por aquí</p>
                         <p className="text-sm">No hay prácticas que coincidan con este filtro.</p>
                       </div>
                     )}
@@ -233,8 +233,8 @@ export default function ClassFeedAlumnoPage() {
 
                 {/* Columna Lateral (Tablerito Pendientes) */}
                 <div className="xl:col-span-1">
-                  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm sticky top-0">
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-5 flex items-center gap-2 border-b border-slate-100 pb-4">
+                  <div className="bg-panel border border-border rounded-3xl p-6 shadow-sm sticky top-0">
+                    <h3 className="font-extrabold text-foreground text-lg mb-5 flex items-center gap-2 border-b border-border pb-4">
                       <i className="fa-solid fa-list-ul text-indigo-500"></i> Próximas entregas
                     </h3>
                     
@@ -244,16 +244,16 @@ export default function ClassFeedAlumnoPage() {
                           <div 
                             key={p.id} 
                             onClick={() => handlePracticeClick(p.id)}
-                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-indigo-300 hover:bg-indigo-50/50 cursor-pointer transition-all group shadow-sm hover:shadow-md"
+                            className="p-4 bg-main border border-border rounded-2xl hover:border-indigo-300 hover:bg-indigo-50/50 cursor-pointer transition-all group shadow-sm hover:shadow-md"
                           >
-                            <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors line-clamp-2 leading-snug mb-3">
+                            <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-700 transition-colors line-clamp-2 leading-snug mb-3">
                               {p.title}
                             </h4>
                             <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider">
                               <span className={p.status === "overdue" ? "text-red-500 bg-red-50 px-2 py-1 rounded-md" : "text-blue-600 bg-blue-50 px-2 py-1 rounded-md"}>
                                 {p.status === "overdue" ? "Atrasada" : "Asignada"}
                               </span>
-                              <span className="text-slate-500">
+                              <span className="text-muted">
                                 {p.dueDate}
                               </span>
                             </div>
@@ -265,8 +265,8 @@ export default function ClassFeedAlumnoPage() {
                         <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
                           <i className="fa-solid fa-party-horn text-2xl"></i>
                         </div>
-                        <p className="text-base font-extrabold text-slate-700">¡Todo al día!</p>
-                        <p className="text-sm font-medium text-slate-400 mt-2">No tienes prácticas pendientes por entregar.</p>
+                        <p className="text-base font-extrabold text-foreground">¡Todo al día!</p>
+                        <p className="text-sm font-medium text-muted mt-2">No tienes prácticas pendientes por entregar.</p>
                       </div>
                     )}
                   </div>

@@ -35,15 +35,15 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl shadow-2xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Unirse a un laboratorio</h2>
-        <p className="text-[var(--text-muted)] mb-8">Introduce el código alfanumérico que te asignó tu docente.</p>
+      <div className="bg-panel border border-border rounded-3xl shadow-2xl p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold text-foreground mb-2">Unirse a un laboratorio</h2>
+        <p className="text-muted mb-8">Introduce el código alfanumérico que te asignó tu docente.</p>
         
         <div className="flex flex-col gap-2 mb-8">
-          <label className="text-sm font-semibold text-[var(--text-primary)]">Código de acceso</label>
+          <label className="text-sm font-semibold text-foreground">Código de acceso</label>
           <input
             type="text"
-            className="border-2 border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-primary)] rounded-xl px-4 py-4 text-2xl font-mono tracking-widest text-center uppercase focus:border-[var(--accent-blue)] focus:outline-none transition-colors"
+            className="border-2 border-border bg-[var(--bg-main)] text-foreground rounded-xl px-4 py-4 text-2xl font-mono tracking-widest text-center uppercase focus:border-[var(--accent-blue)] focus:outline-none transition-colors"
             value={classCode}
             onChange={handleChange}
             placeholder="Ej: AB CD EF"
@@ -52,7 +52,7 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
         
         <div className="flex gap-3 justify-end">
           <button 
-            className="px-6 py-3 rounded-xl font-bold text-[var(--text-primary)] hover:bg-[var(--bg-input)] border border-transparent transition-colors" 
+            className="px-6 py-3 rounded-xl font-bold text-foreground hover:bg-input border border-transparent transition-colors" 
             onClick={onClose}
           >
             Cancelar

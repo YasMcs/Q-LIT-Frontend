@@ -17,7 +17,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="flex items-center justify-center w-9 h-9 rounded-full transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 focus:outline-none"
+      className="flex items-center justify-center w-9 h-9 rounded-full transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-muted dark:text-muted focus:outline-none"
       title="Cambiar tema"
     >
       {theme === "dark" ? (
