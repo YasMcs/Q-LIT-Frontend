@@ -30,7 +30,10 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
       )}
       
       <div className="flex justify-between items-start gap-2">
-        <h3 className="m-0 leading-tight truncate">{title}</h3>
+        <div>
+           <h3 className="m-0 text-lg font-bold leading-tight truncate">{title}</h3>
+           <p className="mt-1 text-sm text-muted">Grupo: <span className="text-foreground font-medium">{group}</span></p>
+        </div>
         {((!isArchived && (onArchive || onEdit)) || (isArchived && onUnarchive)) && (
           <div className="relative -mt-1 -mr-2" ref={menuRef}>
             <button 
@@ -88,26 +91,26 @@ export default function ClassCard({ title, group, inviteCode, studentsCount, pen
         )}
       </div>
       
-      <p className="mt-2 truncate">{group}</p>
-      
       {inviteCode && (
-        <div className="mt-3 bg-[var(--bg-main)] border border-border rounded-xl p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[0.7rem] font-bold text-muted uppercase tracking-wider">
-               <i className="fa-solid fa-key" /> Código de acceso
-            </div>
-            <div className="text-sm font-black text-accent font-mono tracking-widest bg-input px-2 py-1 rounded-md border border-border shadow-sm">
-              {inviteCode}
-            </div>
+        <div className="mt-4 flex items-center gap-3">
+          <div className="text-xs text-muted uppercase tracking-wide font-semibold"><i className="fa-solid fa-key mr-1" /> Código:</div>
+          <div className="bg-accent/10 text-accent px-2.5 py-1 rounded-md text-sm font-mono font-bold border border-accent/20 shadow-sm">
+            {inviteCode}
           </div>
         </div>
       )}
       
-      <div className="docente-class-footer">
-        <span>
-          <i className="fa-solid fa-users" style={{ color: isArchived ? "#94a3b8" : "#4f46e5" }} /> {studentsCount} Alumnos
-        </span>
-        {!isArchived && <span>{pendingReviews} Por Revisar</span>}
+      <div className="mt-5 pt-4 border-t border-border flex items-center justify-between text-sm">
+        <div className="flex items-center gap-2 text-foreground">
+          <i className="fa-solid fa-users text-muted" style={{ color: isArchived ? "#94a3b8" : "" }} /> 
+          <span className="font-semibold">{studentsCount}</span> <span className="text-muted">Alumnos</span>
+        </div>
+        {!isArchived && (
+          <div className="flex items-center gap-2 text-foreground">
+            <i className="fa-solid fa-clipboard-check text-muted" />
+            <span className="font-semibold">{pendingReviews}</span> <span className="text-muted">Por Revisar</span>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -50,7 +50,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -61,8 +61,8 @@
 
 .docente-nav-item:hover,
 .docente-nav-item.active {
-  background-color: var(--bg-input);
-  color: var(--accent-blue);
+  background-color: rgba(103, 103, 234, 0.12);
+  color: #6767ea;
 }
 
 .docente-user-profile {
@@ -76,7 +76,7 @@
 .docente-avatar {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  background: linear-gradient(135deg, #6767ea, #818cf8);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@
 
 .docente-user-info small {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 /* Contenido Principal */
@@ -126,7 +126,7 @@
 }
 
 .docente-btn-create {
-  background-color: var(--accent-blue);
+  background-color: #6767ea;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -162,9 +162,9 @@
 }
 
 .docente-class-card:hover {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -12px rgba(79, 70, 229, 0.06);
+  box-shadow: 0 20px 40px -12px rgba(103, 103, 234, 0.06);
 }
 
 .docente-class-card.archived {
@@ -181,12 +181,12 @@
 
 .docente-class-card.archived h3,
 .docente-class-card.archived p {
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .docente-class-card.archived .docente-role-badge {
-  background-color: var(--bg-input);
-  color: var(--text-muted);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #b5bac1;
 }
 
 .docente-role-badge {
@@ -199,7 +199,7 @@
   letter-spacing: 0.05em;
   margin-bottom: 16px;
   background: var(--bg-input);
-  color: var(--accent-blue);
+  color: var(--text-primary);
 }
 
 .docente-class-card h3 {
@@ -211,7 +211,7 @@
 
 .docente-class-card p {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-bottom: 24px;
 }
 
@@ -223,7 +223,7 @@
   border-top: 1px solid var(--bg-input);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 /* Modal overlays */
@@ -257,7 +257,7 @@
 }
 
 .docente-modal p {
-  color: var(--text-muted);
+  color: #b5bac1;
   font-size: 0.9rem;
   margin-bottom: 24px;
 }
@@ -273,7 +273,7 @@
   display: block;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
 }
 
@@ -289,7 +289,7 @@
 }
 
 .docente-input-group input:focus {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
 }
 
 .docente-modal-actions {
@@ -301,7 +301,7 @@
 
 .docente-btn-cancel {
   background: var(--bg-input);
-  color: var(--text-muted);
+  color: #b5bac1;
   border: none;
   padding: 12px 20px;
   border-radius: 12px;
@@ -328,3 +328,4 @@
 .docente-btn-submit:hover {
   background: var(--accent-blue-hover);
 }
+

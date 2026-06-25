@@ -420,7 +420,7 @@ export default function CrearPracticaDocentePage() {
                     <button
                       key={table.name}
                       onClick={() => setActiveModalTable(table.name)}
-                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-[var(--accent-blue)] text-white' : 'text-muted hover:bg-input'}`}
+                      className={`text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeModalTable === table.name ? 'bg-accent text-white' : 'text-muted hover:bg-input'}`}
                     >
                       <i className="fa-solid fa-table mr-2 opacity-70"></i>
                       {table.name}
@@ -491,7 +491,7 @@ export default function CrearPracticaDocentePage() {
               </p>
               <div className="flex flex-col gap-3 mt-8">
                 <button 
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:bg-[var(--accent-blue-hover)] transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-accent hover:bg-[var(--accent-blue-hover)] transition-colors flex justify-center items-center gap-2"
                   onClick={() => executeSave(false)}
                 >
                   <i className="fa-solid fa-clock-rotate-left"></i> Mantener enunciados actuales

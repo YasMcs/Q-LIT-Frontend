@@ -23,8 +23,8 @@ export default function CustomSelect({ options, value, onChange, icon }) {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center justify-between gap-3 w-full min-w-[200px] px-4 py-3 bg-panel border ${
-          isOpen ? "border-[var(--accent-blue)] ring-2 ring-[var(--accent-blue)]/20" : "border-border"
-        } rounded-xl shadow-sm hover:border-[var(--accent-blue)] transition-all text-sm text-foreground font-medium`}
+          isOpen ? "border-accent ring-2 ring-[var(--accent-blue)]/20" : "border-border"
+        } rounded-xl shadow-sm hover:border-accent transition-all text-sm text-foreground font-medium`}
       >
         <div className="flex items-center gap-2 truncate">
           {icon && <i className={`fa-solid ${icon} text-muted shrink-0`} />}

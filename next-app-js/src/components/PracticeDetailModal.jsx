@@ -128,7 +128,7 @@ export default function PracticeDetailModal({
                 >
                   <i className="fa-regular fa-trash-can"></i>
                 </button>
-                <div className="w-px h-6 bg-[var(--border-color)] mx-2"></div>
+                <div className="w-px h-6 bg-border mx-2"></div>
               </>
             )}
             
@@ -141,7 +141,7 @@ export default function PracticeDetailModal({
           </div>
           
           <button
-            className="px-6 py-2.5 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:opacity-90 hover:shadow-lg transition-all flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl font-bold text-white bg-accent hover:opacity-90 hover:shadow-lg transition-all flex items-center gap-2"
             onClick={() => {
               onClose();
               if (onAction) onAction(practice.id);

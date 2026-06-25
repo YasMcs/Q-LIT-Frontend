@@ -28,12 +28,12 @@
 .directorio-header h1 {
   font-size: 2.2rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .directorio-header p {
-  color: var(--text-muted);
+  color: #b5bac1;
   font-size: 1rem;
 }
 
@@ -82,7 +82,7 @@
 }
 
 .directorio-search input:focus {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
@@ -141,7 +141,7 @@
 }
 
 .directorio-student-item.active {
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   border-color: var(--border-color);
 }
 
@@ -154,7 +154,7 @@
 .student-list-score {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .student-avatar {
@@ -162,7 +162,7 @@
   height: 40px;
   border-radius: 12px;
   background: var(--bg-input);
-  color: var(--text-muted);
+  color: #b5bac1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -176,14 +176,14 @@
 }
 
 .student-name-info strong {
-  color: var(--text-main);
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .student-name-info span {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 
@@ -229,13 +229,13 @@
 .detail-header-info h2 {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
   margin-bottom: 0.2rem;
 }
 
 .detail-header-info p {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .detail-body {
@@ -285,7 +285,7 @@
 .stat-box span {
   display: block;
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
@@ -313,12 +313,12 @@
 
 .practice-history-card .prac-title {
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .practice-history-card .prac-date {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-top: 0.2rem;
 }
 
@@ -330,3 +330,4 @@
 .score-good { color: var(--success); }
 .score-bad { color: var(--danger); }
 .score-pending { color: var(--warning); }
+

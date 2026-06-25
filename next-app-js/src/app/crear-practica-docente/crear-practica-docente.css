@@ -34,7 +34,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-muted);
+  color: #b5bac1;
   font-size: 1.35rem;
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@
 }
 
 .btn-close-classroom:hover {
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
 }
 
@@ -60,12 +60,12 @@
 }
 
 .classroom-icon-logo {
-  color: var(--accent-blue);
+  color: var(--text-primary);
   font-size: 1.35rem;
 }
 
 .btn-create-task {
-  background-color: var(--accent-blue);
+  background-color: #6767ea;
   color: white;
   border: none;
   padding: 0.7rem 1.5rem;
@@ -125,7 +125,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   border: 1px solid var(--border-color);
   transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -133,7 +133,7 @@
 
 .classroom-input-wrapper:focus-within {
   background-color: var(--bg-panel);
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
 }
 
@@ -159,7 +159,7 @@
   bottom: 0.35rem;
   right: 1.25rem;
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   font-weight: 500;
 }
 
@@ -190,7 +190,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-muted);
+  color: #b5bac1;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -201,13 +201,13 @@
 }
 
 .classroom-editor-formatting button:hover {
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
 }
 
 /* Objective wrapper adjustment */
 .objective-wrapper {
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--border-color);
   border-radius: 12px;
 }
@@ -230,7 +230,7 @@
 
 .attachments-subtitle {
   font-size: 0.88rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-top: -0.5rem;
   margin-bottom: 0.5rem;
 }
@@ -256,20 +256,20 @@
 }
 
 .attachment-card:hover {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   background-color: rgba(79, 70, 229, 0.01);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
 }
 
 .attachment-card.active {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   background-color: rgba(79, 70, 229, 0.03);
   box-shadow: 0 0 0 1px var(--accent-blue);
 }
 
 .attachment-icon-wrapper {
-  background-color: rgba(79, 70, 229, 0.06);
+  background-color: rgba(103, 103, 234, 0.06);
   border-radius: 8px;
   width: 46px;
   height: 46px;
@@ -280,7 +280,7 @@
 }
 
 .database-file-icon {
-  color: var(--accent-blue);
+  color: var(--text-primary);
   font-size: 1.35rem;
 }
 
@@ -303,7 +303,7 @@
 
 .attachment-type {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -312,7 +312,7 @@
 .btn-inspect-attachment {
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: #b5bac1;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
@@ -323,8 +323,8 @@
 }
 
 .btn-inspect-attachment:hover {
-  background-color: var(--bg-input);
-  color: var(--accent-blue);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
 }
 
 /* Right Sidebar */
@@ -348,7 +348,7 @@
 .sidebar-label {
   font-size: 0.8rem;
   font-weight: 800;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -379,7 +379,7 @@
 }
 
 .sidebar-number-input:focus {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
 }
 
@@ -405,7 +405,7 @@
 
 .sidebar-date-input:focus, 
 .sidebar-time-input:focus {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
 }
 
@@ -420,12 +420,12 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: var(--accent-blue);
+  accent-color: var(--text-primary);
 }
 
 .checkbox-control-wrapper label {
   font-size: 0.82rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   cursor: pointer;
 }
 
@@ -438,7 +438,7 @@
   background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  color: var(--accent-blue);
+  color: var(--text-primary);
   padding: 0.8rem 1rem;
   font-family: inherit;
   font-size: 0.9rem;
@@ -455,7 +455,7 @@
 
 .btn-rubric-toggle:hover {
   background-color: rgba(79, 70, 229, 0.04);
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
 }
 
 .rubric-plus-icon {
@@ -478,7 +478,7 @@
 
 .rubric-drawer-subtitle {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   line-height: 1.4;
 }
 
@@ -488,7 +488,7 @@
   align-items: center;
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #b5bac1;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.6rem;
 }
@@ -497,7 +497,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--accent-blue);
+  color: var(--text-primary);
   font-family: inherit;
   font-weight: 700;
   font-size: 0.85rem;
@@ -519,7 +519,7 @@
 
 .rubric-drawer-input-text {
   flex: 1;
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-primary);
@@ -532,13 +532,13 @@
 
 .rubric-drawer-input-text:focus {
   background-color: var(--bg-panel);
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
 }
 
 .rubric-drawer-input-points {
   width: 55px;
   text-align: center;
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-primary);
@@ -551,7 +551,7 @@
 
 .rubric-drawer-input-points:focus {
   background-color: var(--bg-panel);
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
 }
 
 .btn-delete-criterio-drawer {
@@ -578,9 +578,9 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.78rem;
-  background-color: var(--bg-input);
+  background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--accent-blue);
-  color: var(--accent-blue);
+  color: var(--text-primary);
   padding: 0.6rem;
   border-radius: 6px;
   font-weight: 600;
@@ -600,8 +600,8 @@
 }
 
 .rubric-drawer-unbalanced-alert button:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 /* Modal light theme standard alignment */

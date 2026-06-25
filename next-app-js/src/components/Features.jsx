@@ -4,44 +4,30 @@ export default function Features() {
   const featuresList = [
     {
       icon: "fa-laptop-code",
-      title: "Práctica Interactiva",
-      description: "Escribe y ejecuta consultas SQL en un entorno seguro y en tiempo real, sin configuraciones complejas.",
-      size: "wide"
+      title: "Salas Interactivas",
+      description: "Únete a salas dinámicas con chat fluido y reacciones en tiempo real. Aprende haciendo con la guía de tu entorno."
+    },
+    {
+      icon: "fa-users",
+      title: "Docentes Expertos",
+      description: "Encuentra profesionales dispuestos a compartir su experiencia y guiarte en tu carrera."
     },
     {
       icon: "fa-shield-halved",
-      title: "Entorno Anti-Plagio",
-      description: "Control estricto de acciones como copiar y pegar, asegurando la autenticidad del trabajo de cada estudiante.",
-      size: "tall"
-    },
-    {
-      icon: "fa-bolt",
-      title: "Evaluación Ágil",
-      description: "Docentes pueden revisar, probar y calificar las entregas directamente en la plataforma, agilizando el flujo de trabajo.",
-      size: ""
-    },
-    {
-      icon: "fa-users-viewfinder",
-      title: "Gestión Centralizada",
-      description: "Administra clases, diccionarios de datos y esquemas de manera organizada desde un solo lugar.",
-      size: "wide"
+      title: "Seguridad Total",
+      description: "Tu privacidad es lo primero. Entorno seguro y moderado para una mejor experiencia."
     }
   ];
 
   return (
     <section className="features-section" id="features">
-      <div className="features-header">
-        <span className="features-badge">¿Por qué Q-LIT?</span>
-        <h2>Todo lo que necesitas para enseñar y aprender Bases de Datos</h2>
-        <p>Una plataforma diseñada específicamente para resolver los retos de los laboratorios de SQL modernos.</p>
-      </div>
-      <div className="features-grid">
+      <div className="features-simple-grid">
         {featuresList.map((feat, index) => (
-          <div className={`feature-card ${feat.size}`} key={index} style={{ animationDelay: `${index * 0.15}s` }}>
-            <div className="feature-icon-wrapper">
+          <div className="simple-feature-card" key={index} style={{ animationDelay: `${index * 0.15}s` }}>
+            <div className="simple-feature-icon">
               <i className={`fa-solid ${feat.icon}`}></i>
             </div>
-            <div>
+            <div className="simple-feature-text">
               <h3>{feat.title}</h3>
               <p>{feat.description}</p>
             </div>

@@ -253,7 +253,7 @@ export default function ClassFeedDocentePage() {
                 Cancelar
               </button>
               <button 
-                className="px-5 py-2.5 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:opacity-90 hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl font-bold text-white bg-accent hover:opacity-90 hover:shadow-lg transition-all"
                 onClick={submitDateChange}
               >
                 Actualizar Límite

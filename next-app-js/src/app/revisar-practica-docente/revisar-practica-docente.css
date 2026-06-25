@@ -1,14 +1,14 @@
 /* Isolated Stylesheet for Revisar Práctica Docente */
 
 .revisar-practica-wrapper {
-  --bg-main: #f8fafc;
-  --bg-card: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
+  
+  
+  
+  
+  --primary: #6767ea;
+  --primary-hover: #6767ea;
   --accent: #a855f7;
-  --border-color: #e2e8f0;
+  --border-color: rgba(255, 255, 255, 0.04);
   --radius: 16px;
   --danger: #ef4444;
   --success: #22c55e;
@@ -18,7 +18,7 @@
   width: 100vw;
   overflow: hidden;
   background-color: var(--bg-main);
-  color: var(--text-main);
+  color: var(--text-primary);
   font-family: 'Plus Jakarta Sans', sans-serif;
   flex-direction: row; /* Sidebar on left, Practice on right */
   position: relative;
@@ -26,7 +26,7 @@
 
 .students-sidebar {
   width: 320px;
-  background-color: var(--bg-card);
+  background-color: var(--bg-panel);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -61,7 +61,7 @@
 .sidebar-header h2 {
   font-size: 1.1rem;
   font-weight: 800;
-  color: var(--text-main);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -95,12 +95,12 @@
   transition: all 0.2s;
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .students-list li:hover {
   background-color: var(--bg-main);
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .students-list li.selected {
@@ -123,7 +123,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 2.5rem;
-  background-color: var(--bg-card);
+  background-color: var(--bg-panel);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
@@ -140,10 +140,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-card);
+  background: var(--bg-panel);
   border: 1px solid var(--border-color);
   cursor: pointer;
-  color: var(--text-muted);
+  color: #b5bac1;
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -152,8 +152,8 @@
 }
 
 .btn-icon-back-revisar:hover {
-  color: var(--text-main);
-  border-color: var(--text-muted);
+  color: var(--text-primary);
+  border-color: #b5bac1;
   background-color: var(--bg-main);
 }
 
@@ -167,12 +167,12 @@
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .student-meta-revisar {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -208,12 +208,12 @@
 
 .btn-secondary-revisar {
   background-color: var(--border-color);
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .btn-secondary-revisar:hover {
-  background-color: var(--text-muted);
-  color: var(--bg-card);
+  background-color: #b5bac1;
+  color: var(--bg-panel);
 }
 
 .btn-primary-revisar {
@@ -247,7 +247,7 @@
 
 .grading-sidebar-revisar {
   width: 400px;
-  background-color: var(--bg-card);
+  background-color: var(--bg-panel);
   border-left: 1px solid var(--border-color);
   padding: 2.5rem 2rem;
   display: flex;
@@ -261,7 +261,7 @@
 .sidebar-title-revisar {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--text-main);
+  color: var(--text-primary);
   border-bottom: 2px solid var(--border-color);
   padding-bottom: 1rem;
   margin-bottom: 0.5rem;
@@ -269,7 +269,7 @@
 
 /* Panels */
 .panel-revisar {
-  background-color: var(--bg-card);
+  background-color: var(--bg-panel);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
   padding: 2.5rem;
@@ -283,7 +283,7 @@
 .section-title-revisar {
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--text-main);
+  color: var(--text-primary);
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 1rem;
   letter-spacing: -0.02em;
@@ -299,7 +299,7 @@
 .form-group-revisar label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -315,7 +315,7 @@
 
 /* Code block styles */
 .code-block-revisar {
-  background-color: var(--text-main);
+  background-color: #6767ea;
   border-radius: 10px;
   padding: 1.2rem;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
@@ -326,7 +326,7 @@
 
 .code-title-revisar {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.5rem;
@@ -363,7 +363,7 @@
 
 .result-table-revisar th {
   background-color: var(--bg-main);
-  color: var(--text-muted);
+  color: #b5bac1;
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -372,7 +372,7 @@
 
 .result-table-revisar td {
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
-  color: var(--text-main);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -415,7 +415,7 @@
 
 .ia-grade-note-revisar {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   font-style: italic;
   margin-top: -0.25rem;
 }
@@ -423,7 +423,7 @@
 /* Timeline of Interactions (Right Side) */
 .timeline-intro-revisar {
   font-size: 0.88rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-top: -1rem;
   line-height: 1.4;
 }
@@ -489,7 +489,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
@@ -497,7 +497,7 @@
 .timeline-code-revisar {
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.82rem;
-  color: var(--text-main);
+  color: var(--text-primary);
   background-color: var(--bg-main);
   padding: 0.4rem 0.6rem;
   border-radius: 6px;
@@ -540,7 +540,7 @@
 
 .checklist-plain-text-revisar {
   font-size: 0.9rem;
-  color: var(--text-main);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -550,7 +550,7 @@
 .criterio-valor-badge {
   display: inline-block;
   font-size: 0.75rem;
-  background-color: rgba(99, 102, 241, 0.08);
+  background-color: rgba(103, 103, 234, 0.08);
   color: var(--primary);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
@@ -613,7 +613,7 @@
 .grade-percentage-revisar {
   font-size: 1.1rem;
   font-weight: 800;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .empty-state-not-submitted {
@@ -624,7 +624,7 @@
   flex: 1;
   text-align: center;
   padding: 4rem;
-  background-color: var(--bg-card);
+  background-color: var(--bg-panel);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
   margin: 2.5rem;
@@ -640,12 +640,12 @@
 
 .empty-state-not-submitted h2 {
   font-size: 1.5rem;
-  color: var(--text-main);
+  color: var(--text-primary);
   margin: 0;
 }
 
 .empty-state-not-submitted p {
-  color: var(--text-muted);
+  color: #b5bac1;
   font-size: 1rem;
   max-width: 400px;
 }

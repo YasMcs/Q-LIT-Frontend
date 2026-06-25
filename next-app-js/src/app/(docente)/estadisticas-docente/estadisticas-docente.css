@@ -3,7 +3,7 @@
   height: 100vh;
   width: 100vw;
   background-color: var(--bg-main);
-  color: var(--text-main);
+  color: var(--text-primary);
   overflow: hidden;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
@@ -27,12 +27,12 @@
 .estadisticas-header h1 {
   font-size: 2.2rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .estadisticas-header p {
-  color: var(--text-muted);
+  color: #b5bac1;
   font-size: 1rem;
 }
 
@@ -43,7 +43,7 @@
   background-color: var(--bg-panel);
   font-family: inherit;
   font-size: 1rem;
-  color: var(--text-main);
+  color: var(--text-primary);
   cursor: pointer;
   box-shadow: 0 2px 8px var(--shadow-sm);
   transition: all 0.2s ease;
@@ -93,7 +93,7 @@
 
 .kpi-info h3 {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.2rem;
@@ -102,7 +102,7 @@
 .kpi-info .kpi-value {
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 /* Dashboard Widgets Grid */
@@ -138,7 +138,7 @@
 .widget-header h2 {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-primary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -151,7 +151,7 @@
 
 .widget-subtitle {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 /* Struggles Section */
@@ -180,12 +180,12 @@
 
 .struggle-topic {
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .struggle-stat {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   font-weight: 500;
 }
 
@@ -221,7 +221,7 @@
 .groups-table th {
   text-align: left;
   padding: 1rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -231,7 +231,7 @@
 
 .groups-table td {
   padding: 1.2rem 1rem;
-  color: var(--text-main);
+  color: var(--text-primary);
   border-bottom: 1px solid var(--border-light);
   font-size: 0.95rem;
 }
@@ -258,3 +258,4 @@
 .badge.good { background-color: #dcfce7; color: #166534; }
 .badge.average { background-color: #ffedd5; color: #9a3412; }
 .badge.poor { background-color: #fee2e2; color: #991b1b; }
+

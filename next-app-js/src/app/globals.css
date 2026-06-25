@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
+*, ::before, ::after {
+  border-color: var(--border-color);
+}
 :root {
-  --bg-main: #111214;
-  --bg-panel: #1e1f22;
-  --bg-input: #0b0c0d;
+  --bg-main: #000000;
+  --bg-panel: #0a0a0a;
+  --bg-input: #121212;
   --border-color: rgba(255, 255, 255, 0.04);
   --text-primary: #dbdee1;
   --text-muted: #949ba4;
-  --accent-blue: #5865F2;
-  --accent-blue-hover: #4752C4;
+  --accent-blue: #6767ea;
+  --accent-blue-hover: #0284c7;
   --danger-red: #da373c;
 }
 

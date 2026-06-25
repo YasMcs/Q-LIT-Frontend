@@ -8,28 +8,48 @@ export default function Hero() {
 
   return (
     <section className="hero-section" id="hero">
-      <div className="hero-content">
-        <div className="hero-badge">
-          <span className="badge-dot"></span> Plataforma de Prácticas
+      <div className="hero-grid-container">
+        {/* Left Side: Dark Copy Section */}
+        <div className="hero-text-content">
+          <div className="hero-badge">
+            Aprende • Enseña • Conecta
+          </div>
+          <h1>
+            Tu camino al
+            <br />
+            éxito con
+            <br />
+            <span>Laboratorios en Vivo</span>
+          </h1>
+          <p className="subtitle">
+            Conecta con un entorno seguro en tiempo real.
+            <br />
+            Agiliza prácticas, asegura autenticidad y acelera el
+            <br />
+            aprendizaje con la mejor plataforma.
+          </p>
+          <div className="hero-cta-group">
+            <button className="btn-cta-start" onClick={handleStart}>
+              ¡Quiero empezar ya! <i className="fa-solid fa-chevron-right ml-2" style={{ marginLeft: '8px' }}></i>
+            </button>
+            <div className="hero-stats">
+              <div className="stat-item">
+                <strong>Anti</strong>
+                <span>Plagio</span>
+              </div>
+              <div className="stat-item">
+                <strong>24/7</strong>
+                <span>Online</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <h1>
-          <span>Q-LIT</span>
-        </h1>
-        <h2 className="hero-long-name">
-          Laboratorio de Consultas para la Enseñanza Interactiva
-        </h2>
-        <p className="subtitle">
-          El soporte interactivo más avanzado para tus laboratorios de Bases de Datos. Agiliza la recepción de prácticas, asegura la autenticidad de las entregas y lleva el aprendizaje al siguiente nivel con un entorno web seguro e innovador.
-        </p>
-        <button className="btn-cta-start" onClick={handleStart}>
-          Comienza ahora <i className="fa-solid fa-arrow-right ml-2" style={{ marginLeft: '8px' }}></i>
-        </button>
-      </div>
-      <div className="hero-image-container">
-        <img src="/Coding workshop-cuate.svg" alt="Q-LIT Education Workspace" className="hero-illustration" />
-      </div>
-      <div className="scroll-hint">
-        <i className="fa-solid fa-chevron-down" />
+
+        {/* Right Side: Vibrant Graphic Section */}
+        <div className="hero-image-wrapper">
+          <div className="hero-glow-orb"></div>
+          <img src="/machine-learning.svg" alt="Q-LIT Machine Learning Robot" className="hero-illustration svg-inverted" />
+        </div>
       </div>
     </section>
   );

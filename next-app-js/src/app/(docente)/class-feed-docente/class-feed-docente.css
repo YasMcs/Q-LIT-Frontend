@@ -50,7 +50,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -61,8 +61,8 @@
 
 .docente-nav-item:hover,
 .docente-nav-item.active {
-  background-color: var(--bg-input);
-  color: var(--accent-blue);
+  background-color: rgba(103, 103, 234, 0.12);
+  color: #6767ea;
 }
 
 .docente-user-profile {
@@ -76,7 +76,7 @@
 .docente-avatar {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  background: linear-gradient(135deg, #6767ea, #818cf8);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@
 
 .docente-user-info small {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .feed-app-container {
@@ -128,18 +128,18 @@
 }
 
 .feed-breadcrumbs a {
-  color: var(--text-muted);
+  color: #b5bac1;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .feed-breadcrumbs a:hover {
-  color: var(--accent-blue);
+  color: var(--text-primary);
 }
 
 .feed-breadcrumbs i {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .feed-breadcrumbs .current-class {
@@ -150,7 +150,7 @@
 .feed-code-badge {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--accent-blue);
+  color: var(--text-primary);
   background: var(--bg-input);
   padding: 8px 18px;
   border-radius: 10px;
@@ -188,12 +188,12 @@
 
 .feed-panel-header p {
   font-size: 0.95rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-top: 4px;
 }
 
 .feed-btn-action-master {
-  background-color: var(--accent-blue);
+  background-color: #6767ea;
   color: white;
   border: none;
   padding: 12px 20px;
@@ -226,7 +226,7 @@
 }
 
 .feed-manage-card:hover {
-  border-color: var(--accent-blue);
+  border-color: var(--text-primary);
   box-shadow: 0 10px 20px -10px rgba(79, 70, 229, 0.05);
 }
 
@@ -238,7 +238,7 @@
 
 .feed-challenge-core p {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: #b5bac1;
   margin-top: 4px;
 }
 
@@ -255,7 +255,7 @@
 
 .feed-badge-alert.closed {
   background: var(--bg-input);
-  color: var(--text-muted);
+  color: #b5bac1;
 }
 
 .feed-btn-review {
@@ -271,9 +271,9 @@
 }
 
 .feed-btn-review:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-  background-color: var(--bg-input);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Sidebar Panel Control */
@@ -296,7 +296,7 @@
 .feed-stat-box small {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #b5bac1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: block;
@@ -308,3 +308,4 @@
   margin-top: 4px;
   color: var(--text-primary);
 }
+

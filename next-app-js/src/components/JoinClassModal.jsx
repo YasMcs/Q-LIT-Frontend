@@ -43,7 +43,7 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
           <label className="text-sm font-semibold text-foreground">Código de acceso</label>
           <input
             type="text"
-            className="border-2 border-border bg-[var(--bg-main)] text-foreground rounded-xl px-4 py-4 text-2xl font-mono tracking-widest text-center uppercase focus:border-[var(--accent-blue)] focus:outline-none transition-colors"
+            className="border-2 border-border bg-[var(--bg-main)] text-foreground rounded-xl px-4 py-4 text-2xl font-mono tracking-widest text-center uppercase focus:border-accent focus:outline-none transition-colors"
             value={classCode}
             onChange={handleChange}
             placeholder="Ej: AB CD EF"
@@ -58,7 +58,7 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
             Cancelar
           </button>
           <button 
-            className="px-6 py-3 rounded-xl font-bold text-white bg-[var(--accent-blue)] hover:opacity-90 transition-colors shadow-lg" 
+            className="px-6 py-3 rounded-xl font-bold text-white bg-accent hover:opacity-90 transition-colors shadow-lg" 
             onClick={handleSubmit}
           >
             Inscribirse
