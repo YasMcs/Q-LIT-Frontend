@@ -44,8 +44,24 @@ export default function PracticeDetailModal({
                 <i className="fa-regular fa-calendar-plus" /> Publicado: {practice.assignDate || (practice.fecha_asignacion ? new Date(practice.fecha_asignacion).toLocaleDateString() : (practice.createdAt ? new Date(practice.createdAt).toLocaleDateString() : "N/A"))}
               </span>
               <span className="flex items-center gap-1.5">
-                <i className="fa-regular fa-calendar-clock" /> Vence: {practice.dueDate || (practice.deadline ? new Date(practice.deadline).toLocaleDateString() : "Sin límite")}
+                <i className="fa-regular fa-calendar-clock" /> Vence: {practice.dueDate || (practice.deadline ? new Date(practice.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite")}
               </span>
+              
+              {!isStudent && (
+                <>
+                  {practice.closeLateSubmissions && (
+                    <span className="flex items-center gap-1.5 text-muted">
+                      <i className="fa-solid fa-lock text-[var(--danger-red)]" />
+                      Cierre estricto
+                    </span>
+                  )}
+                  {practice.requiredFunctions?.db && (
+                    <span className="flex items-center gap-1.5 text-muted">
+                      <i className="fa-solid fa-database text-accent" /> BD: {practice.requiredFunctions.db}
+                    </span>
+                  )}
+                </>
+              )}
               {isStudent && (
                 <span className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${
                   practice.status === "solved" ? "bg-emerald-100 text-emerald-700" :

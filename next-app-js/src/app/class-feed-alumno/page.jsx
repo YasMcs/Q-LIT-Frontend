@@ -43,8 +43,8 @@ export default function ClassFeedAlumnoPage() {
           const formatted = prData.map(p => ({
             ...p,
             status: p.deadline && new Date(p.deadline) < new Date() ? "overdue" : "assigned",
-            dueDate: p.deadline ? new Date(p.deadline).toLocaleDateString() : "Sin límite",
-            assignDate: new Date(p.createdAt).toLocaleDateString()
+            dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
+            assignDate: new Date(p.createdAt).toLocaleDateString("es-ES")
           }));
           setPractices(formatted);
         }

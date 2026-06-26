@@ -216,7 +216,9 @@ export default function ClassFeedDocentePage() {
                   id={challenge.id}
                   title={challenge.title}
                   subtitle={challenge.subtitle}
-                  assignDate={challenge.fecha_asignacion ? challenge.fecha_asignacion.split('T')[0] : ''}
+                  assignDate={challenge.fecha_asignacion ? new Date(challenge.fecha_asignacion).toLocaleDateString("es-ES") : ''}
+                  deadline={challenge.deadline}
+                  closeLateSubmissions={challenge.closeLateSubmissions}
                   pendingCount={challenge.pendingCount}
                   status={challenge.status}
                   onClick={handleChallengeClick}

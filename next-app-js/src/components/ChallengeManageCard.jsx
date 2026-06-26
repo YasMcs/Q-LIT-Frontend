@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 export default function ChallengeManageCard({ 
-  id, title, pendingCount, status, assignDate,
+  id, title, pendingCount, status, assignDate, deadline, closeLateSubmissions,
   onReview, onEdit, onChangeDate, onDelete, onClick
 }) {
   const isPending = pendingCount > 0;
@@ -31,11 +31,16 @@ export default function ChallengeManageCard({
         <h3>
           {title}
         </h3>
-        {assignDate && (
-          <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-muted">
-            <i className="fa-regular fa-calendar-plus" /> Asignada: {assignDate}
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3 mt-2 text-[11px] uppercase tracking-wider font-bold text-muted">
+          {assignDate && (
+            <span className="flex items-center gap-1.5"><i className="fa-regular fa-calendar-plus" /> Asignada: {assignDate}</span>
+          )}
+          {deadline ? (
+            <span className="flex items-center gap-1.5"><i className="fa-regular fa-calendar-clock" /> Vence: {new Date(deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}</span>
+          ) : (
+            <span className="flex items-center gap-1.5"><i className="fa-regular fa-calendar-clock" /> Sin límite</span>
+          )}
+        </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         {isPending ? (

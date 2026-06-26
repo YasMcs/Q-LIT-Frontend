@@ -27,6 +27,7 @@ function CrearPracticaDocenteContent() {
   const [maxScore, setMaxScore] = useState(100);
   const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState("");
+  const [closeLateSubmissions, setCloseLateSubmissions] = useState(false);
   const [modalDb, setModalDb] = useState(null);
   const [activeModalTable, setActiveModalTable] = useState(null);
   const [isFunctionsModalOpen, setIsFunctionsModalOpen] = useState(false);
@@ -48,8 +49,9 @@ function CrearPracticaDocenteContent() {
       .then(res => {
         if (res.status === 'success') {
           setCatalogs(res.data);
-          if (res.data.length > 0) {
-            setActiveDb(res.data[0].name);
+          // Only set activeDb if editing, otherwise leave it empty so user chooses manually
+          if (!editId) {
+            setActiveDb("");
           }
         }
       })
@@ -65,10 +67,16 @@ function CrearPracticaDocenteContent() {
             setSelectedFunctions(data.requiredFunctions?.keywords || []);
             setMaxScore(data.totalPoints || 100);
             setActiveDb(data.requiredFunctions?.db || "punto_venta_db");
+            setCloseLateSubmissions(data.closeLateSubmissions || false);
             if (data.deadline) {
               const dt = new Date(data.deadline);
-              setDueDate(dt.toISOString().split("T")[0]);
-              setDueTime(dt.toISOString().split("T")[1].substring(0, 5));
+              const year = dt.getFullYear();
+              const month = String(dt.getMonth() + 1).padStart(2, '0');
+              const day = String(dt.getDate()).padStart(2, '0');
+              const hours = String(dt.getHours()).padStart(2, '0');
+              const minutes = String(dt.getMinutes()).padStart(2, '0');
+              setDueDate(`${year}-${month}-${day}`);
+              setDueTime(`${hours}:${minutes}`);
             }
             if (data.checklistItems && data.checklistItems.length > 0) {
               setCriteria(data.checklistItems.map((item, index) => ({
@@ -83,11 +91,9 @@ function CrearPracticaDocenteContent() {
     }
   }, [editId]);
 
-  // Rubric / checklist state (initially expanded and fully editable)
+  // Rubric / checklist state (initially empty with one blank item)
   const [criteria, setCriteria] = useState([
-    { id: 1, text: "Uso correcto de la cláusula SELECT", points: 40 },
-    { id: 2, text: "Filtrado preciso utilizando WHERE", points: 40 },
-    { id: 3, text: "Ordenamiento adecuado mediante ORDER BY", points: 20 },
+    { id: 1, text: "", points: 100 }
   ]);
 
   const criteriaSum = criteria.reduce((sum, item) => sum + item.points, 0);
@@ -167,10 +173,12 @@ function CrearPracticaDocenteContent() {
           maxScore,
           dueDate,
           dueTime,
+          deadlineIso: new Date(`${dueDate}T${dueTime}`).toISOString(),
           activeDb,
           criteria,
           classroomId: selectedClassroomId,
-          forceRegenerate
+          forceRegenerate,
+          closeLateSubmissions
         })
       });
 
@@ -198,6 +206,26 @@ function CrearPracticaDocenteContent() {
       alert("Por favor, introduce el título de la práctica.");
       return;
     }
+    if (!description.trim()) {
+      alert("Por favor, introduce las instrucciones u objetivo de la práctica.");
+      return;
+    }
+    if (selectedFunctions.length === 0) {
+      alert("Por favor, selecciona al menos una función o cláusula SQL esperada.");
+      return;
+    }
+    if (!activeDb) {
+      alert("Por favor, selecciona una base de datos temática para la práctica.");
+      return;
+    }
+    if (!maxScore || maxScore <= 0) {
+      alert("Por favor, asigna un valor total válido mayor a 0 para la práctica.");
+      return;
+    }
+    if (!dueDate || !dueTime) {
+      alert("Por favor, establece la fecha y hora de entrega.");
+      return;
+    }
     // Only require classroomId for new practices
     if (!editId && !selectedClassroomId) {
       alert("Por favor, selecciona a qué laboratorio asignar esta práctica.");
@@ -222,7 +250,7 @@ function CrearPracticaDocenteContent() {
 
   return (
     <div className="classroom-editor-body animate-fade-in animate-scale-up">
-      {/* Top Navbar */}
+      {/* Barra de Navegación Superior */}
       <header className="classroom-navbar">
         <div className="navbar-left-group">
           <button className="btn-close-classroom" onClick={handleCancel} title="Cancelar">
@@ -240,38 +268,52 @@ function CrearPracticaDocenteContent() {
         </div>
       </header>
 
-      {/* Editor Layout Grid */}
+      {/* Cuadrícula de Diseño del Editor */}
       <div className="classroom-layout-container">
-        {/* Left Column (Forms & Attachments) */}
+        {/* Columna Izquierda (Formularios y Adjuntos) */}
         <main className="classroom-main-column">
           <div className="classroom-card-panel">
-            {/* Title */}
-            <div className="classroom-input-wrapper">
-              <input
-                type="text"
-                className="classroom-input-field title-field"
-                placeholder="Título"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <span className="classroom-required-tag">*Obligatorio</span>
+            {/* Título */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-bold text-foreground px-1 flex items-center gap-2">
+                Título de la práctica
+                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Nombre corto para identificar esta tarea dentro de tu laboratorio."></i>
+                <span className="text-[var(--danger-red)]">*</span>
+              </label>
+              <div className="classroom-input-wrapper">
+                <input
+                  type="text"
+                  className="classroom-input-field title-field"
+                  placeholder="Ej: Análisis de Ventas Mensuales"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
             </div>
 
-            {/* Description (IA Context & Objective) */}
-            <div className="classroom-input-wrapper">
-              <textarea
-                className="classroom-textarea-field description-field"
-                placeholder="Instrucciones u Objetivo — Escribe aquí el contexto de la práctica o el reto que esperas que el alumno resuelva."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+            {/* Descripción (Contexto de IA y Objetivo) */}
+            <div className="flex flex-col gap-2 mt-4">
+              <label className="text-sm font-bold text-foreground px-1 flex items-center gap-2">
+                Objetivo de la práctica
+                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Describe el objetivo pedagógico de la práctica. La IA utilizará esto para generar el enunciado interactivo (historia) que verá el estudiante."></i>
+                <span className="text-[var(--danger-red)]">*</span>
+              </label>
+              <div className="classroom-input-wrapper">
+                <textarea
+                  className="classroom-textarea-field description-field"
+                  placeholder="Ej: Que el estudiante comprenda la lógica de selectivas y condicionales (WHERE) al momento de buscar datos."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
             </div>
 
-            {/* Required SQL Functions (Pills + Button) */}
-            {/* Required SQL Functions (Pills + Button) */}
-            <div className="mt-4 flex flex-col gap-3">
-              <label className="text-sm font-bold text-foreground px-1">
+            {/* Funciones SQL Requeridas (Píldoras y Botón) */}
+            <div className="mt-6 flex flex-col gap-3">
+              <label className="text-sm font-bold text-foreground px-1 flex items-center gap-2">
                 Funciones y Cláusulas SQL Esperadas
+                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Selecciona qué comandos SQL el alumno TIENE que usar para que la plataforma dé por buena su respuesta."></i>
+                <span className="text-[var(--danger-red)]">*</span>
               </label>
               
               <div className="flex items-center gap-3 flex-wrap">
@@ -302,10 +344,13 @@ function CrearPracticaDocenteContent() {
             </div>
           </div>
 
-          {/* Attachments Section: Seed Theme Database selection */}
-          <div className="classroom-card-panel attachments-panel">
-            <h3 className="attachments-title">Adjuntar Base de Datos Temática</h3>
-            <p className="attachments-subtitle">Elige el esquema de datos semilla que servirá de base interactiva para esta práctica.</p>
+          {/* Sección de Adjuntos: Selección de Base de Datos */}
+          <div className="classroom-card-panel attachments-panel mt-4">
+            <h3 className="attachments-title flex items-center gap-2">
+              Adjuntar Base de Datos Temática
+              <i className="fa-solid fa-circle-info text-muted cursor-help text-sm custom-tooltip" data-tooltip="Elige el esquema de datos semilla que servirá de base interactiva para esta práctica."></i>
+              <span className="text-[var(--danger-red)] text-sm">*</span>
+            </h3>
 
             <div className="attachments-grid">
               {catalogs.length === 0 ? (
@@ -339,49 +384,70 @@ function CrearPracticaDocenteContent() {
           </div>
         </main>
 
-        {/* Right Sidebar (Settings & Dynamic Checklist) */}
+        {/* Barra Lateral Derecha (Configuración y Rúbrica) */}
         <aside className="classroom-sidebar">
-          {/* Puntos (Puntuación Máxima) */}
-          <div className="sidebar-control-group">
-            <label className="sidebar-label">Valor total de la práctica</label>
-            <div className="puntos-input-wrapper">
-              <input
-                type="number"
-                className="sidebar-number-input"
-                min="0"
-                value={maxScore}
-                onChange={(e) => setMaxScore(parseInt(e.target.value) || 0)}
-              />
+          {/* Panel de Configuración General */}
+          <div className="classroom-card-panel flex flex-col gap-6">
+            {/* Puntos (Puntuación Máxima) */}
+            <div>
+              <label className="sidebar-label flex items-center gap-2 mb-2">
+                Valor total de la práctica
+                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Los puntos totales que vale esta tarea."></i>
+                <span className="text-[var(--danger-red)]">*</span>
+              </label>
+              <div className="puntos-input-wrapper">
+                <input
+                  type="number"
+                  className="sidebar-number-input"
+                  min="0"
+                  value={maxScore}
+                  onChange={(e) => setMaxScore(parseInt(e.target.value) || 0)}
+                />
+              </div>
+            </div>
+
+            {/* Fecha y Hora de Entrega */}
+            <div>
+              <label className="sidebar-label flex items-center gap-2 mb-2">
+                Fecha y hora de entrega
+                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="El límite de tiempo para que los alumnos entreguen sus consultas SQL."></i>
+                <span className="text-[var(--danger-red)]">*</span>
+              </label>
+              <div className="due-datetime-inputs">
+                <input
+                  type="date"
+                  className="sidebar-date-input"
+                  value={dueDate}
+                  onChange={handleDateChange}
+                />
+                <input
+                  type="time"
+                  className="sidebar-time-input"
+                  value={dueTime}
+                  onChange={(e) => setDueTime(e.target.value)}
+                />
+              </div>
+              <div className="checkbox-control-wrapper mt-3">
+                <input 
+                  type="checkbox" 
+                  id="close-late-submissions" 
+                  className="sidebar-checkbox" 
+                  checked={closeLateSubmissions}
+                  onChange={(e) => setCloseLateSubmissions(e.target.checked)}
+                />
+                <label htmlFor="close-late-submissions" className="text-sm">Cerrar entregas después de la fecha límite</label>
+              </div>
             </div>
           </div>
 
-          {/* Fecha y Hora de Entrega */}
-          <div className="sidebar-control-group">
-            <label className="sidebar-label">Fecha y hora de entrega</label>
-            <div className="due-datetime-inputs">
-              <input
-                type="date"
-                className="sidebar-date-input"
-                value={dueDate}
-                onChange={handleDateChange}
-              />
-              <input
-                type="time"
-                className="sidebar-time-input"
-                value={dueTime}
-                onChange={(e) => setDueTime(e.target.value)}
-              />
-            </div>
-            <div className="checkbox-control-wrapper">
-              <input type="checkbox" id="close-late-submissions" className="sidebar-checkbox" />
-              <label htmlFor="close-late-submissions">Cerrar entregas después de la fecha límite</label>
-            </div>
-          </div>
-
-          {/* Fully Expanded Rubric / Lista de Cotejo Section */}
-          <div className="sidebar-control-group rubric-sidebar-section">
-            <div className="rubric-drawer-header">
-              <label className="sidebar-label">Lista de Cotejo</label>
+          {/* Panel de Rúbrica / Lista de Cotejo */}
+          <div className="classroom-card-panel flex flex-col flex-grow">
+            <div className="rubric-drawer-header mb-4">
+              <label className="sidebar-label flex items-center gap-2">
+                Lista de Cotejo
+                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Desglosa el valor total de la práctica en criterios específicos para que la IA sepa qué buscar en la respuesta del alumno."></i>
+                <span className="text-[var(--danger-red)]">*</span>
+              </label>
               <button type="button" className="btn-add-criterio-drawer" onClick={handleAddCriteria}>
                 + Añadir Criterio
               </button>
@@ -432,9 +498,9 @@ function CrearPracticaDocenteContent() {
         </aside>
       </div>
 
-      {/* Schema Detail Modal */}
+      {/* Modal de Detalle de Esquema */}
       {modalDb && (
-        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in" onClick={handleCloseModal}>
           <div className="bg-panel rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col h-[75vh] border border-border" onClick={(e) => e.stopPropagation()}>
             <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex justify-between items-center shrink-0">
               <span className="text-xl font-bold text-foreground">Esquema: {modalDb}</span>
@@ -443,7 +509,7 @@ function CrearPracticaDocenteContent() {
               </button>
             </div>
             <div className="flex flex-1 min-h-0">
-              {/* Sidebar: Table List */}
+              {/* Barra Lateral: Lista de Tablas */}
               <div className="w-64 border-r border-border bg-[var(--bg-main)] overflow-y-auto p-4 shrink-0">
                 <p className="text-xs font-bold text-muted uppercase tracking-wider mb-4 px-3">Tablas ({catalogs.find(c => c.name === modalDb)?.tables?.length || 0})</p>
                 <div className="flex flex-col gap-1">
