@@ -256,13 +256,13 @@ export default function ClassFeedAlumnoPage() {
                           <div 
                             key={p.id} 
                             onClick={() => handlePracticeClick(p.id)}
-                            className="p-4 bg-main border border-border rounded-2xl hover:border-indigo-300 hover:bg-indigo-50/50 cursor-pointer transition-all group shadow-sm hover:shadow-md"
+                            className="p-4 bg-main border border-border rounded-2xl hover:border-indigo-500 hover:bg-indigo-500/10 cursor-pointer transition-all group shadow-sm hover:shadow-md"
                           >
-                            <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-700 transition-colors line-clamp-2 leading-snug mb-3">
+                            <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug mb-3">
                               {p.title}
                             </h4>
                             <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider">
-                              <span className={p.status === "overdue" ? "text-red-500 bg-red-50 px-2 py-1 rounded-md" : "text-blue-600 bg-blue-50 px-2 py-1 rounded-md"}>
+                              <span className={p.status === "overdue" ? "text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md" : "text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-md"}>
                                 {p.status === "overdue" ? "Atrasada" : "Asignada"}
                               </span>
                               <span className="text-muted">

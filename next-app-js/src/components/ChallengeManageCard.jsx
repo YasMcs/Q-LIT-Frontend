@@ -51,7 +51,11 @@ export default function ChallengeManageCard({
 
         <div className="relative" ref={menuRef}>
           <button 
-            className="p-2 text-muted hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+            className={`p-2 rounded-lg transition-colors ${
+              isMenuOpen 
+                ? "bg-[rgba(255,255,255,0.08)] text-foreground" 
+                : "text-muted hover:text-foreground hover:bg-[rgba(255,255,255,0.06)]"
+            }`}
             onClick={(e) => { e.stopPropagation(); setIsMenuOpen(!isMenuOpen); }}
           >
             <i className="fa-solid fa-ellipsis-vertical px-1"></i>
