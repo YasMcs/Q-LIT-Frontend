@@ -1,29 +1,84 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import CustomSelect from "@/components/CustomSelect";
 import "./directorio-docente.css";
 
-import mockData from "@/app/api/mocks/teacher/directorio.json";
-
-const mockStudents = mockData.students;
-
 export default function DirectorioDocentePage() {
+  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterClass, setFilterClass] = useState("all");
   const [selectedStudent, setSelectedStudent] = useState(null);
+  
+  const [students, setStudents] = useState([]);
+  const [classrooms, setClassrooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // 1. Cargar las clases/laboratorios activos del docente para llenar el dropdown
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch(`/api/proxy/classrooms?teacherId=${session.user.id}`)
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.data) {
+            setClassrooms(resData.data);
+          }
+        })
+        .catch(err => console.error("Error al cargar laboratorios:", err));
+    }
+  }, [session]);
+
+  // 2. Cargar la lista de alumnos dinámica de acuerdo al filtro de laboratorios
+  useEffect(() => {
+    if (session?.user?.id) {
+      setLoading(true);
+      fetch(`/api/proxy/classrooms/teacher/students?teacherId=${session.user.id}&classroomId=${filterClass}`)
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.students) {
+            setStudents(resData.students);
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error al cargar alumnos:", err);
+          setLoading(false);
+        });
+    }
+  }, [session, filterClass]);
+
+  // Mapear opciones del filtro dropdown por nombre de grupo
   const filterOptions = [
     { value: "all", label: "Todos los laboratorios" },
-    { value: "A", label: "Grupo A" },
-    { value: "B", label: "Grupo B" }
+    ...classrooms.map(c => {
+      const groupName = c.group || c.inviteCode || "";
+      const label = groupName.toLowerCase().startsWith("grupo") ? groupName : `Grupo ${groupName}`;
+      return { value: c.id, label };
+    })
   ];
 
-  const filteredStudents = mockStudents.filter(s => {
+  // Aplicar filtro de búsqueda por texto localmente
+  const filteredStudents = students.filter(s => {
     const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           s.group.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesClass = filterClass === "all" || s.group === filterClass;
-    return matchesSearch && matchesClass;
+    return matchesSearch;
   });
+
+  // Limpiar el estudiante seleccionado si tras filtrar ya no aparece en la lista
+  useEffect(() => {
+    if (selectedStudent && !filteredStudents.some(s => s.id === selectedStudent.id)) {
+      setSelectedStudent(null);
+    }
+  }, [filteredStudents, selectedStudent]);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-main text-muted gap-2">
+        <i className="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
+        <span>Cargando alumnos inscritos...</span>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -76,17 +131,21 @@ export default function DirectorioDocentePage() {
                 <div className="detail-body">
                   <div className="practices-list">
                     <h3 className="practices-list-title">Historial de Entregas</h3>
-                    {selectedStudent.practices.map(prac => (
-                      <div key={prac.id} className="practice-history-card">
-                        <div>
-                          <div className="prac-title">{prac.title}</div>
-                          <div className="prac-date">{prac.date}</div>
+                    {selectedStudent.practices && selectedStudent.practices.length > 0 ? (
+                      selectedStudent.practices.map(prac => (
+                        <div key={prac.id} className="practice-history-card">
+                          <div>
+                            <div className="prac-title">{prac.title}</div>
+                            <div className="prac-date">{prac.date}</div>
+                          </div>
+                          <div className={`prac-score ${prac.score === 0 ? 'score-bad' : prac.score >= 80 ? 'score-good' : 'score-pending'}`}>
+                            {prac.score === 0 && prac.date === "No entregada" ? "No entregado" : `${prac.score}/100`}
+                          </div>
                         </div>
-                        <div className={`prac-score ${prac.score === 0 ? 'score-bad' : prac.score >= 80 ? 'score-good' : 'score-pending'}`}>
-                          {prac.score === 0 ? "No entregado" : `${prac.score}/100`}
-                        </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-muted italic text-sm text-center py-4">Este laboratorio no tiene prácticas asignadas aún.</p>
+                    )}
                   </div>
                 </div>
               </div>
