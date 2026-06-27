@@ -1,22 +1,63 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import CustomSelect from "@/components/CustomSelect";
 import "./estadisticas-docente.css";
 
-import mockData from "@/app/api/mocks/teacher/estadisticas.json";
-
-const globalStats = mockData.globalStats;
-const struggles = mockData.struggles;
-const classStats = mockData.classStats;
-
 export default function EstadisticasDocentePage() {
+  const { data: session } = useSession();
   const [filter, setFilter] = useState("all");
+  const [stats, setStats] = useState(null);
+  const [classrooms, setClassrooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // 1. Obtener la lista de aulas/grupos del docente para llenar el dropdown dinámicamente
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch(`/api/proxy/classrooms?teacherId=${session.user.id}`)
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.data) {
+            setClassrooms(resData.data);
+          }
+        })
+        .catch(err => console.error("Error al cargar aulas:", err));
+    }
+  }, [session]);
+
+  // 2. Obtener las estadísticas basadas en el grupo seleccionado (filtro)
+  useEffect(() => {
+    if (session?.user?.id) {
+      setLoading(true);
+      fetch(`/api/proxy/classrooms/teacher/statistics?teacherId=${session.user.id}&classroomId=${filter}`)
+        .then(res => res.json())
+        .then(resData => {
+          setStats(resData);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error al cargar estadísticas:", err);
+          setLoading(false);
+        });
+    }
+  }, [session, filter]);
+
+  // Mapear las opciones del filtro de grupos
   const filterOptions = [
     { value: "all", label: "Todos los grupos" },
-    { value: "1", label: "Grupo A" },
-    { value: "2", label: "Grupo B" }
+    ...classrooms.map(c => ({ value: c.id, label: c.title }))
   ];
+
+  if (loading || !stats) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-main text-muted gap-2">
+        <i className="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
+        <span>Cargando estadísticas reales...</span>
+      </div>
+    );
+  }
+
+  const { globalStats, struggles, classStats } = stats;
 
   return (
     <>
