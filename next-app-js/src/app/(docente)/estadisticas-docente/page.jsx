@@ -42,10 +42,14 @@ export default function EstadisticasDocentePage() {
     }
   }, [session, filter]);
 
-  // Mapear las opciones del filtro de grupos
+  // Mapear las opciones del filtro por grupo (ej. "Grupo A")
   const filterOptions = [
     { value: "all", label: "Todos los grupos" },
-    ...classrooms.map(c => ({ value: c.id, label: c.title }))
+    ...classrooms.map(c => {
+      const groupName = c.group || "";
+      const label = groupName.toLowerCase().startsWith("grupo") ? groupName : `Grupo ${groupName}`;
+      return { value: c.id, label };
+    })
   ];
 
   if (loading || !stats) {
