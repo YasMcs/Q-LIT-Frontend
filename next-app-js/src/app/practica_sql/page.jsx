@@ -111,13 +111,15 @@ function PracticaSQLContent() {
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error?.message || "Error al ejecutar la consulta.");
+        setExecutionError(data.error || { message: "Error al ejecutar la consulta." });
+        setTerminalState("error");
+        return;
       }
 
       setExecutionResult(data.data);
       setTerminalState("success");
     } catch (err) {
-      setExecutionError(err.message);
+      setExecutionError({ message: err.message || "Error de red al ejecutar la consulta." });
       setTerminalState("error");
     }
   };
@@ -230,8 +232,14 @@ function PracticaSQLContent() {
   useEffect(() => {
     if (practiceId) {
       fetch(`/api/proxy/practices/${practiceId}/start`, { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
+        .then(async (res) => {
+          const data = await res.json();
+          // Si el servidor retorna un error (como el 403 de práctica ya entregada)
+          if (!res.ok) {
+            alert(data.error?.message || "Error al ingresar a la práctica");
+            router.push("/class-feed-alumno"); // Redirecciona de vuelta al muro
+            return;
+          }
           if (data.data) {
             setPracticeData(data.data.practice);
             setGeneratedStatement(data.data.submission.generatedStatement);
@@ -432,10 +440,24 @@ function PracticaSQLContent() {
                 </div>
               )}
 
-              {terminalState === "error" && (
-                <div className="terminal-placeholder-sql text-red-500">
-                  <div className="font-bold mb-2"><i className="fa-solid fa-triangle-exclamation" /> Error de Ejecución:</div>
-                  <div className="text-sm opacity-90">{executionError}</div>
+              {terminalState === "error" && executionError && (
+                <div className="terminal-placeholder-sql text-red-500 flex flex-col items-start gap-2">
+                  <div className="font-bold mb-1">
+                    <i className="fa-solid fa-triangle-exclamation mr-1.5" /> Error de Ejecución:
+                  </div>
+                  <div className="text-sm opacity-90 font-medium">
+                    {executionError.mensaje || (typeof executionError === 'string' ? executionError : (executionError.message || "Error desconocido"))}
+                  </div>
+                  
+                  {executionError.suggestion && (
+                    <div className="mt-3 p-4 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[13px] rounded-xl flex items-start gap-2.5 max-w-xl text-left font-medium shadow-sm">
+                      <span className="text-base leading-none">💡</span>
+                      <div>
+                        <strong className="block mb-1 text-amber-400">Sugerencia pedagógica:</strong>
+                        {executionError.suggestion}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

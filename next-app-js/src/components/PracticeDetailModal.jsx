@@ -14,6 +14,10 @@ export default function PracticeDetailModal({
   if (!isOpen || !practice) return null;
 
   const isStudent = role === "student";
+  
+  // Obtener la entrega del estudiante si existe
+  const submission = practice.submissions?.[0];
+  const isSolved = isStudent && practice.status === "solved" && submission;
 
   // Overlay con desenfoque para el modal
   return (
@@ -85,36 +89,68 @@ export default function PracticeDetailModal({
 
         {/* Body */}
         <div className="px-8 py-6 max-h-[60vh] overflow-y-auto">
-          {/* Objective */}
-          <div className="mb-8">
-            <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-3">
-              Objetivo
-            </h3>
-            <p className="text-foreground leading-relaxed">
-              {practice.description || "No hay un objetivo definido para esta práctica."}
-            </p>
-          </div>
-
-          {/* Expected Functions */}
-          <div>
-            <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-3">
-              Funciones Esperadas
-            </h3>
-            {practice.requiredFunctions && practice.requiredFunctions.keywords && practice.requiredFunctions.keywords.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {practice.requiredFunctions.keywords.map((func, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1.5 bg-input border border-border rounded-lg text-sm font-mono font-bold text-foreground"
-                  >
-                    {func}
-                  </span>
-                ))}
+          {isSolved ? (
+            <div className="space-y-6 animate-fade-in">
+              <div>
+                <h3 className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
+                  Estado de la Entrega
+                </h3>
+                <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full ${submission.reviewStatus === "calificada" ? "bg-emerald-500 animate-pulse" : "bg-amber-500 animate-pulse"}`}></span>
+                  {submission.reviewStatus === "calificada" ? "Calificada por el docente" : "Entregada (En espera de revisión)"}
+                </p>
               </div>
-            ) : (
-              <p className="text-muted italic text-sm">No se especificaron funciones.</p>
-            )}
-          </div>
+              <div>
+                <h3 className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
+                  Fecha y Hora de Entrega
+                </h3>
+                <p className="text-sm font-semibold text-foreground">
+                  {new Date(submission.submittedAt).toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" })}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
+                  Consulta SQL Enviada
+                </h3>
+                <pre className="p-4 bg-[var(--bg-main)] border border-border rounded-2xl text-sm font-mono text-indigo-400 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner">
+                  {submission.studentSqlCode || "-- Sin código registrado --"}
+                </pre>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Objective */}
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-3">
+                  Objetivo
+                </h3>
+                <p className="text-foreground leading-relaxed">
+                  {practice.description || "No hay un objetivo definido para esta práctica."}
+                </p>
+              </div>
+
+              {/* Expected Functions */}
+              <div>
+                <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-3">
+                  Funciones Esperadas
+                </h3>
+                {practice.requiredFunctions && practice.requiredFunctions.keywords && practice.requiredFunctions.keywords.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {practice.requiredFunctions.keywords.map((func, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1.5 bg-input border border-border rounded-lg text-sm font-mono font-bold text-foreground"
+                      >
+                        {func}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted italic text-sm">No se especificaron funciones.</p>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Footer */}
@@ -156,23 +192,32 @@ export default function PracticeDetailModal({
             </button>
           </div>
           
-          <button
-            className="px-6 py-2.5 rounded-xl font-bold text-white bg-accent hover:opacity-90 hover:shadow-lg transition-all flex items-center gap-2"
-            onClick={() => {
-              onClose();
-              if (onAction) onAction(practice.id);
-            }}
-          >
-            {isStudent ? (
-              <>
-                <i className="fa-solid fa-terminal"></i> Ingresar al laboratorio
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-list-check"></i> Revisar Entregas
-              </>
-            )}
-          </button>
+          {isStudent && practice.status === "solved" ? (
+            <button
+              className="px-6 py-2.5 rounded-xl font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 cursor-not-allowed flex items-center gap-2"
+              disabled
+            >
+              <i className="fa-solid fa-circle-check"></i> Práctica Entregada
+            </button>
+          ) : (
+            <button
+              className="px-6 py-2.5 rounded-xl font-bold text-white bg-accent hover:opacity-90 hover:shadow-lg transition-all flex items-center gap-2"
+              onClick={() => {
+                onClose();
+                if (onAction) onAction(practice.id);
+              }}
+            >
+              {isStudent ? (
+                <>
+                  <i className="fa-solid fa-terminal"></i> Ingresar al laboratorio
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-list-check"></i> Revisar Entregas
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -40,12 +40,24 @@ export default function ClassFeedAlumnoPage() {
         const pr = await fetch(`/api/proxy/practices/classroom/${data.data[0].id}`);
         const prData = await pr.json();
         if (pr.ok && Array.isArray(prData)) {
-          const formatted = prData.map(p => ({
-            ...p,
-            status: p.deadline && new Date(p.deadline) < new Date() ? "overdue" : "assigned",
-            dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
-            assignDate: new Date(p.createdAt).toLocaleDateString("es-ES")
-          }));
+          const formatted = prData.map(p => {
+            // Obtener la entrega del estudiante
+            const studentSubmission = p.submissions?.[0];
+            const isSubmitted = studentSubmission && (studentSubmission.reviewStatus === "pendiente" || studentSubmission.reviewStatus === "calificada");
+            
+            let status = "assigned";
+            if (isSubmitted) {
+              status = "solved"; // Se marca como entregada
+            } else if (p.deadline && new Date(p.deadline) < new Date()) {
+              status = "overdue"; // Vencida
+            }
+            return {
+              ...p,
+              status,
+              dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
+              assignDate: new Date(p.createdAt).toLocaleDateString("es-ES")
+            };
+          });
           setPractices(formatted);
         }
       } else {
