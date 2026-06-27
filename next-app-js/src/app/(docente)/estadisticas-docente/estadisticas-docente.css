@@ -237,7 +237,7 @@
 }
 
 .groups-table tbody tr:hover td {
-  background-color: #f8fafc;
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .groups-table tr:last-child td {
