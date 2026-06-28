@@ -24,6 +24,9 @@ export default function ClassFeedDocentePage() {
   const [challenges, setChallenges] = useState([]);
   const [selectedPractice, setSelectedPractice] = useState(null);
   
+  // Filtering
+  const [filterStatus, setFilterStatus] = useState("todas");
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
@@ -163,11 +166,28 @@ export default function ClassFeedDocentePage() {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm("¿Estás seguro de que deseas eliminar esta práctica? Esta acción no se puede deshacer.")) {
-      setChallenges(challenges.filter(c => c.id !== id));
+      try {
+        const res = await fetch(`/api/proxy/practices/${id}`, {
+          method: "DELETE"
+        });
+        
+        if (!res.ok) {
+          throw new Error("Error al eliminar la práctica en el servidor");
+        }
+        
+        setChallenges(challenges.filter(c => c.id !== id));
+      } catch (err) {
+        alert(err.message);
+      }
     }
   };
+
+  const filteredChallenges = challenges.filter(c => {
+    if (filterStatus === "todas") return true;
+    return c.status === filterStatus;
+  });
 
   return (
     <>
@@ -196,38 +216,67 @@ export default function ClassFeedDocentePage() {
         <div className="feed-workspace flex">
           {/* Main Panel */}
           <main className="feed-main-panel flex-1">
-            <div className="feed-panel-header">
-              <div>
-                <h1>Estructura del Laboratorio</h1>
-                <p>
-                  Controla las asignaciones activas, añade nuevas prácticas y evalúa el desempeño técnico.
-                </p>
+            {/* Toolbar: Tabs & Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+              {/* Premium Segmented Control Tabs */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-panel border border-border">
+                  <i className="fa-solid fa-filter text-muted-foreground" title="Filtrar prácticas" />
+                </div>
+                <div className="flex bg-panel border border-border p-1.5 rounded-xl self-start sm:self-auto">
+                  <button 
+                    onClick={() => setFilterStatus("todas")} 
+                    className={`px-4 py-2 text-sm font-semibold transition-all rounded-lg ${filterStatus === 'todas' ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted hover:text-foreground hover:bg-input'}`}
+                  >
+                    Todas
+                  </button>
+                  <button 
+                    onClick={() => setFilterStatus("active")} 
+                    className={`px-4 py-2 text-sm font-semibold transition-all rounded-lg ${filterStatus === 'active' ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted hover:text-foreground hover:bg-input'}`}
+                  >
+                    Activas
+                  </button>
+                  <button 
+                    onClick={() => setFilterStatus("closed")} 
+                    className={`px-4 py-2 text-sm font-semibold transition-all rounded-lg ${filterStatus === 'closed' ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted hover:text-foreground hover:bg-input'}`}
+                  >
+                    Vencidas
+                  </button>
+                </div>
               </div>
-              <button className="feed-btn-action-master" onClick={handleAddChallenge}>
-                <i className="fa-solid fa-plus" /> Añadir Práctica SQL
+
+              {/* Action Button */}
+              <button className="feed-btn-action-master whitespace-nowrap" onClick={handleAddChallenge}>
+                <i className="fa-solid fa-plus" /> Nueva Práctica
               </button>
             </div>
 
             {/* Challenges List */}
             <div className="space-y-4">
-              {challenges.map((challenge) => (
-                <ChallengeManageCard
-                  key={challenge.id}
-                  id={challenge.id}
-                  title={challenge.title}
-                  subtitle={challenge.subtitle}
-                  assignDate={challenge.fecha_asignacion ? new Date(challenge.fecha_asignacion).toLocaleDateString("es-ES") : ''}
-                  deadline={challenge.deadline}
-                  closeLateSubmissions={challenge.closeLateSubmissions}
-                  pendingCount={challenge.pendingCount}
-                  status={challenge.status}
-                  onClick={handleChallengeClick}
-                  onReview={handleReview}
-                  onEdit={handleEdit}
-                  onChangeDate={handleChangeDateClick}
-                  onDelete={handleDelete}
-                />
-              ))}
+              {filteredChallenges.length === 0 ? (
+                <div className="p-8 text-center bg-panel border border-border rounded-xl">
+                  <p className="text-muted">No hay laboratorios en esta categoría.</p>
+                </div>
+              ) : (
+                filteredChallenges.map((challenge) => (
+                  <ChallengeManageCard
+                    key={challenge.id}
+                    id={challenge.id}
+                    title={challenge.title}
+                    subtitle={challenge.subtitle}
+                    assignDate={challenge.fecha_asignacion ? new Date(challenge.fecha_asignacion).toLocaleDateString("es-ES") : ''}
+                    deadline={challenge.deadline}
+                    closeLateSubmissions={challenge.closeLateSubmissions}
+                    pendingCount={challenge.pendingCount}
+                    status={challenge.status}
+                    onClick={handleChallengeClick}
+                    onReview={handleReview}
+                    onEdit={handleEdit}
+                    onChangeDate={handleChangeDateClick}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
             </div>
           </main>
 

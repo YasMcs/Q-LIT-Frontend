@@ -37,11 +37,7 @@ export default function RoleGuard({ children, allowedRole }) {
   }, [status, session, allowedRole, router]);
 
   if (status === "loading" || !isAuthorized) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', backgroundColor: '#0f172a', color: 'white' }}>
-        <i className="fa-solid fa-circle-notch fa-spin fa-3x" style={{ color: '#3b82f6' }}></i>
-      </div>
-    );
+    return null;
   }
 
   return <>{children}</>;
