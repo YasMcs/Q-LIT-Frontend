@@ -63,23 +63,16 @@
 /* ---- NAVBAR SUPERIOR ---- */
 .home-page-container .navbar {
   width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 16px 32px;
+  padding: 30px 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.04);
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background: linear-gradient(to bottom, rgba(5, 5, 10, 1) 0%, rgba(5, 5, 10, 0.95) 50%, rgba(5, 5, 10, 0) 100%);
+  pointer-events: auto;
 }
 
 .home-page-container .brand-logo {

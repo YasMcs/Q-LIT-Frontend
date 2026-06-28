@@ -8,17 +8,16 @@ import Features from "@/components/Features";
 import Scope from "@/components/Scope";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 import "./welcome.css";
 
 export default function HomePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
       if (!session.user.role) {
-        
         router.push("/onboarding");
       } else if (session.user.role === "teacher") {
         router.push("/dashboard-docente");
@@ -29,7 +28,7 @@ export default function HomePage() {
   }, [status, session, router]);
 
   if (status === "loading" || (status === "authenticated" && session?.user)) {
-    return <LoadingSpinner text="Autenticando..." />;
+    return <div className="min-h-screen w-full bg-[var(--bg-main)]"></div>;
   }
 
   return (

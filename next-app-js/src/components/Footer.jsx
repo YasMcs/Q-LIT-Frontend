@@ -5,46 +5,55 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="footer-container">
-      <div className="footer-content">
-        <div className="footer-brand">
-          <div className="brand-logo" style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
-            Q-LIT<div className="dot" style={{ width: '6px', height: '6px', marginLeft: '2px' }} />
+    <footer className="footer-container" style={{ padding: '60px 40px 24px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px' }}>
+        
+        <div>
+          <div className="brand-logo" style={{ fontSize: '1.4rem', marginBottom: '16px', display: 'flex', alignItems: 'center', fontWeight: '800' }}>
+            Q-LIT<div className="dot" style={{ width: '6px', height: '6px', marginLeft: '4px', backgroundColor: '#6366f1', borderRadius: '50%' }} />
           </div>
-          <p className="footer-description">
-            Plataforma avanzada para la gestión, evaluación y monitoreo de bases de datos.
+          <p style={{ color: '#b5bac1', fontSize: '0.95rem', lineHeight: '1.6', maxWidth: '300px' }}>
+            Plataforma interactiva avanzada para la enseñanza, gestión y evaluación de Bases de Datos.
           </p>
         </div>
         
-        <div className="footer-links">
-          <h4><i className="fa-solid fa-scale-balanced" style={{ marginRight: '8px', color: '#6366f1' }}></i> Legal</h4>
-          <ul>
+        <div>
+          <h4 style={{ color: '#fff', marginBottom: '20px', fontSize: '1.05rem', fontWeight: '600' }}><i className="fa-solid fa-scale-balanced" style={{ marginRight: '8px', color: '#6366f1' }}></i> Legal</h4>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <li>
-              <a href="/aviso-privacidad.pdf" target="_blank" rel="noopener noreferrer" className="footer-link">
-                <i className="fa-solid fa-file-pdf" style={{ marginRight: '6px' }}></i> Aviso de Privacidad
+              <a href="/aviso-privacidad" className="footer-link" style={{ color: '#b5bac1', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = '#fff'} onMouseOut={e => e.currentTarget.style.color = '#b5bac1'}>
+                <i className="fa-solid fa-file-contract" style={{ marginRight: '8px' }}></i> Aviso de Privacidad
+              </a>
+            </li>
+            <li>
+              <a href="/aviso-privacidad#cookies" className="footer-link" style={{ color: '#b5bac1', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = '#fff'} onMouseOut={e => e.currentTarget.style.color = '#b5bac1'}>
+                <i className="fa-solid fa-cookie-bite" style={{ marginRight: '8px' }}></i> Política de Cookies
               </a>
             </li>
           </ul>
         </div>
 
-        <div className="footer-contact">
-          <h4><i className="fa-solid fa-headset" style={{ marginRight: '8px', color: '#6366f1' }}></i> Soporte Técnico</h4>
-          <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div>
+          <h4 style={{ color: '#fff', marginBottom: '20px', fontSize: '1.05rem', fontWeight: '600' }}><i className="fa-solid fa-headset" style={{ marginRight: '8px', color: '#6366f1' }}></i> Soporte Técnico</h4>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <li>
-              <a href="mailto:q.lit.laboratorios@gmail.com" className="footer-link" style={{ textTransform: 'uppercase', fontSize: '0.85rem', letterSpacing: '0.5px' }}>
+              <a href="mailto:q.lit.laboratorios@gmail.com" style={{ color: '#b5bac1', textDecoration: 'none', fontSize: '0.9rem', letterSpacing: '0.5px', textTransform: 'uppercase', transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = '#fff'} onMouseOut={e => e.currentTarget.style.color = '#b5bac1'}>
                 <i className="fa-solid fa-envelope" style={{ marginRight: '8px' }}></i> Q.LIT.LABORATORIOS@GMAIL.COM
               </a>
             </li>
             <li>
-              <a href="mailto:y.macias1802@gmail.com" className="footer-link" style={{ textTransform: 'uppercase', fontSize: '0.85rem', letterSpacing: '0.5px' }}>
+              <a href="mailto:y.macias1802@gmail.com" style={{ color: '#b5bac1', textDecoration: 'none', fontSize: '0.9rem', letterSpacing: '0.5px', textTransform: 'uppercase', transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = '#fff'} onMouseOut={e => e.currentTarget.style.color = '#b5bac1'}>
                 <i className="fa-solid fa-envelope" style={{ marginRight: '8px' }}></i> Y.MACIAS1802@GMAIL.COM
               </a>
             </li>
           </ul>
         </div>
       </div>
-      <div className="footer-bottom">
-        <p>&copy; {currentYear} Q-LIT. Todos los derechos reservados.</p>
+      
+      <div style={{ maxWidth: '1200px', margin: '60px auto 0', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+        <p style={{ color: '#b5bac1', fontSize: '0.9rem', margin: 0 }}>
+          &copy; {currentYear} Q-LIT. Todos los derechos reservados.
+        </p>
       </div>
     </footer>
   );

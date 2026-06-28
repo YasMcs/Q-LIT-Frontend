@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export default function RoleGuard({ children, allowedRole }) {
+export default function RoleGuard({ children, allowedRole, fallback = null }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -36,8 +36,13 @@ export default function RoleGuard({ children, allowedRole }) {
     }
   }, [status, session, allowedRole, router]);
 
-  if (status === "loading" || !isAuthorized) {
-    return null;
+  if (status === "loading") {
+    // Show children immediately while loading so the page can show its own skeleton
+    return <>{children}</>;
+  }
+
+  if (!isAuthorized) {
+    return fallback;
   }
 
   return <>{children}</>;

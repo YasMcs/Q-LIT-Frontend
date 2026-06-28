@@ -15,11 +15,11 @@ export default function Hero() {
             Aprende • Enseña • Practica
           </div>
           <h1>
-            El mejor
+            Laboratorio de Consultas
             <br />
-            Laboratorio de
+            para la
             <br />
-            <span>Consultas SQL</span>
+            <span>Enseñanza Interactiva</span>
           </h1>
           <p className="subtitle">
             Plataforma interactiva para la enseñanza de Bases de Datos.

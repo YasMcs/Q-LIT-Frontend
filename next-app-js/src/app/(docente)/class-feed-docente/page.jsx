@@ -5,7 +5,7 @@ import Link from "next/link";
 import ChallengeManageCard from "@/components/ChallengeManageCard";
 import PracticeDetailModal from "@/components/PracticeDetailModal";
 import StatBox from "@/components/StatBox";
-
+import ClassFeedSkeleton from "@/components/skeletons/ClassFeedSkeleton";
 
 import "./class-feed-docente.css";
 
@@ -23,6 +23,7 @@ export default function ClassFeedDocentePage() {
   const [students, setStudents] = useState([]);
   const [challenges, setChallenges] = useState([]);
   const [selectedPractice, setSelectedPractice] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   // Filtering
   const [filterStatus, setFilterStatus] = useState("todas");
@@ -36,43 +37,46 @@ export default function ClassFeedDocentePage() {
     }
 
     if (classroomId) {
-      // Fetch classroom and students
-      fetch(`/api/proxy/classrooms/${classroomId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.data) {
-            const cls = data.data;
-            if (!titleParam) setClassInfo(prev => ({ ...prev, title: cls.name }));
-            if (!codeParam) setClassInfo(prev => ({ ...prev, code: cls.inviteCode }));
-            
-            // Map enrollments to students
-            if (cls.enrollments) {
-              const mappedStudents = cls.enrollments.map(e => ({
-                id: e.user.id,
-                name: e.user.name || "Sin Nombre"
-              }));
-              setStudents(mappedStudents);
-            }
-          }
-        })
-        .catch(err => console.error("Error al cargar datos del laboratorio:", err));
-
-      // Fetch practices
-      fetch(`/api/proxy/practices/classroom/${classroomId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            const formatted = data.map(p => ({
-              ...p,
-              subtitle: p.description ? p.description.substring(0, 50) + "..." : "Práctica SQL",
-              fecha_asignacion: p.createdAt,
-              pendingCount: 0,
-              status: p.deadline && new Date(p.deadline) < new Date() ? "closed" : "active"
+      setLoading(true);
+      Promise.all([
+        fetch(`/api/proxy/classrooms/${classroomId}`).then(res => res.json()),
+        fetch(`/api/proxy/practices/classroom/${classroomId}`).then(res => res.json())
+      ])
+      .then(([classroomData, practicesData]) => {
+        // Handle Classroom & Students
+        if (classroomData && !classroomData.error) {
+          const cls = classroomData.data || classroomData;
+          setClassInfo({
+            title: cls.name || titleParam,
+            code: cls.inviteCode || codeParam
+          });
+          if (cls.enrollments) {
+            const mappedStudents = cls.enrollments.map(e => ({
+              id: e.user.id,
+              name: e.user.name || "Sin Nombre"
             }));
-            setChallenges(formatted);
+            setStudents(mappedStudents);
           }
-        })
-        .catch(err => console.error("Error al cargar prácticas:", err));
+        }
+        
+        // Handle Practices
+        if (Array.isArray(practicesData)) {
+          const formatted = practicesData.map(p => ({
+            ...p,
+            subtitle: p.description ? p.description.substring(0, 50) + "..." : "Práctica SQL",
+            fecha_asignacion: p.createdAt,
+            pendingCount: 0,
+            status: p.deadline && new Date(p.deadline) < new Date() ? "closed" : "active"
+          }));
+          setChallenges(formatted);
+        }
+      })
+      .catch(err => console.error("Error fetching class feed data:", err))
+      .finally(() => {
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
     }
   }, [classroomId, titleParam, codeParam]);
 
@@ -167,9 +171,14 @@ export default function ClassFeedDocentePage() {
       setNewTime("");
       alert("Fecha límite actualizada con éxito.");
     } catch (err) {
-      alert(err.message);
+      console.error(err);
+      alert("Error al actualizar la fecha. Inténtalo de nuevo.");
     }
   };
+
+  if (loading) {
+    return <ClassFeedSkeleton isSidebarOpen={isSidebarOpen} />;
+  }
 
   const handleDelete = async (id) => {
     if (confirm("¿Estás seguro de que deseas eliminar esta práctica? Esta acción no se puede deshacer.")) {

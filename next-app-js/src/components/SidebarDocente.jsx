@@ -3,18 +3,19 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function SidebarDocente() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const activeKey = pathname.includes("dashboard") ? "clases"
                   : pathname.includes("directorio") ? "directorio"
                   : pathname.includes("estadisticas") ? "estadisticas"
                   : pathname.includes("archivo") ? "archivo"
                   : pathname.includes("class-feed") ? "clases"
                   : "clases";
-
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("docente-sidebar-collapsed");
@@ -48,6 +49,10 @@ export default function SidebarDocente() {
         .docente-sidebar.collapsed .docente-user-profile { justify-content: center; padding-top: 24px; border-top: none; }
       `}</style>
       
+      {isLoggingOut && <LoadingSpinner fullScreen={true} text="Cerrando sesión..." />}
+      <div 
+        className={`docente-sidebar-wrapper ${isCollapsed ? "collapsed" : ""}`}
+      >
       <aside className={`docente-sidebar relative ${isCollapsed ? "collapsed" : ""}`}>
         <div className="w-full">
           <div className="flex items-center mb-12 justify-between pr-4">
@@ -109,7 +114,10 @@ export default function SidebarDocente() {
               <span className="whitespace-nowrap font-bold text-sm truncate block">{session?.user?.name || "Panel Docente"}</span>
               <small className="whitespace-nowrap opacity-80 truncate block mb-2">{session?.user?.email || "Administrador"}</small>
               <button 
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={() => {
+                  setIsLoggingOut(true);
+                  setTimeout(() => signOut({ callbackUrl: "/" }), 1500);
+                }}
                 className="text-xs font-bold text-[var(--danger-red)] hover:text-white bg-[var(--danger-red)]/10 hover:bg-[var(--danger-red)] px-2 py-1 rounded-md transition-colors self-start whitespace-nowrap"
               >
                 <i className="fa-solid fa-arrow-right-from-bracket mr-1"></i> Cerrar sesión
@@ -118,6 +126,7 @@ export default function SidebarDocente() {
           </div>
         </div>
       </aside>
+      </div>
     </>
   );
 }

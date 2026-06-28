@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import ClassCard from "@/components/ClassCard";
 import CreateClassModal from "@/components/CreateClassModal";
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 import "./dashboard-docente.css";
 
 export default function DashboardDocentePage() {
@@ -63,7 +64,17 @@ export default function DashboardDocentePage() {
   };
 
   if (loading) {
-    return <main className="docente-main"><p>Cargando laboratorios...</p></main>;
+    return (
+      <main className="docente-main animate-fade-in">
+        <div className="docente-header-actions">
+          <h1>Tus grupos asignados</h1>
+          <button className="docente-btn-create" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+            <i className="fa-solid fa-plus" /> Crear Nuevo Laboratorio
+          </button>
+        </div>
+        <DashboardSkeleton count={6} />
+      </main>
+    );
   }
 
   return (
