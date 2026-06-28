@@ -1,8 +1,9 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import RoleCard from "@/components/RoleCard";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import "../welcome.css";
 
 export default function OnboardingPage() {
@@ -45,16 +46,41 @@ export default function OnboardingPage() {
   };
 
   if (status === "loading" || (status === "authenticated" && session?.user?.role)) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', backgroundColor: '#0f172a', color: 'white' }}>
-        <i className="fa-solid fa-circle-notch fa-spin fa-3x" style={{ color: '#3b82f6' }}></i>
-      </div>
-    );
+    return <LoadingSpinner text="Cargando perfil..." />;
   }
 
   return (
     <div className="home-page-container animate-fade-in animate-scale-up" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <section className="roles-section" id="roles" style={{ marginTop: 0, padding: '4rem 2rem' }}>
+        {session?.user && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '2rem', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '15px', maxWidth: '500px', margin: '0 auto 2rem' }}>
+            <img src={session.user.image} alt="Profile" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+            <div style={{ textAlign: 'left', flex: 1 }}>
+              <div style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{session.user.name}</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{session.user.email}</div>
+            </div>
+            <button 
+              onClick={() => signIn('google', undefined, { prompt: 'select_account' })}
+              style={{ padding: '8px 12px', background: 'transparent', color: '#a855f7', border: '1px solid #a855f7', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', transition: 'all 0.2s' }}
+              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.1)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              Cambiar cuenta
+            </button>
+          </div>
+        )}
+        
+        <div style={{ position: 'absolute', top: '30px', left: '40px' }}>
+          <button 
+            onClick={() => signOut({ callbackUrl: '/' })}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold', transition: 'all 0.3s' }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          >
+            <i className="fa-solid fa-arrow-left"></i> Volver al inicio
+          </button>
+        </div>
+
         <div className="roles-section-header">
           <h2>¡Bienvenido a Q-LIT!</h2>
           <p>Para comenzar a utilizar la plataforma, por favor selecciona el perfil que mejor describa tu rol.</p>
@@ -62,7 +88,7 @@ export default function OnboardingPage() {
         <div className="role-grid">
           <RoleCard
             role="teacher"
-            icon="fa-graduation-cap"
+            icon="fa-chalkboard-user"
             title="Entorno Docente"
             features={[
               "Crea laboratorios virtuales y define la estructura y datos de la Base de Datos (DDL/DML).",
@@ -74,7 +100,7 @@ export default function OnboardingPage() {
           />
           <RoleCard
             role="student"
-            icon="fa-code"
+            icon="fa-user-graduate"
             title="Entorno Estudiante"
             features={[
               "Resuelve retos interactivos escribiendo consultas SQL en un editor profesional con autocompletado.",

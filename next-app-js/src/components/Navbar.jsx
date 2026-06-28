@@ -1,7 +1,6 @@
 "use client";
 import React from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { ThemeToggle } from './ThemeToggle';
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -9,11 +8,12 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="brand-logo">
-        Q-LIT<div className="dot" />
+        <div style={{ display: 'flex', alignItems: 'center', fontSize: '1.8rem', fontWeight: '800' }}>
+          Q-LIT<div className="dot" style={{ width: '8px', height: '8px', marginLeft: '4px', backgroundColor: '#6366f1', borderRadius: '50%', boxShadow: '0 0 10px #6366f1' }} />
+        </div>
       </div>
       {session ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <ThemeToggle />
           <img 
             src={session.user.image} 
             alt="Profile" 
@@ -31,7 +31,6 @@ export default function Navbar() {
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <ThemeToggle />
           <button className="btn-login-trigger" onClick={() => signIn('google', undefined, { prompt: 'select_account' })}>
             <i className="fa-brands fa-google" style={{ marginRight: '8px' }}></i> ¿Ya tienes cuenta? <strong>Inicia sesión</strong>
           </button>

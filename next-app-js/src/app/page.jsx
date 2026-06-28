@@ -5,6 +5,9 @@ import { useSession } from "next-auth/react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
+import Scope from "@/components/Scope";
+import Footer from "@/components/Footer";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import "./welcome.css";
 
 export default function HomePage() {
@@ -25,8 +28,13 @@ export default function HomePage() {
     }
   }, [status, session, router]);
 
+  if (status === "loading" || (status === "authenticated" && session?.user)) {
+    return <LoadingSpinner text="Autenticando..." />;
+  }
+
   return (
     <div className="home-page-container animate-fade-in animate-scale-up relative">
+      <div className="stars-layer"></div>
       <div className="ambient-orb orb-1"></div>
       <div className="ambient-orb orb-2"></div>
       <div className="ambient-orb orb-3"></div>
@@ -34,6 +42,8 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <Features />
+      <Scope />
+      <Footer />
     </div>
   );
 }

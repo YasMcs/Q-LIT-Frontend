@@ -12,21 +12,21 @@ export default function Hero() {
         {/* Left Side: Dark Copy Section */}
         <div className="hero-text-content">
           <div className="hero-badge">
-            Aprende • Enseña • Conecta
+            Aprende • Enseña • Practica
           </div>
           <h1>
-            Tu camino al
+            El mejor
             <br />
-            éxito con
+            Laboratorio de
             <br />
-            <span>Laboratorios en Vivo</span>
+            <span>Consultas SQL</span>
           </h1>
           <p className="subtitle">
-            Conecta con un entorno seguro en tiempo real.
+            Plataforma interactiva para la enseñanza de Bases de Datos.
             <br />
-            Agiliza prácticas, asegura autenticidad y acelera el
+            Evalúa consultas con IA, genera laboratorios personalizados y
             <br />
-            aprendizaje con la mejor plataforma.
+            fomenta la lógica SQL 100% práctica sin configuraciones previas.
           </p>
           <div className="hero-cta-group">
             <button className="btn-cta-start" onClick={handleStart}>
@@ -34,12 +34,12 @@ export default function Hero() {
             </button>
             <div className="hero-stats">
               <div className="stat-item">
-                <strong>Anti</strong>
-                <span>Plagio</span>
+                <strong>100%</strong>
+                <span>Práctico</span>
               </div>
               <div className="stat-item">
-                <strong>24/7</strong>
-                <span>Online</span>
+                <strong>Cero</strong>
+                <span>Config</span>
               </div>
             </div>
           </div>
@@ -48,7 +48,33 @@ export default function Hero() {
         {/* Right Side: Vibrant Graphic Section */}
         <div className="hero-image-wrapper">
           <div className="hero-glow-orb"></div>
-          <img src="/machine-learning.svg" alt="Q-LIT Machine Learning Robot" className="hero-illustration svg-inverted" />
+
+          {/* Twinkling Stars */}
+          <div className="star s-1"></div>
+          <div className="star s-2"></div>
+          <div className="star s-3"></div>
+          <div className="star s-4"></div>
+          <div className="star s-5"></div>
+          <div className="star s-6"></div>
+          <div className="star s-7"></div>
+          <div className="star s-8"></div>
+          <div className="star s-9"></div>
+          <div className="star s-10"></div>
+          <div className="star s-11"></div>
+          <div className="star s-12"></div>
+          <div className="star s-13"></div>
+          <div className="star s-14"></div>
+          <div className="star s-15"></div>
+
+          {/* Floating Queries */}
+          <div className="orbiting-query query-1">SELECT *</div>
+          <div className="orbiting-query query-2">WHERE id = ?</div>
+          <div className="orbiting-query query-3">JOIN users</div>
+          <div className="orbiting-query query-4">UPDATE roles</div>
+          <div className="orbiting-query query-5">INSERT INTO</div>
+          <div className="orbiting-query query-6">ORDER BY desc</div>
+
+          <img src="/recurso-7.svg" alt="Q-LIT Premium Visual" className="hero-illustration svg-inverted" />
         </div>
       </div>
     </section>
