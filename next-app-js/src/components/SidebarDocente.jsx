@@ -51,7 +51,7 @@ export default function SidebarDocente() {
       
       {isLoggingOut && <LoadingSpinner fullScreen={true} text="Cerrando sesión..." />}
       <div 
-        className={`docente-sidebar-wrapper ${isCollapsed ? "collapsed" : ""}`}
+        className={`shrink-0 h-full relative ${isCollapsed ? "collapsed" : ""}`}
       >
       <aside className={`docente-sidebar relative ${isCollapsed ? "collapsed" : ""}`}>
         <div className="w-full">

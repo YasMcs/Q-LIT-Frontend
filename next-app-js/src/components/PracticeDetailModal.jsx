@@ -199,6 +199,13 @@ export default function PracticeDetailModal({
             >
               <i className="fa-solid fa-circle-check"></i> Práctica Entregada
             </button>
+          ) : isStudent && practice.status === "overdue" ? (
+            <button
+              className="px-6 py-2.5 rounded-xl font-bold text-red-600 bg-red-500/10 border border-red-500/20 cursor-not-allowed flex items-center gap-2"
+              disabled
+            >
+              <i className="fa-solid fa-ban"></i> Práctica Vencida
+            </button>
           ) : (
             <button
               className="px-6 py-2.5 rounded-xl font-bold text-white bg-accent hover:opacity-90 hover:shadow-lg transition-all flex items-center gap-2"
@@ -209,7 +216,7 @@ export default function PracticeDetailModal({
             >
               {isStudent ? (
                 <>
-                  <i className="fa-solid fa-terminal"></i> Ingresar al laboratorio
+                  <i className="fa-solid fa-code"></i> Ingresar al laboratorio
                 </>
               ) : (
                 <>

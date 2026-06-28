@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import PracticeItemCard from "@/components/PracticeItemCard";
 import PracticeDetailModal from "@/components/PracticeDetailModal";
 import JoinClassModal from "@/components/JoinClassModal";
+import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
 
 export default function ClassFeedAlumnoPage() {
   const router = useRouter();
@@ -112,10 +113,6 @@ export default function ClassFeedAlumnoPage() {
 
   const pendingPractices = practices.filter(p => p.status === "assigned");
 
-  if (loading) {
-    return <div className="h-screen flex items-center justify-center bg-main text-muted">Cargando...</div>;
-  }
-
   return (
     <div className="alumno-dashboard-container flex flex-col h-screen bg-main animate-fade-in">
       
@@ -155,8 +152,11 @@ export default function ClassFeedAlumnoPage() {
         </div>
       </header>
 
-      {/* Main Container */}
+      {loading ? (
+        <ClassFeedAlumnoSkeleton />
+      ) : (
       <div className="flex-1 overflow-hidden">
+        {/* Main Container */}
         <main className="h-full overflow-y-auto py-8">
           <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
             {!isEnrolled ? (
@@ -289,6 +289,7 @@ export default function ClassFeedAlumnoPage() {
           </div>
         </main>
       </div>
+      )}
 
       <PracticeDetailModal 
         isOpen={!!selectedPractice}

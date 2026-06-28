@@ -1,6 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import SidebarDocente from "@/components/SidebarDocente";
+import "../(docente)/dashboard-docente/dashboard-docente.css";
 import "./revisar-practica-docente.css";
 
 export default function RevisarPracticaDocentePage() {
@@ -9,20 +12,15 @@ export default function RevisarPracticaDocentePage() {
   const challengeId = searchParams.get("challengeId");
   
   const [students, setStudents] = useState([]);
-  const [practiceInfo, setPracticeInfo] = useState({ title: '', description: '', deadline: null });
+  const [practiceInfo, setPracticeInfo] = useState({ title: 'Cargando...', description: '', deadline: null });
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [checklist, setChecklist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 'list' or 'review'
   const [viewMode, setViewMode] = useState('list');
-  // 'ENTREGADOS' or 'ASIGNADOS'
-  const [filterMode, setFilterMode] = useState('ENTREGADOS');
-
+  const [filterMode, setFilterMode] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState("");
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isEntregadosOpen, setIsEntregadosOpen] = useState(true);
-  const [isNoEntregadosOpen, setIsNoEntregadosOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (challengeId) {
@@ -40,6 +38,7 @@ export default function RevisarPracticaDocentePage() {
               submissionId: sub.submissionId,
               name: sub.studentName,
               email: sub.studentEmail,
+              studentImage: sub.studentImage,
               status: sub.status,
               submitted: sub.status !== "NOT_STARTED",
               sqlQuery: sub.sqlQuery || "",
@@ -57,12 +56,11 @@ export default function RevisarPracticaDocentePage() {
     }
   }, [challengeId]);
 
-  // Restaurar rúbrica sugerida al cambiar de alumno
   useEffect(() => {
     if (selectedStudent) {
       setChecklist(selectedStudent.checklist.map((c) => ({
         ...c,
-        teacherPoints: c.teacherPoints // Inicializa con iaPoints o lo que ya tenia el profe
+        teacherPoints: c.teacherPoints 
       })));
     } else {
       setChecklist([]);
@@ -70,11 +68,7 @@ export default function RevisarPracticaDocentePage() {
   }, [selectedStudent]);
 
   const totalMaxScore = checklist.reduce((sum, item) => sum + item.maxPoints, 0);
-  const [grade, setGrade] = useState(0);
-  
-  useEffect(() => {
-    setGrade(checklist.reduce((sum, item) => sum + item.teacherPoints, 0));
-  }, [checklist]);
+  const grade = checklist.reduce((sum, item) => sum + item.teacherPoints, 0);
 
   const handlePointChange = (id, newPoints) => {
     let val = parseInt(newPoints);
@@ -85,15 +79,12 @@ export default function RevisarPracticaDocentePage() {
   };
 
   const isClosed = practiceInfo.deadline ? new Date(practiceInfo.deadline) < new Date() : false;
-  
   const entregados = students.filter(s => s.submitted);
   const noEntregados = students.filter(s => !s.submitted);
 
-  const displayedStudents = (filterMode === 'ENTREGADOS' ? entregados : noEntregados).filter(s => 
+  const displayedStudents = (filterMode === 'ALL' ? students : filterMode === 'ENTREGADOS' ? entregados : noEntregados).filter(s => 
     s.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleConfirmGrade = async () => {
     if (!selectedStudent || !selectedStudent.submissionId) return;
@@ -114,7 +105,11 @@ export default function RevisarPracticaDocentePage() {
       });
       
       if (res.ok) {
-        alert(`Calificación de ${grade}/${totalMaxScore} confirmada con éxito.`);
+        alert(`Calificación de ${grade}/${totalMaxScore} guardada con éxito.`);
+        // Update local state to reflect the graded status without refetching all
+        setStudents(prev => prev.map(s => 
+          s.id === selectedStudent.id ? { ...s, status: 'COMPLETED', checklist: checklist } : s
+        ));
         setViewMode('list');
       } else {
         alert("Error al confirmar calificación");
@@ -127,7 +122,6 @@ export default function RevisarPracticaDocentePage() {
   };
 
   const handleSkipStudent = () => {
-    // Busca el siguiente alumno en la misma lista
     const currentIndex = displayedStudents.findIndex((s) => s.id === selectedStudent?.id);
     if (currentIndex !== -1) {
       const nextIndex = (currentIndex + 1) % displayedStudents.length;
@@ -139,381 +133,337 @@ export default function RevisarPracticaDocentePage() {
     }
   };
 
-  const handleBackToFeed = () => {
-    router.back();
-  };
-
   const openReview = (student) => {
     setSelectedStudent(student);
     setViewMode('review');
   };
 
+  const handleAssignZero = async (student) => {
+    if (!confirm(`¿Estás seguro de asignar 0 puntos a ${student.name}?`)) return;
+    try {
+      const res = await fetch('/api/proxy/evaluations/assign-zero', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ practiceId: challengeId, studentId: student.id })
+      });
+      if (res.ok) {
+        setStudents(prev => prev.map(s => 
+          s.id === student.id ? { ...s, status: 'COMPLETED' } : s
+        ));
+      } else {
+        alert("Error al asignar 0");
+      }
+    } catch (error) {
+      alert("Error de conexión");
+    }
+  };
+
   if (loading) {
-    return <div className="h-screen flex items-center justify-center text-indigo-600 bg-main"><i className="fa-solid fa-spinner fa-spin mr-2"></i> Cargando entregas...</div>;
-  }
-
-  // --- MODO LISTA (GRID) ---
-  if (viewMode === 'list') {
+    // Sencillo skeleton (idealmente un componente aparte)
     return (
-      <div className="animate-fade-in relative p-8 h-screen overflow-y-auto bg-main text-foreground flex flex-col">
-        <header className="mb-8 flex items-center justify-between bg-panel p-6 rounded-2xl border border-border shadow-sm shrink-0">
-          <div className="flex items-center gap-4">
-            <button
-              className="btn-icon-back-revisar hover:bg-input p-3 rounded-full transition-colors"
-              onClick={handleBackToFeed}
-              title="Volver al feed del laboratorio"
-            >
-              <i className="fa-solid fa-arrow-left text-xl text-foreground" />
-            </button>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">{practiceInfo.title}</h1>
-              <p className="text-muted">Revisión de entregas de los estudiantes</p>
-            </div>
-          </div>
-        </header>
-
-        {/* Filtros */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <button 
-            className={`flex-1 p-6 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer hover:-translate-y-1 ${filterMode === 'ENTREGADOS' ? 'border-accent bg-accent/5 ring-2 ring-accent shadow-md' : 'border-border bg-panel hover:border-accent/50'}`}
-            onClick={() => setFilterMode('ENTREGADOS')}
-          >
-            <div className="text-left">
-              <h3 className={`font-bold text-xl mb-1 ${filterMode === 'ENTREGADOS' ? 'text-accent' : 'text-foreground group-hover:text-accent/80'}`}>
-                Entregados
-              </h3>
-              <p className="text-sm text-muted">Alumnos que han enviado su práctica</p>
-            </div>
-            <div className={`text-5xl font-black ${filterMode === 'ENTREGADOS' ? 'text-accent' : 'text-muted/50'}`}>
-              {entregados.length}
-            </div>
-          </button>
-
-          <button 
-            className={`flex-1 p-6 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer hover:-translate-y-1 ${filterMode === 'ASIGNADOS' ? 'border-[var(--danger-red)] bg-[var(--danger-red)]/5 ring-2 ring-[var(--danger-red)] shadow-md' : 'border-border bg-panel hover:border-[var(--danger-red)]/50'}`}
-            onClick={() => setFilterMode('ASIGNADOS')}
-          >
-            <div className="text-left">
-              <h3 className={`font-bold text-xl mb-1 ${filterMode === 'ASIGNADOS' ? 'text-[var(--danger-red)]' : 'text-foreground group-hover:text-[var(--danger-red)]/80'}`}>
-                {isClosed ? 'Sin Entregar' : 'Asignados'}
-              </h3>
-              <p className="text-sm text-muted">
-                {isClosed ? 'Alumnos que no enviaron a tiempo' : 'Alumnos que aún no han entregado'}
-              </p>
-            </div>
-            <div className={`text-5xl font-black ${filterMode === 'ASIGNADOS' ? 'text-[var(--danger-red)]' : 'text-muted/50'}`}>
-              {noEntregados.length}
-            </div>
-          </button>
-        </div>
-
-        {/* Búsqueda */}
-        <div className="mb-6 relative max-w-md mx-auto sm:mx-0">
-          <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-panel border border-border rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
-          />
-        </div>
-
-        {/* Grid de Tarjetas */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-12">
-          {displayedStudents.map(student => (
-            <div key={student.id} className="student-review-card bg-panel border border-border rounded-2xl p-6 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:-translate-y-1">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-accent/20 to-accent/40 flex items-center justify-center text-accent text-2xl font-bold mb-4 shadow-inner">
-                {student.name.charAt(0).toUpperCase()}
-              </div>
-              <h3 className="font-bold text-foreground mb-1 w-full truncate px-2" title={student.name}>{student.name}</h3>
-              <p className="text-xs text-muted mb-4 truncate w-full px-2" title={student.email}>{student.email || "Sin correo"}</p>
-              
-              <div className="mb-6">
-                {student.status === 'COMPLETED' && (
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-bold border border-emerald-500/20">
-                    <i className="fa-solid fa-check-double mr-1"></i> Calificado
-                  </span>
-                )}
-                {student.status === 'PENDING' && (
-                  <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold border border-accent/20">
-                    <i className="fa-solid fa-clock mr-1"></i> Entregado
-                  </span>
-                )}
-                {student.status === 'NOT_STARTED' && (
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${isClosed ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
-                    <i className={`fa-solid ${isClosed ? 'fa-xmark' : 'fa-hourglass-start'} mr-1`}></i> 
-                    {isClosed ? 'Sin Entregar' : 'Pendiente'}
-                  </span>
-                )}
-              </div>
-
-              {student.status !== 'NOT_STARTED' ? (
-                <button 
-                  onClick={() => openReview(student)}
-                  className="w-full mt-auto py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm"
-                >
-                  <i className="fa-regular fa-eye"></i> Ver entrega
-                </button>
-              ) : (
-                <button 
-                  disabled
-                  className="w-full mt-auto py-2.5 rounded-xl bg-input text-muted font-semibold cursor-not-allowed border border-border border-dashed"
-                >
-                  <i className="fa-solid fa-ban"></i> Sin contenido
-                </button>
-              )}
-            </div>
-          ))}
-
-          {displayedStudents.length === 0 && (
-            <div className="col-span-full py-16 text-center text-muted bg-panel border border-border border-dashed rounded-3xl">
-              <i className="fa-solid fa-user-slash text-5xl mb-4 opacity-50 text-indigo-500"></i>
-              <p className="text-lg">No se encontraron alumnos en esta categoría.</p>
-            </div>
-          )}
+      <div className="flex h-screen bg-background overflow-hidden relative">
+        <SidebarDocente />
+        <div className="flex-1 p-8 flex items-center justify-center">
+           <div className="animate-pulse text-indigo-500 font-bold text-xl"><i className="fa-solid fa-spinner fa-spin mr-3"></i>Cargando revisiones...</div>
         </div>
       </div>
     );
   }
 
-  // --- MODO REVIEW ---
-  return (
-    <div className="revisar-practica-wrapper animate-fade-in animate-scale-up relative">
-      <button 
-        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-        className={`absolute top-[100px] z-[200] group text-muted hover:text-indigo-600 w-8 h-8 flex items-center justify-center rounded-full bg-panel border border-border shadow-md hover:shadow-lg hover:border-indigo-300 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'left-4' : 'left-[304px]'}`}
-        title={isSidebarCollapsed ? "Expandir lista" : "Contraer lista"}
-      >
-        <i className={`fa-solid ${isSidebarCollapsed ? "fa-chevron-right" : "fa-chevron-left"} text-sm transition-transform duration-300 group-hover:scale-110`}></i>
-      </button>
+  // --- MODO LISTA ---
+  if (viewMode === 'list') {
+    return (
+      <div className="flex h-screen bg-background overflow-hidden relative">
+        <SidebarDocente />
+        <div className="flex-1 overflow-y-auto bg-main animate-fade-in relative p-6 md:p-10">
+          
+          <header className="mb-8">
+            <div className="flex items-center gap-3 text-muted text-sm font-semibold mb-3">
+              <Link href="/dashboard-docente" className="hover:text-accent transition-colors">Tus Laboratorios</Link>
+              <i className="fa-solid fa-chevron-right text-xs"></i>
+              <button onClick={() => router.back()} className="hover:text-accent transition-colors">Clase</button>
+              <i className="fa-solid fa-chevron-right text-xs"></i>
+              <span className="text-foreground">Revisión</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">{practiceInfo.title}</h1>
+            <p className="text-muted mt-2 text-lg">Revisión de entregas de los estudiantes</p>
+          </header>
 
-      {/* Sidebar with student list */}
-      <aside className={`students-sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-        <div className="students-sidebar-inner">
-          <div className="sidebar-header">
-            <h2>Lista de Laboratorio</h2>
-            <div className="relative flex items-center w-full">
-              <i className="fa-solid fa-magnifying-glass absolute left-3 text-muted text-sm"></i>
+          {/* Barra de Controles (Buscador y Métricas) */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            {/* Buscador a la izquierda */}
+            <div className="relative w-full max-w-md">
+              <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
               <input
                 type="text"
                 placeholder="Buscar estudiante..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="sidebar-search w-full !pl-9"
+                className="w-full bg-panel border-2 border-border rounded-2xl py-3 pl-12 pr-4 text-sm font-semibold text-foreground focus:outline-none focus:border-indigo-500 transition-all shadow-sm"
               />
             </div>
-          </div>
-        
-        {entregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 && (
-          <div className="students-group-revisar">
-            <button 
-              className="group-title-revisar collapsible-title-revisar" 
-              onClick={() => setIsEntregadosOpen(!isEntregadosOpen)}
-            >
-              <span>Entregaron</span>
-              <i className={`fa-solid fa-chevron-down transition-transform ${!isEntregadosOpen ? 'rotate-180' : ''}`}></i>
-            </button>
-            {isEntregadosOpen && (
-              <ul className="students-list">
-                {entregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((student) => (
-                  <li
-                    key={student.id}
-                    className={selectedStudent?.id === student.id ? "selected" : ""}
-                    onClick={() => setSelectedStudent(student)}
-                  >
-                    {student.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
 
-        {noEntregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 && (
-          <div className="students-group-revisar">
-            <button 
-              className="group-title-revisar collapsible-title-revisar" 
-              onClick={() => setIsNoEntregadosOpen(!isNoEntregadosOpen)}
-            >
-              <span>{isClosed ? 'Sin Entregar' : 'Asignados'}</span>
-              <i className={`fa-solid fa-chevron-down transition-transform ${!isNoEntregadosOpen ? 'rotate-180' : ''}`}></i>
-            </button>
-            {isNoEntregadosOpen && (
-              <ul className="students-list">
-                {noEntregados.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((student) => (
-                  <li
-                    key={student.id}
-                    className={selectedStudent?.id === student.id ? "selected" : ""}
-                    onClick={() => setSelectedStudent(student)}
+            {/* Métricas clickeables a la derecha */}
+            <div className="flex items-center bg-panel border-2 border-border rounded-2xl overflow-hidden shadow-sm">
+               <button 
+                 onClick={() => setFilterMode(filterMode === 'ENTREGADOS' ? 'ALL' : 'ENTREGADOS')} 
+                 className={`flex flex-col items-center justify-center px-8 py-3 transition-all cursor-pointer outline-none ${filterMode === 'ENTREGADOS' ? 'bg-indigo-500/10' : 'hover:bg-input'}`}
+               >
+                 <span className={`text-3xl font-black ${filterMode === 'ENTREGADOS' ? 'text-indigo-500' : 'text-foreground'}`}>{entregados.length}</span>
+                 <span className={`text-xs uppercase font-bold tracking-wider ${filterMode === 'ENTREGADOS' ? 'text-indigo-500' : 'text-muted'}`}>Entregados</span>
+               </button>
+               
+               <div className="w-px h-16 bg-border"></div>
+               
+               <button 
+                 onClick={() => setFilterMode(filterMode === 'ASIGNADOS' ? 'ALL' : 'ASIGNADOS')} 
+                 className={`flex flex-col items-center justify-center px-8 py-3 transition-all cursor-pointer outline-none ${filterMode === 'ASIGNADOS' ? 'bg-rose-500/10' : 'hover:bg-input'}`}
+               >
+                 <span className={`text-3xl font-black ${filterMode === 'ASIGNADOS' ? 'text-rose-500' : 'text-foreground'}`}>{noEntregados.length}</span>
+                 <span className={`text-xs uppercase font-bold tracking-wider ${filterMode === 'ASIGNADOS' ? 'text-rose-500' : 'text-muted'}`}>
+                   {isClosed ? 'No Entregadas' : 'Asignadas'}
+                 </span>
+               </button>
+            </div>
+          </div>
+
+          {/* Grid de Alumnos Rediseñado */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+            {displayedStudents.map(student => (
+              <div key={student.id} className="bg-panel border-2 border-border rounded-3xl p-6 flex flex-col relative overflow-hidden transition-all duration-300 hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1 group">
+                <div className="flex items-center gap-4 mb-5">
+                  {student.studentImage ? (
+                    <img src={student.studentImage} alt={student.name} className="w-14 h-14 rounded-2xl object-cover shadow-sm border border-border" />
+                  ) : (
+                    <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl font-bold shadow-sm border border-indigo-500/20">
+                      {student.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 overflow-hidden">
+                    <h3 className="font-bold text-foreground truncate text-lg">{student.name}</h3>
+                    <p className="text-xs text-muted truncate">{student.email || "Sin correo"}</p>
+                  </div>
+                </div>
+                
+                <div className="mb-6 flex gap-2 flex-wrap">
+                  {student.status === 'COMPLETED' && (
+                    <span className="px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-500 text-xs font-black uppercase tracking-widest border border-emerald-500/30">
+                      Calificado
+                    </span>
+                  )}
+                  {student.status === 'PENDING' && (
+                    <span className="px-3 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-500 text-xs font-black uppercase tracking-widest border border-indigo-500/30">
+                      Entregado
+                    </span>
+                  )}
+                  {student.status === 'NOT_STARTED' && (
+                    <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border ${isClosed ? 'bg-rose-500/15 text-rose-500 border-rose-500/30' : 'bg-slate-500/15 text-slate-400 border-slate-500/30'}`}>
+                      {isClosed ? 'Sin Entregar' : 'Pendiente'}
+                    </span>
+                  )}
+                </div>
+
+                {student.status !== 'NOT_STARTED' ? (
+                  <button 
+                    onClick={() => openReview(student)}
+                    className="w-full mt-auto py-3 rounded-2xl border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white font-bold transition-all flex items-center justify-center gap-2 group-hover:scale-[1.02]"
                   >
-                    {student.name}
-                  </li>
-                ))}
-              </ul>
+                    {student.status === 'COMPLETED' ? (
+                      <><i className="fa-solid fa-pen-to-square"></i> Modificar Evaluación</>
+                    ) : (
+                      <><i className="fa-regular fa-eye"></i> Revisar Entrega</>
+                    )}
+                  </button>
+                ) : (
+                  isClosed ? (
+                    <button 
+                      onClick={() => handleAssignZero(student)}
+                      className="w-full mt-auto py-3 rounded-2xl border-2 border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white font-bold transition-all flex items-center justify-center gap-2 group-hover:scale-[1.02]"
+                    >
+                      <i className="fa-solid fa-star-half-stroke"></i> Asignar 0
+                    </button>
+                  ) : (
+                    <button 
+                      disabled
+                      className="w-full mt-auto py-3 rounded-2xl bg-input text-muted font-bold cursor-not-allowed border-2 border-border border-dashed"
+                    >
+                      Sin Contenido
+                    </button>
+                  )
+                )}
+              </div>
+            ))}
+
+            {displayedStudents.length === 0 && (
+              <div className="col-span-full py-20 text-center text-muted bg-panel border-2 border-border border-dashed rounded-3xl flex flex-col items-center justify-center">
+                <i className="fa-solid fa-user-slash text-6xl mb-6 opacity-40 text-indigo-500"></i>
+                <p className="text-xl font-bold text-foreground">No se encontraron alumnos</p>
+                <p>Prueba buscando con otro término o cambia de categoría.</p>
+              </div>
             )}
           </div>
-        )}
         </div>
-      </aside>
+      </div>
+    );
+  }
 
-      {/* Main content area */}
-      <div className="revisar-practica-body">
-        <header className="navbar-revisar">
-          <div className="nav-left-revisar">
-            <button
-              className="btn-icon-back-revisar"
-              onClick={() => setViewMode('list')}
-              title="Volver a la cuadrícula de alumnos"
-            >
-              <i className="fa-solid fa-arrow-left" />
-            </button>
-            <div className="student-header-title-revisar">
-              <h1 className="student-name-revisar">{practiceInfo.title}</h1>
-              <div className="student-meta-revisar">
-                <span className="font-semibold text-indigo-600 uppercase text-xs tracking-wider">Evaluando a:</span>
-                <span className="text-foreground font-bold">{selectedStudent?.name}</span>
-                <span className="text-muted">({selectedStudent?.email})</span>
-              </div>
-            </div>
+  // --- MODO REVIEW (FOCUS) ---
+  return (
+    <div className="flex flex-col h-screen bg-main overflow-hidden animate-fade-in relative z-50">
+      {/* Topbar minimalista de navegación de estudiantes */}
+      <header className="bg-panel border-b-2 border-border px-6 py-4 flex items-center justify-between shrink-0 shadow-sm relative z-20">
+        <div className="flex items-center gap-6">
+          <button
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-input text-foreground hover:bg-indigo-500 hover:text-white transition-all shadow-sm"
+            onClick={() => setViewMode('list')}
+            title="Volver a la cuadrícula de alumnos"
+          >
+            <i className="fa-solid fa-xmark text-lg" />
+          </button>
+          <div>
+            <h1 className="text-xl font-black text-foreground">{practiceInfo.title}</h1>
+            <p className="text-sm font-bold text-indigo-500 uppercase tracking-widest mt-0.5">Modo Evaluación</p>
           </div>
-          <div className="nav-right-revisar">
-            <button className="btn-revisar btn-secondary-revisar" onClick={handleSkipStudent}>
-              Siguiente Alumno
-            </button>
-            <button 
-              className={`btn-revisar btn-primary-revisar ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`} 
-              onClick={handleConfirmGrade}
-              disabled={isSubmitting || !selectedStudent?.submitted}
-            >
-              {isSubmitting ? (
-                <><i className="fa-solid fa-circle-notch fa-spin mr-2" /> Guardando...</>
-              ) : (
-                "Confirmar Calificación"
-              )}
+        </div>
+        
+        {/* Selector de estudiantes rápido */}
+        <div className="flex items-center gap-4 bg-input p-1.5 rounded-2xl border border-border">
+          <select 
+            className="bg-transparent text-foreground font-bold outline-none cursor-pointer px-4 appearance-none"
+            value={selectedStudent?.id || ''}
+            onChange={(e) => {
+              const st = displayedStudents.find(s => s.id === e.target.value);
+              if (st) setSelectedStudent(st);
+            }}
+          >
+            {displayedStudents.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+          <div className="flex gap-1 border-l border-border pl-2">
+            <button className="w-8 h-8 rounded-xl bg-panel hover:bg-indigo-500 hover:text-white transition-colors flex items-center justify-center border border-border" onClick={handleSkipStudent} title="Siguiente Alumno">
+              <i className="fa-solid fa-chevron-right text-xs"></i>
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <main className="main-container-revisar">
-          {selectedStudent?.submitted ? (
-            <>
-              {/* Left Side: Results */}
-              <div className="left-panel-revisar gap-6">
-                <section className="panel-revisar">
-                  <h2 className="section-title-revisar">Resultados de la Práctica</h2>
+      {/* Main Split Layout */}
+      <div className="flex flex-1 overflow-hidden">
+        {selectedStudent?.submitted ? (
+          <>
+            {/* Left Column (Code & Results) - 60% */}
+            <div className="w-full lg:w-[60%] flex flex-col h-full overflow-y-auto border-r-2 border-border bg-main p-6 lg:p-8 space-y-8">
+              
+              <section className="bg-panel rounded-3xl border-2 border-border p-8 shadow-sm">
+                <h2 className="text-xl font-black text-foreground flex items-center gap-3 mb-6">
+                  <i className="fa-solid fa-code text-indigo-500"></i> Código SQL Entregado
+                </h2>
+                <div className="bg-[#0f111a] rounded-2xl p-6 overflow-x-auto border border-border/50 shadow-inner">
+                  <pre className="text-sm font-mono text-emerald-400 leading-relaxed">
+                    <code>{selectedStudent.sqlQuery || "-- No hay código SQL entregado"}</code>
+                  </pre>
+                </div>
+              </section>
 
-                  <div className="form-group-revisar">
-                    <label>Reto asignado al alumno</label>
-                    <div className="instruction-display-box">
-                      <p>{practiceInfo.description}</p>
-                    </div>
-                  </div>
-
-                  <div className="form-group-revisar">
-                    <label>Código SQL entregado</label>
-                    <div className="sql-box-revisar">
-                      <pre className="sql-code-revisar"><code>{selectedStudent.sqlQuery || "-- No hay código SQL entregado"}</code></pre>
-                    </div>
-                  </div>
-                </section>
-
-                <section className="panel-revisar">
-                  <div className="form-group-revisar">
-                    <label>Tabla de resultados</label>
-                    <div className="table-wrapper-revisar overflow-auto border border-border rounded-xl mt-2 max-h-[400px]">
-                      {selectedStudent.executionResult && selectedStudent.executionResult.columns ? (
-                        <table className="result-table-revisar w-full text-left">
-                          <thead className="bg-main sticky top-0 z-10">
-                            <tr>
-                              {selectedStudent.executionResult.columns.map((col, idx) => (
-                                <th key={idx} className="p-4 border-b border-border">{col}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100">
-                            {selectedStudent.executionResult.rows && selectedStudent.executionResult.rows.map((row, rowIdx) => (
-                              <tr key={rowIdx} className="hover:bg-main transition-colors">
-                                {selectedStudent.executionResult.columns.map((col, colIdx) => (
-                                  <td key={colIdx} className="p-4 font-mono">{row[col]}</td>
-                                ))}
-                              </tr>
+              <section className="bg-panel rounded-3xl border-2 border-border p-8 shadow-sm">
+                <h2 className="text-xl font-black text-foreground flex items-center gap-3 mb-6">
+                  <i className="fa-solid fa-table text-indigo-500"></i> Tabla de Resultados
+                </h2>
+                
+                {selectedStudent.executionResult && selectedStudent.executionResult.columns ? (
+                  <div className="overflow-x-auto rounded-2xl border-2 border-border max-h-[400px]">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-input sticky top-0 z-10 shadow-sm">
+                        <tr>
+                          {selectedStudent.executionResult.columns.map((col, idx) => (
+                            <th key={idx} className="p-4 border-b-2 border-border font-bold text-muted uppercase tracking-wider text-xs">{col}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {selectedStudent.executionResult.rows && selectedStudent.executionResult.rows.map((row, rowIdx) => (
+                          <tr key={rowIdx} className="hover:bg-input transition-colors">
+                            {selectedStudent.executionResult.columns.map((col, colIdx) => (
+                              <td key={colIdx} className="p-4 font-mono text-sm text-foreground">{row[col]}</td>
                             ))}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <div className="p-8 text-center text-muted">
-                          <i className="fa-solid fa-table border border-border p-3 rounded-xl mb-3 text-2xl"></i>
-                          <p>No hay resultados de ejecución para mostrar</p>
-                        </div>
-                      )}
-                    </div>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                </section>
-              </div>
-
-              {/* Right side: Grading Sidebar */}
-              <aside className="grading-sidebar-revisar">
-                <h2 className="sidebar-title-revisar">Calificación y Rúbrica</h2>
-
-                {/* Grading box */}
-                <div className="grade-box-container-revisar">
-                  <div className="grade-input-wrapper-revisar">
-                    <span className="grade-label-text-revisar">Total:</span>
-                    <input
-                      type="number"
-                      className="input-grade-revisar"
-                      value={grade}
-                      readOnly
-                      title="La calificación se calcula automáticamente desde la lista de cotejo"
-                    />
-                    <span className="grade-label-text-revisar">/ {totalMaxScore}</span>
+                ) : (
+                  <div className="p-12 text-center text-muted bg-input rounded-2xl border border-border border-dashed">
+                    <i className="fa-solid fa-table text-4xl mb-4 text-indigo-500/50"></i>
+                    <p className="font-bold">No hay resultados de ejecución para mostrar</p>
                   </div>
-                  <p className="ia-grade-note-revisar">
-                    *Nota: Las casillas y la calificación por defecto son sugerencias de la IA.
-                  </p>
-                </div>
-
-                {/* Checklist / Lista de Cotejo */}
-                <div className="form-group-revisar">
-                  <label>Criterios de Evaluación</label>
-                  <div className="checklist-plain-list-revisar">
-                    {checklist.map((item) => {
-                      const isChecked = item.teacherPoints > 0;
-                      return (
-                        <div key={item.id} className="checklist-plain-row-revisar">
-                          <div className="checklist-plain-text-revisar">
-                            <span>{item.text}</span>
-                            <span className="criterio-valor-badge">{item.maxPoints} pts</span>
-                          </div>
-                          <label className="checklist-switch">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => handlePointChange(item.id, e.target.checked ? item.maxPoints : 0)}
-                            />
-                            <span className="slider"></span>
-                          </label>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </aside>
-            </>
-          ) : (
-            <div className="empty-state-not-submitted w-full h-full flex flex-col items-center justify-center bg-panel border border-border border-dashed rounded-3xl p-12 mt-4 max-w-4xl mx-auto shadow-sm">
-              <div className="w-24 h-24 rounded-full bg-input flex items-center justify-center mb-6">
-                <i className="fa-solid fa-file-excel text-5xl text-muted/50"></i>
-              </div>
-              <h2 className="text-3xl font-bold mb-3 text-foreground">No Entregó</h2>
-              <p className="text-muted text-center max-w-md mb-8 text-lg">El estudiante <strong className="text-foreground">{selectedStudent?.name}</strong> no ha enviado la práctica o no la entregó a tiempo.</p>
-              <button className="btn-revisar btn-primary-revisar px-8 py-4 rounded-xl shadow-md text-lg transition-transform hover:-translate-y-1" onClick={() => alert("Se asignó 0. Pasando al siguiente...") || handleSkipStudent()}>
-                <i className="fa-solid fa-forward-step mr-2"></i> Asignar 0 y Siguiente
-              </button>
+                )}
+              </section>
             </div>
-          )}
-        </main>
+
+            {/* Right Column (Grading) - 40% */}
+            <div className="w-full lg:w-[40%] bg-panel h-full overflow-y-auto flex flex-col">
+              <div className="p-6 lg:p-8 flex-1">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-2xl font-black text-foreground">Rúbrica</h2>
+                  <div className="bg-indigo-500/10 px-4 py-2 rounded-xl border border-indigo-500/20">
+                    <span className="text-2xl font-black text-indigo-500">{grade}</span>
+                    <span className="text-muted font-bold"> / {totalMaxScore} pts</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {checklist.map((item) => {
+                    const isChecked = item.teacherPoints > 0;
+                    return (
+                      <div key={item.id} onClick={() => handlePointChange(item.id, isChecked ? 0 : item.maxPoints)} className={`group p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-4 ${isChecked ? 'border-emerald-500 bg-emerald-500/5 shadow-sm' : 'border-border bg-input hover:border-emerald-500/50'}`}>
+                        <div className={`relative w-12 h-6 rounded-full transition-colors duration-300 shrink-0 ${isChecked ? 'bg-emerald-500' : 'bg-muted/50'}`}>
+                          <div className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 shadow-sm ${isChecked ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                        </div>
+                        <div className="flex-1">
+                          <p className={`font-semibold mb-1 transition-colors ${isChecked ? 'text-foreground' : 'text-muted'}`}>{item.text}</p>
+                          <span className={`text-xs font-black uppercase tracking-widest ${isChecked ? 'text-emerald-500' : 'text-muted'}`}>
+                            {item.maxPoints} pts
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Action footer */}
+              <div className="p-6 border-t-2 border-border bg-panel shrink-0 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+                <button 
+                  className={`w-full py-4 rounded-2xl font-black text-white text-lg tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3 ${isSubmitting ? 'bg-muted cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600'}`}
+                  onClick={handleConfirmGrade}
+                  disabled={isSubmitting || !selectedStudent?.submitted}
+                >
+                  {isSubmitting ? (
+                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Guardando...</>
+                  ) : (
+                    selectedStudent.status === 'COMPLETED' ? (
+                      <><i className="fa-solid fa-pen-to-square"></i> Actualizar Calificación</>
+                    ) : (
+                      <><i className="fa-solid fa-check-double"></i> Confirmar Calificación</>
+                    )
+                  )}
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-main p-12">
+            <div className="w-32 h-32 rounded-full bg-input flex items-center justify-center mb-8 shadow-inner border border-border">
+              <i className="fa-solid fa-file-excel text-6xl text-muted/50"></i>
+            </div>
+            <h2 className="text-4xl font-black mb-4 text-foreground">Sin Entrega</h2>
+            <p className="text-muted text-center max-w-lg mb-10 text-xl font-medium">El estudiante <strong className="text-foreground">{selectedStudent?.name}</strong> no ha enviado su código SQL o el tiempo se agotó.</p>
+            <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-10 py-5 rounded-2xl font-bold shadow-lg shadow-indigo-500/20 text-lg transition-transform hover:-translate-y-1" onClick={handleSkipStudent}>
+              Siguiente Alumno <i className="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
