@@ -113,8 +113,13 @@ export default function ClassFeedDocentePage() {
       try {
         const dt = new Date(challenge.deadline);
         if (!isNaN(dt.getTime())) {
-          dPart = dt.toISOString().split("T")[0];
-          tPart = dt.toISOString().split("T")[1].substring(0, 5);
+          const yyyy = dt.getFullYear();
+          const mm = String(dt.getMonth() + 1).padStart(2, '0');
+          const dd = String(dt.getDate()).padStart(2, '0');
+          const hh = String(dt.getHours()).padStart(2, '0');
+          const min = String(dt.getMinutes()).padStart(2, '0');
+          dPart = `${yyyy}-${mm}-${dd}`;
+          tPart = `${hh}:${min}`;
         }
       } catch(e) {
         // ignore
