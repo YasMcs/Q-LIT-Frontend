@@ -18,11 +18,22 @@ export const authOptions = {
       }
     }),
   ],
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 días de duración del token
+  },
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
       if (user) {
-        session.user.id = user.id;
-        session.user.role = user.role; // Exponer el rol en la sesión
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.role = token.role;
       }
       return session;
     },

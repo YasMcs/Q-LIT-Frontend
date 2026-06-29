@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 
 
-export default function PracticeItemCard({ id, title, status, dueDate, assignDate, onClick }) {
+export default function PracticeItemCard({ id, title, status, dueDate, assignDate, score, totalPoints, onClick }) {
   const router = useRouter();
   const isSolved = status === "solved";
   const isOverdue = status === "overdue";
@@ -23,9 +23,7 @@ export default function PracticeItemCard({ id, title, status, dueDate, assignDat
         <div>
           <h4>{title}</h4>
           <div className="flex items-center gap-4 mt-2 text-xs font-semibold text-muted">
-            <span className="flex items-center gap-1">
-              <i className="fa-regular fa-calendar-plus" /> Publicado: {assignDate}
-            </span>
+
             <span className="flex items-center gap-1">
               <i className="fa-regular fa-calendar-clock" /> Vence: {dueDate}
             </span>
@@ -34,7 +32,7 @@ export default function PracticeItemCard({ id, title, status, dueDate, assignDat
       </div>
       {isSolved && (
         <span className="alumno-status-text solved">
-          <i className="fa-solid fa-circle-check" /> Entregado
+          <i className="fa-solid fa-circle-check" /> {score !== undefined && score !== null ? `${score}/${totalPoints}` : "Entregado"}
         </span>
       )}
       {isOverdue && (

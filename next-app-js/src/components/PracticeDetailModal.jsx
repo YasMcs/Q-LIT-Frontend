@@ -44,9 +44,7 @@ export default function PracticeDetailModal({
               {practice.title}
             </h2>
             <div className="flex flex-wrap items-center gap-4 mt-3 text-sm font-medium text-muted">
-              <span className="flex items-center gap-1.5">
-                <i className="fa-regular fa-calendar-plus" /> Publicado: {practice.assignDate || (practice.fecha_asignacion ? new Date(practice.fecha_asignacion).toLocaleDateString() : (practice.createdAt ? new Date(practice.createdAt).toLocaleDateString() : "N/A"))}
-              </span>
+
               <span className="flex items-center gap-1.5">
                 <i className="fa-regular fa-calendar-clock" /> Vence: {practice.dueDate || (practice.deadline ? new Date(practice.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite")}
               </span>
@@ -97,7 +95,7 @@ export default function PracticeDetailModal({
                 </h3>
                 <p className="text-sm font-bold text-foreground flex items-center gap-2">
                   <span className={`w-2.5 h-2.5 rounded-full ${submission.reviewStatus === "calificada" ? "bg-emerald-500 animate-pulse" : "bg-amber-500 animate-pulse"}`}></span>
-                  {submission.reviewStatus === "calificada" ? "Calificada por el docente" : "Entregada (En espera de revisión)"}
+                  {submission.reviewStatus === "calificada" ? `Calificada: ${submission.score !== undefined ? submission.score : 0} / ${practice.totalPoints || 100}` : "Entregada (En espera de revisión)"}
                 </p>
               </div>
               <div>
@@ -194,10 +192,13 @@ export default function PracticeDetailModal({
           
           {isStudent && practice.status === "solved" ? (
             <button
-              className="px-6 py-2.5 rounded-xl font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 cursor-not-allowed flex items-center gap-2"
-              disabled
+              className="px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all flex items-center gap-2"
+              onClick={() => {
+                onClose();
+                if (onAction) onAction(practice.id);
+              }}
             >
-              <i className="fa-solid fa-circle-check"></i> Práctica Entregada
+              <i className="fa-solid fa-eye"></i> Ver mi entrega
             </button>
           ) : isStudent && practice.status === "overdue" ? (
             <button

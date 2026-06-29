@@ -64,6 +64,7 @@ function PracticaSQLContent() {
   const [dbSchemas, setDbSchemas] = useState(DB_SCHEMAS);
   const [generatedStatement, setGeneratedStatement] = useState("");
   const [requiredFunctions, setRequiredFunctions] = useState([]);
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
   // Query editor state
   const [sqlQuery, setSqlQuery] = useState("");
@@ -127,6 +128,11 @@ function PracticaSQLContent() {
   const handleSubmit = async () => {
     if (!sqlQuery.trim()) {
       alert("No has escrito ninguna consulta SQL.");
+      return;
+    }
+
+    if (terminalState !== "success" || !executionResult) {
+      alert("Debes ejecutar tu consulta y asegurarte de que no tenga errores de sintaxis antes de poder entregarla.");
       return;
     }
     
@@ -244,6 +250,15 @@ function PracticaSQLContent() {
             setPracticeData(data.data.practice);
             setGeneratedStatement(data.data.submission.generatedStatement);
             setRequiredFunctions(data.data.practice.requiredFunctions?.keywords || []);
+            
+            if (data.data.submission.isReadOnly) {
+              setIsReadOnly(true);
+              setSqlQuery(data.data.submission.studentSqlCode || "");
+              if (data.data.submission.executionResult) {
+                setExecutionResult(data.data.submission.executionResult);
+                setTerminalState("success");
+              }
+            }
           }
           setLoading(false);
         })
@@ -334,17 +349,19 @@ function PracticaSQLContent() {
             <button className="back-btn-sql" onClick={handleBack}>
               <i className="fa-solid fa-arrow-left" /> Volver al laboratorio
             </button>
-              <button 
-                className={`btn-sql btn-success-sql ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`} 
-                onClick={handleSubmit} 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <><i className="fa-solid fa-circle-notch fa-spin" /> Evaluando...</>
-                ) : (
-                  <><i className="fa-solid fa-paper-plane" /> Entregar Práctica</>
-                )}
-              </button>
+              {!isReadOnly && (
+                <button 
+                  className={`btn-sql btn-success-sql ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`} 
+                  onClick={handleSubmit} 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <><i className="fa-solid fa-circle-notch fa-spin" /> Evaluando...</>
+                  ) : (
+                    <><i className="fa-solid fa-paper-plane" /> Entregar Práctica</>
+                  )}
+                </button>
+              )}
           </div>
 
           <div className="workspace-upper-body-sql !p-0 border-b border-border flex flex-col">
@@ -353,20 +370,22 @@ function PracticaSQLContent() {
               <span className="text-[11px] font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                 <i className="fa-solid fa-code" /> Editor SQL
               </span>
-              <div className="flex gap-2">
-                <button 
-                  className="px-3 py-1.5 text-xs font-bold text-muted bg-panel border border-border rounded-md shadow-sm hover:bg-input hover:text-foreground transition-colors flex items-center gap-1.5" 
-                  onClick={handleClear}
-                >
-                  <i className="fa-solid fa-eraser" /> Limpiar
-                </button>
-                <button 
-                  className="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 transition-colors flex items-center gap-1.5" 
-                  onClick={handleExecute}
-                >
-                  <i className="fa-solid fa-play" /> Ejecutar Consulta
-                </button>
-              </div>
+              {!isReadOnly && (
+                <div className="flex gap-2">
+                  <button 
+                    className="px-3 py-1.5 text-xs font-bold text-muted bg-panel border border-border rounded-md shadow-sm hover:bg-input hover:text-foreground transition-colors flex items-center gap-1.5" 
+                    onClick={handleClear}
+                  >
+                    <i className="fa-solid fa-eraser" /> Limpiar
+                  </button>
+                  <button 
+                    className="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 transition-colors flex items-center gap-1.5" 
+                    onClick={handleExecute}
+                  >
+                    <i className="fa-solid fa-play" /> Ejecutar Consulta
+                  </button>
+                </div>
+              )}
             </div>
             
             <div className="flex-1 relative">
@@ -375,7 +394,15 @@ function PracticaSQLContent() {
               language="sql"
               theme="qlit-theme"
               value={sqlQuery}
-              onChange={(value) => setSqlQuery(value || "")}
+              onChange={(value) => {
+                setSqlQuery(value || "");
+                // Forzar a re-ejecutar si el estudiante modifica la consulta
+                if (!isReadOnly && (terminalState === "success" || terminalState === "error")) {
+                  setTerminalState("placeholder");
+                  setExecutionResult(null);
+                  setExecutionError(null);
+                }
+              }}
               beforeMount={(monaco) => {
                 monaco.editor.defineTheme('qlit-theme', {
                   base: 'vs-dark',
@@ -389,6 +416,7 @@ function PracticaSQLContent() {
                 });
               }}
               options={{
+                readOnly: isReadOnly,
                 minimap: { enabled: false },
                 fontSize: 15,
                 fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
@@ -451,9 +479,11 @@ function PracticaSQLContent() {
                   
                   {executionError.suggestion && (
                     <div className="mt-3 p-4 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[13px] rounded-xl flex items-start gap-2.5 max-w-xl text-left font-medium shadow-sm">
-                      <span className="text-base leading-none">💡</span>
+                      <i className="fa-regular fa-lightbulb text-base mt-0.5" />
                       <div>
-                        <strong className="block mb-1 text-amber-400">Sugerencia pedagógica:</strong>
+                        <strong className="block mb-1 text-amber-400">
+                          {executionError.isAiGenerated ? "Sugerencia de Lumi:" : "Sugerencia pedagógica:"}
+                        </strong>
                         {executionError.suggestion}
                       </div>
                     </div>

@@ -55,6 +55,7 @@ export default function ClassFeedAlumnoPage() {
             return {
               ...p,
               status,
+              score: studentSubmission?.score,
               dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
               assignDate: new Date(p.createdAt).toLocaleDateString("es-ES")
             };
@@ -229,6 +230,8 @@ export default function ClassFeedAlumnoPage() {
                             status={practice.status}
                             dueDate={practice.dueDate}
                             assignDate={practice.assignDate}
+                            score={practice.score}
+                            totalPoints={practice.totalPoints}
                             onClick={handlePracticeClick}
                           />
                         ))}

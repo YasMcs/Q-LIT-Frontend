@@ -153,7 +153,10 @@ export default function ClassFeedDocentePage() {
       const res = await fetch(`/api/proxy/practices/${selectedChallengeId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deadline: isoDateTime })
+        body: JSON.stringify({ 
+          deadline: isoDateTime,
+          deadlineIso: isoDateTime
+        })
       });
 
       if (!res.ok) {
