@@ -315,28 +315,21 @@ export default function ClassFeedAlumnoPage() {
                     <div className="mb-6 flex justify-between items-center">
                       <div>
                         <h1 className="text-3xl font-extrabold text-foreground mb-2">Mis Laboratorios</h1>
-                        <p className="text-muted font-medium">
-                          {hasArchivedOnly
-                            ? "Has abandonado todos tus laboratorios. Puedes reactivar uno si deseas volver a consultarlo."
-                            : "Selecciona un laboratorio para ver tus prácticas y progresar."
-                          }
-                        </p>
+                        <p className="text-muted font-medium">Selecciona un laboratorio para ver tus prácticas y progresar.</p>
                       </div>
-                      {!hasArchivedOnly && (
-                        <button
-                          onClick={() => setIsJoinModalOpen(true)}
-                          className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
-                        >
-                          <i className="fa-solid fa-plus" /> Unirse a una clase
-                        </button>
-                      )}
+                      <button
+                        onClick={() => setIsJoinModalOpen(true)}
+                        className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                      >
+                        <i className="fa-solid fa-plus" /> Unirse a una clase
+                      </button>
                     </div>
 
-                    {classrooms.filter(c => !c.isArchived).length === 0 && !hasArchivedOnly ? (
+                    {classrooms.filter(c => !c.isArchived).length === 0 ? (
                       <div className="text-center py-16 text-muted border border-dashed border-border rounded-3xl bg-panel animate-fade-in">
                         <i className="fa-solid fa-laptop-code text-5xl mb-4 text-muted"></i>
                         <p className="font-bold text-lg text-muted mb-1">No tienes laboratorios activos</p>
-                        <p className="text-sm">Únete a un laboratorio utilizando el código de tu docente.</p>
+                        <p className="text-sm">Únete a un nuevo laboratorio o reactiva uno de los que dejaste.</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
