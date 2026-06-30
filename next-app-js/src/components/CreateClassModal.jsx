@@ -36,12 +36,16 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
         
         <div className="docente-input-group">
           <label>Grupo / Sección</label>
-          <input
-            type="text"
+          <select
             value={classGroup}
-            onChange={(e) => setClassGroup(e.target.value.toUpperCase())}
-            placeholder="Ej: Grupo B"
-          />
+            onChange={(e) => setClassGroup(e.target.value)}
+          >
+            <option value="" disabled>Selecciona un grupo</option>
+            <option value="Grupo A">Grupo A</option>
+            <option value="Grupo B">Grupo B</option>
+            <option value="Grupo C">Grupo C</option>
+            <option value="Grupo D">Grupo D</option>
+          </select>
         </div>
         
         <div className="docente-modal-actions">

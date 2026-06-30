@@ -277,7 +277,8 @@
   text-transform: uppercase;
 }
 
-.docente-input-group input {
+.docente-input-group input,
+.docente-input-group select {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--border-color);
@@ -286,9 +287,11 @@
   outline: none;
   color: var(--text-primary);
   background-color: var(--bg-panel);
+  cursor: pointer;
 }
 
-.docente-input-group input:focus {
+.docente-input-group input:focus,
+.docente-input-group select:focus {
   border-color: var(--text-primary);
 }
 
