@@ -138,14 +138,6 @@ export default function ClassFeedAlumnoPage() {
           <div className="flex items-center gap-4 relative">
             <div 
               onClick={() => setIsProfileModalOpen(true)}
-              className="text-sm font-bold text-muted hidden sm:flex flex-col items-end mr-2 cursor-pointer hover:text-indigo-400 transition-colors"
-              title="Ver perfil"
-            >
-              <span className="text-foreground">{session?.user?.name || "Alumno"}</span>
-              <span className="text-xs font-normal opacity-80">{session?.user?.email}</span>
-            </div>
-            <div 
-              onClick={() => setIsProfileModalOpen(true)}
               className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden cursor-pointer hover:scale-105 hover:opacity-85 transition-all duration-200"
               title="Ver perfil"
             >
