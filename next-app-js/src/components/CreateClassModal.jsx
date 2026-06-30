@@ -4,7 +4,7 @@ import { showAlert } from "@/utils/alerts";
 
 export default function CreateClassModal({ isOpen, onClose, onCreate }) {
   const [className, setClassName] = useState("");
-  const [classGroup, setClassGroup] = useState("Grupo A");
+  const [classGroup, setClassGroup] = useState("");
 
   if (!isOpen) return null;
 
@@ -15,7 +15,7 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
     }
     onCreate({ title: className, group: classGroup });
     setClassName("");
-    setClassGroup("Grupo A");
+    setClassGroup("");
   };
 
   return (
@@ -40,6 +40,7 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
             value={classGroup}
             onChange={(e) => setClassGroup(e.target.value)}
           >
+            <option value="" disabled hidden>Selecciona un grupo</option>
             <option value="Grupo A">Grupo A</option>
             <option value="Grupo B">Grupo B</option>
             <option value="Grupo C">Grupo C</option>
