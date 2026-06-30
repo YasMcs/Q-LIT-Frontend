@@ -117,6 +117,7 @@ function ClassFeedDocenteContent() {
   const [selectedChallengeId, setSelectedChallengeId] = useState(null);
   const [newDate, setNewDate] = useState("");
   const [newTime, setNewTime] = useState("");
+  const [isSavingDate, setIsSavingDate] = useState(false);
 
   const handleChangeDateClick = (id) => {
     const challenge = challenges.find(c => c.id === id);
@@ -158,6 +159,14 @@ function ClassFeedDocenteContent() {
     }
 
     const isoDateTime = new Date(`${newDate}T${newTime}:00`).toISOString();
+    const selectedDateObj = new Date(`${newDate}T${newTime}:00`);
+    if (selectedDateObj < new Date()) {
+      await showAlert("Fecha Inválida", "La fecha y hora de entrega no pueden estar en el pasado.", "warning");
+      return;
+    }
+
+    if (isSavingDate) return;
+    setIsSavingDate(true);
 
     try {
       const res = await fetch(`/api/proxy/practices/${selectedChallengeId}`, {
@@ -186,6 +195,8 @@ function ClassFeedDocenteContent() {
     } catch (err) {
       console.error(err);
       await showAlert("Error", "Error al actualizar la fecha. Inténtalo de nuevo.", "error");
+    } finally {
+      setIsSavingDate(false);
     }
   };
 
@@ -382,21 +393,22 @@ function ClassFeedDocenteContent() {
               <p className="text-sm text-muted mt-4">
                 Al establecer una nueva fecha, la asignación se reabrirá automáticamente si estaba vencida.
               </p>
-            </div>
-
-            <div className="px-6 py-4 bg-[var(--bg-main)] border-t border-border flex justify-end gap-3">
-              <button 
-                className="px-5 py-2.5 rounded-xl font-bold text-foreground bg-panel border border-border hover:bg-input transition-all"
-                onClick={() => setIsDateModalOpen(false)}
-              >
-                Cancelar
-              </button>
-              <button 
-                className="px-5 py-2.5 rounded-xl font-bold text-white bg-accent hover:opacity-90 hover:shadow-lg transition-all"
-                onClick={submitDateChange}
-              >
-                Actualizar Límite
-              </button>
+                <div className="flex items-center gap-3 mt-8">
+                  <button 
+                    className="flex-1 py-3 px-4 bg-accent text-white rounded-xl font-bold hover:bg-indigo-600 transition-colors shadow-lg hover:shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={submitDateChange}
+                    disabled={isSavingDate}
+                  >
+                    {isSavingDate ? "Guardando..." : "Guardar Cambios"}
+                  </button>
+                  <button 
+                    className="py-3 px-6 bg-input text-muted rounded-xl font-bold hover:bg-border transition-colors disabled:opacity-50"
+                    onClick={() => setIsDateModalOpen(false)}
+                    disabled={isSavingDate}
+                  >
+                    Cancelar
+                  </button>
+                </div>
             </div>
           </div>
         </div>

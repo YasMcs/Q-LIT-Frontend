@@ -5,19 +5,23 @@ import { showAlert } from "@/utils/alerts";
 export default function CreateClassModal({ isOpen, onClose, onCreate }) {
   const [className, setClassName] = useState("");
   const [classGroup, setClassGroup] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
-
-  const handleSubmit = async () => {
+  if (!isOpen) return null;  const handleSubmit = async () => {
     if (!className || !classGroup) {
       await showAlert("Datos Incompletos", "Completa los parámetros del laboratorio", "warning");
       return;
     }
-    onCreate({ title: className, group: classGroup });
-    setClassName("");
-    setClassGroup("");
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onCreate({ title: className, group: classGroup });
+      setClassName("");
+      setClassGroup("");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
   return (
     <div className="docente-overlay animate-fade-in">
       <div className="docente-modal">
@@ -45,11 +49,11 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
         </div>
         
         <div className="docente-modal-actions">
-          <button className="docente-btn-cancel" onClick={onClose}>
+          <button className="docente-btn-cancel" onClick={onClose} disabled={isSubmitting}>
             Cancelar
           </button>
-          <button className="docente-btn-submit" onClick={handleSubmit}>
-            Inicializar
+          <button className="docente-btn-submit" onClick={handleSubmit} disabled={isSubmitting} style={{ opacity: isSubmitting ? 0.6 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}>
+            {isSubmitting ? "Inicializando..." : "Inicializar"}
           </button>
         </div>
       </div>

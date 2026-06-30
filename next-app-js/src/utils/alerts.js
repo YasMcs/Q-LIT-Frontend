@@ -8,6 +8,7 @@ const QLitSwal = Swal.mixin({
   confirmButtonColor: "#6767ea", // Matches --accent-blue
   cancelButtonColor: "#da373c",  // Matches --danger-red
   customClass: {
+    container: "backdrop-blur-sm bg-black/40",
     popup: "rounded-[24px] border border-[rgba(255,255,255,0.06)] shadow-2xl font-sans",
     title: "text-lg font-black text-white",
     htmlContainer: "text-sm text-muted font-medium",

@@ -4,6 +4,7 @@ import { showAlert } from "@/utils/alerts";
 
 export default function JoinClassModal({ isOpen, onClose, onJoin }) {
   const [classCode, setClassCode] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -30,8 +31,14 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
       await showAlert("Código Inválido", "El código de laboratorio debe tener entre 5 y 6 caracteres", "warning");
       return;
     }
-    onJoin(rawCode);
-    setClassCode("");
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onJoin(rawCode);
+      setClassCode("");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,16 +60,18 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
         
         <div className="flex gap-3 justify-end">
           <button 
-            className="px-6 py-3 rounded-xl font-bold text-foreground hover:bg-input border border-transparent transition-colors" 
+            className="px-6 py-3 rounded-xl font-bold text-foreground hover:bg-input border border-transparent transition-colors disabled:opacity-50" 
             onClick={onClose}
+            disabled={isSubmitting}
           >
             Cancelar
           </button>
           <button 
-            className="px-6 py-3 rounded-xl font-bold text-white bg-accent hover:opacity-90 transition-colors shadow-lg" 
+            className="px-6 py-3 bg-accent hover:bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-indigo-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleSubmit}
+            disabled={isSubmitting}
           >
-            Inscribirse
+            {isSubmitting ? "Uniéndose..." : "Unirse"}
           </button>
         </div>
       </div>

@@ -227,11 +227,20 @@ function CrearPracticaDocenteContent() {
       await showAlert("Falta Fecha", "Por favor, establece la fecha y hora de entrega.", "warning");
       return;
     }
+    
+    const selectedDateObj = new Date(`${dueDate}T${dueTime}:00`);
+    if (selectedDateObj < new Date()) {
+      await showAlert("Fecha Inválida", "La fecha y hora de entrega no pueden estar en el pasado.", "warning");
+      return;
+    }
+    
     // Only require classroomId for new practices
     if (!editId && !selectedClassroomId) {
       await showAlert("Falta Laboratorio", "Por favor, selecciona a qué laboratorio asignar esta práctica.", "warning");
       return;
     }
+    
+    if (isSaving) return;
     
     // Validar que no haya criterios vacíos
     const hasEmptyCriteria = criteria.some(item => !item.text.trim());
@@ -337,6 +346,7 @@ function CrearPracticaDocenteContent() {
                 >
                   <i className="fa-solid fa-list-check"></i> Seleccionar Funciones
                 </button>
+
                 
                 {selectedFunctions.length === 0 ? (
                   <span className="text-muted text-sm italic px-2">Ninguna función seleccionada</span>
@@ -663,7 +673,7 @@ function CrearPracticaDocenteContent() {
 
       {/* Confirmation Modal for Edit */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-panel border border-border rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
             <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center">
@@ -682,20 +692,23 @@ function CrearPracticaDocenteContent() {
               </p>
               <div className="flex flex-col gap-3 mt-8">
                 <button 
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-accent hover:bg-[var(--accent-blue-hover)] transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-accent hover:bg-[var(--accent-blue-hover)] transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => executeSave(false)}
+                  disabled={isSaving}
                 >
-                  <i className="fa-solid fa-clock-rotate-left"></i> Mantener enunciados actuales
+                  <i className="fa-solid fa-clock-rotate-left"></i> {isSaving ? "Procesando..." : "Mantener enunciados actuales"}
                 </button>
                 <button 
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-[var(--danger-red)] bg-red-500/10 hover:bg-red-500/20 transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-[var(--danger-red)] bg-red-500/10 hover:bg-red-500/20 transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => executeSave(true)}
+                  disabled={isSaving}
                 >
-                  <i className="fa-solid fa-rotate-right"></i> Regenerar enunciados (Reiniciar progreso)
+                  <i className="fa-solid fa-rotate-right"></i> {isSaving ? "Procesando..." : "Regenerar enunciados (Reiniciar progreso)"}
                 </button>
                 <button 
-                  className="w-full py-3 px-4 rounded-xl font-bold text-muted bg-[var(--bg-main)] hover:bg-input border border-border mt-2 transition-colors"
+                  className="w-full py-3 px-4 rounded-xl font-bold text-muted bg-[var(--bg-main)] hover:bg-input border border-border mt-2 transition-colors disabled:opacity-50"
                   onClick={() => setShowConfirmModal(false)}
+                  disabled={isSaving}
                 >
                   Cancelar edición
                 </button>

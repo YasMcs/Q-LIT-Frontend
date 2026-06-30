@@ -44,7 +44,7 @@ export default function ChallengeManageCard({
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         {isPending ? (
-          <span className="feed-badge-alert">{pendingCount} Por Revisar</span>
+          <span className="feed-badge-alert">{`${pendingCount} Por Revisar`}</span>
         ) : (
           <span className="feed-badge-alert closed">0 Pendientes</span>
         )}
@@ -78,7 +78,7 @@ export default function ChallengeManageCard({
               </button>
               <div className="h-px bg-input my-1"></div>
               <button 
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-500/10 flex items-center gap-2"
                 onClick={(e) => { e.stopPropagation(); setIsMenuOpen(false); onDelete && onDelete(id); }}
               >
                 <i className="fa-solid fa-trash fa-fw text-red-400"></i> Eliminar

@@ -34,6 +34,26 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Custom Dark Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 5px;
+  border: 2px solid var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f3f;
+}
+
 @layer utilities {
   @keyframes fadeIn {
     from { opacity: 0; }
@@ -366,9 +386,3 @@ input[type=number] {
   border-radius: 8px;
 }
 
-/* SweetAlert2 Backdrop Blur */
-.swal2-container {
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-}

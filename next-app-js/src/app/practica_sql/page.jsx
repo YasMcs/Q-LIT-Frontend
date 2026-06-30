@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
-import { showAlert } from "@/utils/alerts";
+import { showAlert, showConfirm } from "@/utils/alerts";
 import "./practica_sql.css";
 
 const DB_SCHEMAS = {
@@ -136,7 +136,17 @@ function PracticaSQLContent() {
       await showAlert("Falta Ejecución", "Debes ejecutar tu consulta y asegurarte de que no tenga errores de sintaxis antes de poder entregarla.", "warning");
       return;
     }
+
+    const isConfirmed = await showConfirm(
+      "¿Entregar práctica?",
+      "Una vez entregada, tu consulta será evaluada y ya no podrás modificarla.",
+      "Sí, entregar",
+      "Cancelar"
+    );
     
+    if (!isConfirmed) return;
+    
+    if (isSubmitting) return;
     setIsSubmitting(true);
     try {
       const payload = {
@@ -387,10 +397,11 @@ function PracticaSQLContent() {
                     <i className="fa-solid fa-eraser" /> Limpiar
                   </button>
                   <button 
-                    className="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 transition-colors flex items-center gap-1.5" 
+                    className="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 transition-colors flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed" 
                     onClick={handleExecute}
+                    disabled={terminalState === "executing" || isSubmitting}
                   >
-                    <i className="fa-solid fa-play" /> Ejecutar Consulta
+                    <i className="fa-solid fa-play" /> {terminalState === "executing" ? "Ejecutando..." : "Ejecutar Consulta"}
                   </button>
                 </div>
               )}

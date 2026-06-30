@@ -300,8 +300,9 @@
 }
 
 .feed-badge-alert {
-  background: #fff7ed;
-  color: #ea580c;
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.2);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -313,6 +314,7 @@
 .feed-badge-alert.closed {
   background: var(--bg-input);
   color: #b5bac1;
+  border-color: var(--border-color);
 }
 
 .feed-btn-review {
