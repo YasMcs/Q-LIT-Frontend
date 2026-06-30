@@ -156,6 +156,30 @@ export default function ClassFeedAlumnoPage() {
     }
   };
 
+  const handleEnterArchivedClass = async (cls) => {
+    const confirmed = await showConfirm(
+      "Reactivar Laboratorio",
+      `¿Deseas desarchivar y reactivar el laboratorio "${cls.title}" para volver a ver tus prácticas y poder trabajar en él de nuevo?`
+    );
+    if (!confirmed) return;
+    
+    try {
+      const res = await fetch(`/api/proxy/classrooms/${cls.id}/unarchive`, {
+        method: "POST"
+      });
+      
+      if (res.ok) {
+        await showAlert("Éxito", "El laboratorio ha sido reactivado correctamente", "success");
+        fetchData(cls.id);
+      } else {
+        const data = await res.json();
+        await showAlert("Error", data.error?.message || "No se pudo reactivar el laboratorio", "error");
+      }
+    } catch (err) {
+      await showAlert("Error", "Error de red al intentar reactivar el laboratorio", "error");
+    }
+  };
+
 
   const filteredPractices = practices.filter(p => {
     if (filter === "all") return true;
@@ -315,7 +339,7 @@ export default function ClassFeedAlumnoPage() {
                         {classrooms.filter(c => c.isArchived).map((cls) => (
                           <div
                             key={cls.id}
-                            onClick={() => fetchData(cls.id)}
+                            onClick={() => handleEnterArchivedClass(cls)}
                             className="bg-panel border border-border rounded-3xl p-6 cursor-pointer opacity-70 hover:opacity-100 hover:border-slate-500 hover:bg-input transition-all duration-300 group"
                           >
                             <div className="flex justify-between items-start mb-4">
