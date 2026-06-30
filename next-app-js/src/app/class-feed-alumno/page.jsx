@@ -6,6 +6,8 @@ import PracticeItemCard from "@/components/PracticeItemCard";
 import PracticeDetailModal from "@/components/PracticeDetailModal";
 import JoinClassModal from "@/components/JoinClassModal";
 import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
+import UserProfileDropdown from "@/components/UserProfileDropdown";
+import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
 
 export default function ClassFeedAlumnoPage() {
   const router = useRouter();
@@ -18,6 +20,8 @@ export default function ClassFeedAlumnoPage() {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -130,25 +134,34 @@ export default function ClassFeedAlumnoPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-sm font-bold text-muted hidden sm:flex flex-col items-end mr-2">
+          <div className="flex items-center gap-4 relative">
+            <div 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="text-sm font-bold text-muted hidden sm:flex flex-col items-end mr-2 cursor-pointer hover:text-indigo-400 transition-colors"
+              title="Ver perfil"
+            >
               <span className="text-foreground">{session?.user?.name || "Alumno"}</span>
               <span className="text-xs font-normal opacity-80">{session?.user?.email}</span>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden">
+            <div 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden cursor-pointer hover:scale-105 hover:opacity-85 transition-all duration-200"
+              title="Ver perfil"
+            >
               {session?.user?.image ? (
                 <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 "AL"
               )}
             </div>
-            <button 
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="ml-2 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm"
-              title="Cerrar sesión"
-            >
-              <i className="fa-solid fa-arrow-right-from-bracket"></i>
-            </button>
+
+            <UserProfileDropdown 
+              isOpen={isProfileModalOpen}
+              onClose={() => setIsProfileModalOpen(false)}
+              user={session?.user}
+              onShowPrivacy={() => setIsPrivacyModalOpen(true)}
+              positionClasses="top-[52px] right-0"
+            />
           </div>
         </div>
       </header>
@@ -306,6 +319,12 @@ export default function ClassFeedAlumnoPage() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
         onJoin={handleJoinClass}
+      />
+
+
+      <PrivacyNoticeModal 
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
       />
     </div>
   );

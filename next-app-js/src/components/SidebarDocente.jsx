@@ -4,12 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import UserProfileDropdown from "@/components/UserProfileDropdown";
+import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
 
 export default function SidebarDocente() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const activeKey = pathname.includes("dashboard") ? "clases"
                   : pathname.includes("directorio") ? "directorio"
                   : pathname.includes("estadisticas") ? "estadisticas"
@@ -101,32 +105,46 @@ export default function SidebarDocente() {
         </div>
 
         {/* Profile */}
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4 relative">
           <div className="docente-user-profile w-full items-center">
-            <div className="docente-avatar shrink-0" style={{ overflow: 'hidden', padding: 0 }}>
+            <div 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="docente-avatar shrink-0 cursor-pointer hover:scale-105 hover:opacity-85 transition-all duration-200" 
+              style={{ overflow: 'hidden', padding: 0 }}
+              title="Ver perfil"
+            >
               {session?.user?.image ? (
                 <img src={session.user.image} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 "Prof"
               )}
             </div>
-            <div className="docente-user-info hide-on-collapse ml-3 overflow-hidden" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <div 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="docente-user-info hide-on-collapse ml-3 overflow-hidden cursor-pointer hover:text-indigo-400 transition-colors" 
+              style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+              title="Ver perfil"
+            >
               <span className="whitespace-nowrap font-bold text-sm truncate block">{session?.user?.name || "Panel Docente"}</span>
-              <small className="whitespace-nowrap opacity-80 truncate block mb-2">{session?.user?.email || "Administrador"}</small>
-              <button 
-                onClick={() => {
-                  setIsLoggingOut(true);
-                  setTimeout(() => signOut({ callbackUrl: "/" }), 1500);
-                }}
-                className="text-xs font-bold text-[var(--danger-red)] hover:text-white bg-[var(--danger-red)]/10 hover:bg-[var(--danger-red)] px-2 py-1 rounded-md transition-colors self-start whitespace-nowrap"
-              >
-                <i className="fa-solid fa-arrow-right-from-bracket mr-1"></i> Cerrar sesión
-              </button>
+              <small className="whitespace-nowrap opacity-80 truncate block">{session?.user?.email || "Administrador"}</small>
             </div>
           </div>
+
+          <UserProfileDropdown 
+            isOpen={isProfileModalOpen}
+            onClose={() => setIsProfileModalOpen(false)}
+            user={session?.user}
+            onShowPrivacy={() => setIsPrivacyModalOpen(true)}
+            positionClasses={isCollapsed ? "bottom-[-16px] left-[72px]" : "bottom-[64px] left-[12px]"}
+          />
         </div>
       </aside>
       </div>
+
+      <PrivacyNoticeModal 
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
     </>
   );
 }

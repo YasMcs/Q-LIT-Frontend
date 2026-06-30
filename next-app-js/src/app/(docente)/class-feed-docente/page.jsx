@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ChallengeManageCard from "@/components/ChallengeManageCard";
@@ -10,6 +10,14 @@ import ClassFeedSkeleton from "@/components/skeletons/ClassFeedSkeleton";
 import "./class-feed-docente.css";
 
 export default function ClassFeedDocentePage() {
+  return (
+    <Suspense fallback={<ClassFeedSkeleton isSidebarOpen={true} />}>
+      <ClassFeedDocenteContent />
+    </Suspense>
+  );
+}
+
+function ClassFeedDocenteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const classroomId = searchParams.get("classroomId");

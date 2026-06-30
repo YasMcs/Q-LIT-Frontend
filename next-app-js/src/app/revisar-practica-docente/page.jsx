@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import SidebarDocente from "@/components/SidebarDocente";
@@ -7,6 +7,14 @@ import "../(docente)/dashboard-docente/dashboard-docente.css";
 import "./revisar-practica-docente.css";
 
 export default function RevisarPracticaDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center flex items-center justify-center h-screen">Cargando...</div>}>
+      <RevisarPracticaDocenteContent />
+    </Suspense>
+  );
+}
+
+function RevisarPracticaDocenteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const challengeId = searchParams.get("challengeId");

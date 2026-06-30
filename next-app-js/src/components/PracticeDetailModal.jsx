@@ -54,7 +54,7 @@ export default function PracticeDetailModal({
                   {practice.closeLateSubmissions && (
                     <span className="flex items-center gap-1.5 text-muted">
                       <i className="fa-solid fa-lock text-[var(--danger-red)]" />
-                      Cierre estricto
+                      Entregas cerradas después de la fecha límite
                     </span>
                   )}
                   {practice.requiredFunctions?.db && (
@@ -65,10 +65,10 @@ export default function PracticeDetailModal({
                 </>
               )}
               {isStudent && (
-                <span className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${
-                  practice.status === "solved" ? "bg-emerald-100 text-emerald-700" :
-                  practice.status === "overdue" ? "bg-red-100 text-red-700" :
-                  "bg-blue-100 text-blue-700"
+                <span className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider border ${
+                  practice.status === "solved" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                  practice.status === "overdue" ? "bg-red-500/10 text-red-400 border-red-500/20" :
+                  "bg-blue-500/10 text-blue-400 border-blue-500/20"
                 }`}>
                   {practice.status === "solved" ? "Entregada" :
                    practice.status === "overdue" ? "Sin entregar" :
