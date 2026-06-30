@@ -124,7 +124,7 @@ export default function ClassFeedAlumnoPage() {
       
       {/* Top Navbar Estudiante */}
       <header className="bg-panel border-b border-border shrink-0 shadow-sm z-10 w-full">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="w-full px-6 md:px-12 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
               Q-LIT <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
@@ -173,7 +173,7 @@ export default function ClassFeedAlumnoPage() {
       <div className="flex-1 overflow-hidden">
         {/* Main Container */}
         <main className="h-full overflow-y-auto py-8">
-          <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
+          <div className="w-full px-6 md:px-12">
             {!isEnrolled ? (
 
               <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto py-20 animate-fade-in">
