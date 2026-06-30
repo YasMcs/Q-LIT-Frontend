@@ -106,7 +106,7 @@ export default function SidebarDocente() {
 
         {/* Profile */}
         <div className="w-full flex flex-col gap-4 relative">
-          <div className="docente-user-profile w-full items-center justify-center">
+          <div className="docente-user-profile w-full items-center">
             <div 
               onClick={() => setIsProfileModalOpen(true)}
               className="docente-avatar shrink-0 cursor-pointer hover:scale-105 hover:opacity-85 transition-all duration-200" 
@@ -118,6 +118,14 @@ export default function SidebarDocente() {
               ) : (
                 "Prof"
               )}
+            </div>
+            <div 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="docente-user-info hide-on-collapse ml-3 overflow-hidden cursor-pointer hover:text-indigo-400 transition-colors" 
+              style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+              title="Ver perfil"
+            >
+              <span className="whitespace-nowrap font-bold text-sm truncate block">{session?.user?.name || "Panel Docente"}</span>
             </div>
           </div>
 
