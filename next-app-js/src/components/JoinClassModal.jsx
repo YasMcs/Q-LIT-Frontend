@@ -60,7 +60,7 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
         
         <div className="flex gap-3 justify-end">
           <button 
-            className="px-6 py-3 rounded-xl font-bold text-foreground hover:bg-input border border-transparent transition-colors disabled:opacity-50" 
+            className="px-6 py-3 rounded-xl font-bold text-foreground hover:bg-input border border-transparent transition-colors disabled:opacity-50"
             onClick={onClose}
             disabled={isSubmitting}
           >

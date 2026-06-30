@@ -6,7 +6,7 @@ const QLitSwal = Swal.mixin({
   background: "#0a0a0a", // Matches --bg-panel
   color: "#dbdee1",      // Matches --text-primary
   confirmButtonColor: "#6767ea", // Matches --accent-blue
-  cancelButtonColor: "#da373c",  // Matches --danger-red
+  cancelButtonColor: "#64748b",  // Neutral gray
   customClass: {
     container: "backdrop-blur-sm bg-black/40",
     popup: "rounded-[24px] border border-[rgba(255,255,255,0.06)] shadow-2xl font-sans",

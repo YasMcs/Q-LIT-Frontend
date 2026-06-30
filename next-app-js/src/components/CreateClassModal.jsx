@@ -40,12 +40,25 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
         
         <div className="docente-input-group">
           <label>Grupo / Sección</label>
-          <input
-            type="text"
-            value={classGroup}
-            onChange={(e) => setClassGroup(e.target.value.toUpperCase())}
-            placeholder="Ej: Grupo B"
-          />
+          <div className="flex flex-wrap gap-3 mt-3">
+            {["Grupo A", "Grupo B", "Grupo C", "Grupo D"].map((groupName) => {
+              const isSelected = classGroup === groupName;
+              return (
+                <button
+                  key={groupName}
+                  type="button"
+                  onClick={() => setClassGroup(groupName)}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
+                    isSelected 
+                      ? 'bg-accent text-white border-accent shadow-md scale-105' 
+                      : 'bg-[var(--bg-main)] border-[var(--border-color)] text-muted hover:border-accent/50 hover:text-foreground'
+                  }`}
+                >
+                  {groupName}
+                </button>
+              );
+            })}
+          </div>
         </div>
         
         <div className="docente-modal-actions">

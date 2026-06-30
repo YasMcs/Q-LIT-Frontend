@@ -46,12 +46,14 @@ export default function UserProfileDropdown({ isOpen, onClose, user, onShowPriva
             Aviso de Privacidad
           </button>
           
+          <div className="h-px bg-border my-2"></div>
+          
           <button 
             onClick={() => {
               onClose();
               signOut({ callbackUrl: "/" });
             }}
-            className="w-full px-3 py-2 text-xs font-bold text-red-500 hover:text-white hover:bg-red-500 rounded-lg flex items-center gap-2.5 transition-all text-left mt-3"
+            className="w-full px-3 py-2 text-xs font-bold text-red-500 hover:text-white hover:bg-red-500 rounded-lg flex items-center gap-2.5 transition-all text-left"
           >
             <i className="fa-solid fa-arrow-right-from-bracket text-[14px]"></i>
             Cerrar sesión

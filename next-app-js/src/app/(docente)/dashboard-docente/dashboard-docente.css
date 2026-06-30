@@ -277,7 +277,8 @@
   text-transform: uppercase;
 }
 
-.docente-input-group input {
+.docente-input-group input,
+.docente-input-group select {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--border-color);
@@ -286,10 +287,24 @@
   outline: none;
   color: var(--text-primary);
   background-color: var(--bg-panel);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.docente-input-group input:focus {
-  border-color: var(--text-primary);
+.docente-input-group input:hover,
+.docente-input-group select:hover {
+  border-color: #6767ea;
+}
+
+.docente-input-group input:focus,
+.docente-input-group select:focus {
+  border-color: #6767ea;
+  box-shadow: 0 0 0 2px rgba(103, 103, 234, 0.2);
+}
+
+.docente-input-group select option {
+  background-color: #0a0a0a;
+  color: #dbdee1;
 }
 
 .docente-modal-actions {

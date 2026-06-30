@@ -142,7 +142,6 @@ export default function ClassFeedAlumnoPage() {
               title="Ver perfil"
             >
               <span className="text-foreground">{session?.user?.name || "Alumno"}</span>
-              <span className="text-xs font-normal opacity-80">{session?.user?.email}</span>
             </div>
             <div 
               onClick={() => setIsProfileModalOpen(true)}
