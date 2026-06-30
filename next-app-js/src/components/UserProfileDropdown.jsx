@@ -51,7 +51,7 @@ export default function UserProfileDropdown({ isOpen, onClose, user, onShowPriva
               onClose();
               signOut({ callbackUrl: "/" });
             }}
-            className="w-full px-3 py-2 text-xs font-bold text-red-500 hover:text-white hover:bg-red-500 rounded-lg flex items-center gap-2.5 transition-all text-left mt-1"
+            className="w-full px-3 py-2 text-xs font-bold text-red-500 hover:text-white hover:bg-red-500 rounded-lg flex items-center gap-2.5 transition-all text-left mt-3"
           >
             <i className="fa-solid fa-arrow-right-from-bracket text-[14px]"></i>
             Cerrar sesión

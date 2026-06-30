@@ -232,6 +232,14 @@ function CrearPracticaDocenteContent() {
       await showAlert("Falta Laboratorio", "Por favor, selecciona a qué laboratorio asignar esta práctica.", "warning");
       return;
     }
+    
+    // Validar que no haya criterios vacíos
+    const hasEmptyCriteria = criteria.some(item => !item.text.trim());
+    if (hasEmptyCriteria) {
+      await showAlert("Criterios Incompletos", "Hay campos vacíos en los criterios de la lista de cotejo. Por favor, completa o elimina los criterios vacíos.", "warning");
+      return;
+    }
+
     if (criteriaSum !== maxScore) {
       const confirmed = await showConfirm(
         "Ajuste de Criterios",

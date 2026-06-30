@@ -365,3 +365,10 @@ input[type=number] {
   animation: skeleton-shimmer 2s infinite linear;
   border-radius: 8px;
 }
+
+/* SweetAlert2 Backdrop Blur */
+.swal2-container {
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
