@@ -8,11 +8,13 @@ import JoinClassModal from "@/components/JoinClassModal";
 import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
 import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
-import { showAlert } from "@/utils/alerts";
+import { showAlert, showConfirm } from "@/utils/alerts";
 
 export default function ClassFeedAlumnoPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const [classrooms, setClassrooms] = useState([]);
+  const [showSelector, setShowSelector] = useState(false);
   const [classInfo, setClassInfo] = useState({ title: "Cargando...", envStatus: "" });
   const [practices, setPractices] = useState([]);
   const [selectedPractice, setSelectedPractice] = useState(null);
@@ -33,39 +35,61 @@ export default function ClassFeedAlumnoPage() {
     }
   }, [status]);
 
-  const fetchData = async () => {
+  const fetchData = async (selectedId = null) => {
     try {
       const res = await fetch("/api/proxy/classrooms/student");
       const data = await res.json();
       
       if (res.ok && data.data && data.data.length > 0) {
+        setClassrooms(data.data);
         setIsEnrolled(true);
-        setClassInfo(data.data[0]);
         
-
-        const pr = await fetch(`/api/proxy/practices/classroom/${data.data[0].id}`);
-        const prData = await pr.json();
-        if (pr.ok && Array.isArray(prData)) {
-          const formatted = prData.map(p => {
-            // Obtener la entrega del estudiante
-            const studentSubmission = p.submissions?.[0];
-            const isSubmitted = studentSubmission && (studentSubmission.reviewStatus === "pendiente" || studentSubmission.reviewStatus === "calificada");
-            
-            let status = "assigned";
-            if (isSubmitted) {
-              status = "solved"; // Se marca como entregada
-            } else if (p.deadline && new Date(p.deadline) < new Date()) {
-              status = "overdue"; // Vencida
-            }
-            return {
-              ...p,
-              status,
-              score: studentSubmission?.score,
-              dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
-              assignDate: new Date(p.createdAt).toLocaleDateString("es-ES")
-            };
-          });
-          setPractices(formatted);
+        const activeClassrooms = data.data.filter(c => !c.isArchived);
+        const hasArchived = data.data.some(c => c.isArchived);
+        
+        let targetClass = null;
+        if (selectedId) {
+          targetClass = data.data.find(c => c.id === selectedId);
+        }
+        
+        if (!targetClass && activeClassrooms.length === 1 && !hasArchived) {
+          targetClass = activeClassrooms[0];
+          setShowSelector(false);
+        } else if (!targetClass) {
+          setShowSelector(true);
+          setLoading(false);
+          return;
+        }
+        
+        if (targetClass) {
+          setClassInfo(targetClass);
+          const isCurrentArchived = targetClass.isArchived;
+          
+          const pr = await fetch(`/api/proxy/practices/classroom/${targetClass.id}`);
+          const prData = await pr.json();
+          if (pr.ok && Array.isArray(prData)) {
+            const formatted = prData.map(p => {
+              const studentSubmission = p.submissions?.[0];
+              const isSubmitted = studentSubmission && (studentSubmission.reviewStatus === "pendiente" || studentSubmission.reviewStatus === "calificada");
+              
+              let status = "assigned";
+              if (isSubmitted) {
+                status = "solved";
+              } else if (p.deadline && new Date(p.deadline) < new Date()) {
+                status = "overdue";
+              }
+              return {
+                ...p,
+                status,
+                score: studentSubmission?.score,
+                dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
+                assignDate: new Date(p.createdAt).toLocaleDateString("es-ES"),
+                isReadOnly: isCurrentArchived
+              };
+            });
+            setPractices(formatted);
+            setShowSelector(false);
+          }
         }
       } else {
         setIsEnrolled(false);
@@ -107,6 +131,31 @@ export default function ClassFeedAlumnoPage() {
     }
   };
 
+  const handleLeaveClass = async () => {
+    if (!classInfo || !classInfo.id) return;
+    const confirmed = await showConfirm(
+      "¿Abandonar Laboratorio?",
+      `¿Estás seguro de que deseas abandonar el laboratorio "${classInfo.title}"? Esta acción no se puede deshacer y no podrás volver a unirte a este grupo.`
+    );
+    if (!confirmed) return;
+    try {
+      const res = await fetch(`/api/proxy/classrooms/${classInfo.id}/leave`, {
+        method: "POST"
+      });
+      
+      if (res.ok) {
+        await showAlert("Éxito", "Has abandonado el laboratorio correctamente", "success");
+        setClassInfo({ title: "Cargando...", envStatus: "" });
+        fetchData();
+      } else {
+        const data = await res.json();
+        await showAlert("Error", data.error?.message || "No se pudo abandonar la clase", "error");
+      }
+    } catch (err) {
+      await showAlert("Error", "Error de red al intentar abandonar la clase", "error");
+    }
+  };
+
 
   const filteredPractices = practices.filter(p => {
     if (filter === "all") return true;
@@ -130,9 +179,17 @@ export default function ClassFeedAlumnoPage() {
               Q-LIT <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
             </div>
             <div className="h-6 w-px bg-border hidden md:block"></div>
-            <span className="font-bold text-muted hidden md:block">
-              {isEnrolled ? classInfo.title : "Mi Laboratorio"}
+            <span className="font-bold text-muted hidden md:block mr-2">
+              {isEnrolled ? (showSelector ? "Mis Laboratorios" : classInfo.title) : "Mi Laboratorio"}
             </span>
+            {isEnrolled && !showSelector && (classrooms.length > 1 || classrooms.some(c => c.isArchived)) && (
+              <button
+                onClick={() => setShowSelector(true)}
+                className="px-3.5 py-1.5 bg-input hover:bg-border text-muted hover:text-foreground rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ml-2"
+              >
+                <i className="fa-solid fa-arrow-left"></i> Volver a mis clases
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-4 relative">
@@ -160,6 +217,7 @@ export default function ClassFeedAlumnoPage() {
               onClose={() => setIsProfileModalOpen(false)}
               user={session?.user}
               onShowPrivacy={() => setIsPrivacyModalOpen(true)}
+              onLeaveClass={!showSelector && classInfo.id && !classInfo.isArchived ? handleLeaveClass : null}
               positionClasses="top-[52px] right-0"
             />
           </div>
@@ -190,116 +248,211 @@ export default function ClassFeedAlumnoPage() {
                 </button>
               </div>
             ) : (
-
-              <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-                
-                {/* Columna Principal (Feed) */}
-                <div className="xl:col-span-3">
-                  <div className="mb-8">
-                    <h1 className="text-3xl font-extrabold text-foreground mb-2">Tus Prácticas</h1>
-                    <p className="text-muted font-medium">
-                      Selecciona una asignación para abrir el entorno interactivo y ejecutar tus consultas.
-                    </p>
-                  </div>
-
-                  {/* Filtros */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    <button 
-                      onClick={() => setFilter("all")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'all' ? 'bg-accent text-white shadow-md' : 'bg-panel text-muted border border-border hover:bg-main'}`}
-                    >
-                      Todas
-                    </button>
-                    <button 
-                      onClick={() => setFilter("assigned")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'assigned' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
-                    >
-                      <i className="fa-regular fa-clock mr-1.5"></i> Asignadas
-                    </button>
-                    <button 
-                      onClick={() => setFilter("solved")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'solved' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
-                    >
-                      <i className="fa-solid fa-check mr-1.5"></i> Entregadas
-                    </button>
-                    <button 
-                      onClick={() => setFilter("overdue")}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'overdue' ? 'bg-red-500 text-white shadow-md shadow-red-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
-                    >
-                      <i className="fa-solid fa-triangle-exclamation mr-1.5"></i> Sin entregar
-                    </button>
-                  </div>
-
-                  {/* Practices List */}
-                  <div className="alumno-module-block">
-                    {sortedPractices.length > 0 ? (
+              showSelector ? (
+                <div>
+                  {/* Active Laboratorios */}
+                  <div>
+                    <div className="mb-6 flex justify-between items-center">
                       <div>
-                        {sortedPractices.map((practice) => (
-                          <PracticeItemCard
-                            key={practice.id}
-                            id={practice.id}
-                            title={practice.title}
-                            status={practice.status}
-                            dueDate={practice.dueDate}
-                            assignDate={practice.assignDate}
-                            score={practice.score}
-                            totalPoints={practice.totalPoints}
-                            onClick={handlePracticeClick}
-                          />
-                        ))}
+                        <h1 className="text-3xl font-extrabold text-foreground mb-2">Mis Laboratorios</h1>
+                        <p className="text-muted font-medium">Selecciona un laboratorio para ver tus prácticas y progresar.</p>
+                      </div>
+                      <button
+                        onClick={() => setIsJoinModalOpen(true)}
+                        className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                      >
+                        <i className="fa-solid fa-plus" /> Unirse a una clase
+                      </button>
+                    </div>
+
+                    {classrooms.filter(c => !c.isArchived).length === 0 ? (
+                      <div className="text-center py-16 text-muted border border-dashed border-border rounded-3xl bg-panel animate-fade-in">
+                        <i className="fa-solid fa-laptop-code text-5xl mb-4 text-muted"></i>
+                        <p className="font-bold text-lg text-muted mb-1">No tienes laboratorios activos</p>
+                        <p className="text-sm">Únete a un laboratorio utilizando el código de tu docente.</p>
                       </div>
                     ) : (
-                      <div className="text-center py-16 text-muted animate-fade-in">
-                        <i className="fa-solid fa-folder-open text-5xl mb-4 text-muted"></i>
-                        <p className="font-bold text-lg text-muted mb-1">Nada por aquí</p>
-                        <p className="text-sm">No hay prácticas que coincidan con este filtro.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Columna Lateral (Tablerito Pendientes) */}
-                <div className="xl:col-span-1">
-                  <div className="bg-panel border border-border rounded-3xl p-6 shadow-sm sticky top-0">
-                    <h3 className="font-extrabold text-foreground text-lg mb-5 flex items-center gap-2 border-b border-border pb-4">
-                      <i className="fa-solid fa-list-ul text-indigo-500"></i> Próximas entregas
-                    </h3>
-                    
-                    {pendingPractices.length > 0 ? (
-                      <div className="flex flex-col gap-3">
-                        {pendingPractices.map(p => (
-                          <div 
-                            key={p.id} 
-                            onClick={() => handlePracticeClick(p.id)}
-                            className="p-4 bg-main border border-border rounded-2xl hover:border-indigo-500 hover:bg-indigo-500/10 cursor-pointer transition-all group shadow-sm hover:shadow-md"
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                        {classrooms.filter(c => !c.isArchived).map((cls) => (
+                          <div
+                            key={cls.id}
+                            onClick={() => fetchData(cls.id)}
+                            className="bg-panel border border-border rounded-3xl p-6 cursor-pointer hover:border-indigo-500/50 hover:shadow-lg hover:-translate-y-1 hover:bg-input transition-all duration-300 group relative"
                           >
-                            <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug mb-3">
-                              {p.title}
-                            </h4>
-                            <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider">
-                              <span className={p.status === "overdue" ? "text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md" : "text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-md"}>
-                                {p.status === "overdue" ? "Atrasada" : "Asignada"}
+                            <div className="flex justify-between items-start mb-4">
+                              <div className="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
+                                <i className="fa-solid fa-flask"></i>
+                              </div>
+                              <span className="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-lg font-bold">
+                                {cls.group || "A"}
                               </span>
-                              <span className="text-muted">
-                                {p.dueDate}
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground group-hover:text-indigo-400 transition-colors line-clamp-1 mb-2">
+                              {cls.title}
+                            </h3>
+                            <p className="text-sm text-muted line-clamp-2 mb-4">
+                              Docente: <span className="text-foreground font-medium">{cls.teacher}</span>
+                            </p>
+                            <div className="pt-4 border-t border-border flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted">
+                              <span>Estado</span>
+                              <span className="text-emerald-400 flex items-center gap-1.5 font-bold animate-fade-in">
+                                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Activo
                               </span>
                             </div>
                           </div>
                         ))}
                       </div>
-                    ) : (
-                      <div className="text-center py-10 animate-fade-in">
-                        <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
-                          <i className="fa-solid fa-party-horn text-2xl"></i>
-                        </div>
-                        <p className="text-base font-extrabold text-foreground">¡Todo al día!</p>
-                        <p className="text-sm font-medium text-muted mt-2">No tienes prácticas pendientes por entregar.</p>
-                      </div>
                     )}
                   </div>
+
+                  {/* Archived Laboratorios */}
+                  {classrooms.some(c => c.isArchived) && (
+                    <div className="mt-12">
+                      <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                        <i className="fa-solid fa-box-archive text-muted"></i> Laboratorios Archivados / Abandonados
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                        {classrooms.filter(c => c.isArchived).map((cls) => (
+                          <div
+                            key={cls.id}
+                            onClick={() => fetchData(cls.id)}
+                            className="bg-panel border border-border rounded-3xl p-6 cursor-pointer opacity-70 hover:opacity-100 hover:border-slate-500 hover:bg-input transition-all duration-300 group"
+                          >
+                            <div className="flex justify-between items-start mb-4">
+                              <div className="w-12 h-12 bg-slate-500/10 text-slate-400 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
+                                <i className="fa-solid fa-box-archive"></i>
+                              </div>
+                              <span className="text-xs bg-slate-500/10 text-slate-400 border border-slate-500/20 px-2.5 py-1 rounded-lg font-bold">
+                                {cls.group || "A"}
+                              </span>
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground group-hover:text-slate-400 transition-colors line-clamp-1 mb-2">
+                              {cls.title}
+                            </h3>
+                            <p className="text-sm text-muted line-clamp-2 mb-4">
+                              Docente: <span className="text-foreground font-medium">{cls.teacher}</span>
+                            </p>
+                            <div className="pt-4 border-t border-border flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted">
+                              <span>Estado</span>
+                              <span className="text-amber-500 font-bold">Archivado</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 animate-fade-in">
+                  
+                  {/* Columna Principal (Feed) */}
+                  <div className="xl:col-span-3">
+                    <div className="mb-8">
+                      <h1 className="text-3xl font-extrabold text-foreground mb-2">Tus Prácticas</h1>
+                      <p className="text-muted font-medium">
+                        Selecciona una asignación para abrir el entorno interactivo y ejecutar tus consultas.
+                      </p>
+                    </div>
+
+                    {/* Filtros */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      <button 
+                        onClick={() => setFilter("all")}
+                        className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'all' ? 'bg-accent text-white shadow-md' : 'bg-panel text-muted border border-border hover:bg-main'}`}
+                      >
+                        Todas
+                      </button>
+                      <button 
+                        onClick={() => setFilter("assigned")}
+                        className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'assigned' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
+                      >
+                        <i className="fa-regular fa-clock mr-1.5"></i> Asignadas
+                      </button>
+                      <button 
+                        onClick={() => setFilter("solved")}
+                        className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'solved' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
+                      >
+                        <i className="fa-solid fa-check mr-1.5"></i> Entregadas
+                      </button>
+                      <button 
+                        onClick={() => setFilter("overdue")}
+                        className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'overdue' ? 'bg-red-500 text-white shadow-md shadow-red-500/20' : 'bg-panel text-muted border border-border hover:bg-main'}`}
+                      >
+                        <i className="fa-solid fa-triangle-exclamation mr-1.5"></i> Sin entregar
+                      </button>
+                    </div>
+
+                    {/* Practices List */}
+                    <div className="alumno-module-block">
+                      {sortedPractices.length > 0 ? (
+                        <div>
+                          {sortedPractices.map((practice) => (
+                            <PracticeItemCard
+                              key={practice.id}
+                              id={practice.id}
+                              title={practice.title}
+                              status={practice.status}
+                              dueDate={practice.dueDate}
+                              assignDate={practice.assignDate}
+                              score={practice.score}
+                              totalPoints={practice.totalPoints}
+                              onClick={handlePracticeClick}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-16 text-muted animate-fade-in">
+                          <i className="fa-solid fa-folder-open text-5xl mb-4 text-muted"></i>
+                          <p className="font-bold text-lg text-muted mb-1">Nada por aquí</p>
+                          <p className="text-sm">No hay prácticas que coincidan con este filtro.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Columna Lateral (Tablerito Pendientes) */}
+                  <div className="xl:col-span-1">
+                    <div className="bg-panel border border-border rounded-3xl p-6 shadow-sm sticky top-0">
+                      <h3 className="font-extrabold text-foreground text-lg mb-5 flex items-center gap-2 border-b border-border pb-4">
+                        <i className="fa-solid fa-list-ul text-indigo-500"></i> Próximas entregas
+                      </h3>
+                      
+                      {pendingPractices.length > 0 ? (
+                        <div className="flex flex-col gap-3">
+                          {pendingPractices.map(p => (
+                            <div 
+                              key={p.id} 
+                              onClick={() => handlePracticeClick(p.id)}
+                              className="p-4 bg-main border border-border rounded-2xl hover:border-indigo-500 hover:bg-indigo-500/10 cursor-pointer transition-all group shadow-sm hover:shadow-md"
+                            >
+                              <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug mb-3">
+                                {p.title}
+                              </h4>
+                              <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider">
+                                <span className={p.status === "overdue" ? "text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md" : "text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-md"}>
+                                  {p.status === "overdue" ? "Atrasada" : "Asignada"}
+                                </span>
+                                <span className="text-muted">
+                                  {p.dueDate}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-10 animate-fade-in">
+                          <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                            <i className="fa-solid fa-party-horn text-2xl"></i>
+                          </div>
+                          <p className="text-base font-extrabold text-foreground">¡Todo al día!</p>
+                          <p className="text-sm font-medium text-muted mt-2">No tienes prácticas pendientes por entregar.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                </div>
+              )
             )}
           </div>
         </main>

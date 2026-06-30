@@ -2,7 +2,7 @@
 import React from "react";
 import { signOut } from "next-auth/react";
 
-export default function UserProfileDropdown({ isOpen, onClose, user, onShowPrivacy, positionClasses }) {
+export default function UserProfileDropdown({ isOpen, onClose, user, onShowPrivacy, onLeaveClass, positionClasses }) {
   if (!isOpen) return null;
 
   return (
@@ -45,6 +45,21 @@ export default function UserProfileDropdown({ isOpen, onClose, user, onShowPriva
             <i className="fa-solid fa-file-shield text-indigo-500 text-[14px]"></i>
             Aviso de Privacidad
           </button>
+          
+          {onLeaveClass && (
+            <>
+              <button 
+                onClick={() => {
+                  onClose();
+                  onLeaveClass();
+                }}
+                className="w-full px-3 py-2 text-xs font-bold text-amber-500 hover:text-white hover:bg-amber-500 rounded-lg flex items-center gap-2.5 transition-all text-left animate-pulse"
+              >
+                <i className="fa-solid fa-right-from-bracket text-[14px]"></i>
+                Abandonar Laboratorio
+              </button>
+            </>
+          )}
           
           <div className="h-px bg-border my-2"></div>
           
