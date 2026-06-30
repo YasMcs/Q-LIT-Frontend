@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
+import { showAlert } from "@/utils/alerts";
 import "./practica_sql.css";
 
 const DB_SCHEMAS = {
@@ -92,7 +93,7 @@ function PracticaSQLContent() {
 
   const handleExecute = async () => {
     if (!sqlQuery.trim()) {
-      alert("El editor de consultas SQL está vacío.");
+      await showAlert("Editor Vacío", "El editor de consultas SQL está vacío.", "warning");
       return;
     }
     
@@ -127,12 +128,12 @@ function PracticaSQLContent() {
 
   const handleSubmit = async () => {
     if (!sqlQuery.trim()) {
-      alert("No has escrito ninguna consulta SQL.");
+      await showAlert("Falta Consulta", "No has escrito ninguna consulta SQL.", "warning");
       return;
     }
 
     if (terminalState !== "success" || !executionResult) {
-      alert("Debes ejecutar tu consulta y asegurarte de que no tenga errores de sintaxis antes de poder entregarla.");
+      await showAlert("Falta Ejecución", "Debes ejecutar tu consulta y asegurarte de que no tenga errores de sintaxis antes de poder entregarla.", "warning");
       return;
     }
     
@@ -155,13 +156,13 @@ function PracticaSQLContent() {
       const data = await res.json();
       
       if (res.ok) {
-        alert("¡Felicidades! Tu código ha sido evaluado y la calificación se ha guardado.");
+        await showAlert("¡Excelente!", "Tu código ha sido evaluado y la calificación se ha guardado exitosamente.", "success");
         router.push("/class-feed-alumno");
       } else {
-        alert(data.error?.message || "Hubo un error al evaluar tu práctica.");
+        await showAlert("Error de Evaluación", data.error?.message || "Hubo un error al evaluar tu práctica.", "error");
       }
     } catch (err) {
-      alert("Error de conexión al enviar la evaluación.");
+      await showAlert("Error de Conexión", "Error de conexión al enviar la evaluación.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -242,7 +243,7 @@ function PracticaSQLContent() {
           const data = await res.json();
           // Si el servidor retorna un error (como el 403 de práctica ya entregada)
           if (!res.ok) {
-            alert(data.error?.message || "Error al ingresar a la práctica");
+            await showAlert("Aviso", data.error?.message || "Error al ingresar a la práctica", "info");
             router.push("/class-feed-alumno"); // Redirecciona de vuelta al muro
             return;
           }

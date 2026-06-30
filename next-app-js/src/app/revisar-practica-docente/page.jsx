@@ -3,12 +3,19 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import SidebarDocente from "@/components/SidebarDocente";
+import RevisarPracticaSkeleton from "@/components/skeletons/RevisarPracticaSkeleton";
+import { showAlert, showConfirm } from "@/utils/alerts";
 import "../(docente)/dashboard-docente/dashboard-docente.css";
 import "./revisar-practica-docente.css";
 
 export default function RevisarPracticaDocentePage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center flex items-center justify-center h-screen">Cargando...</div>}>
+    <Suspense fallback={
+      <div className="flex h-screen bg-background overflow-hidden relative">
+        <SidebarDocente />
+        <RevisarPracticaSkeleton />
+      </div>
+    }>
       <RevisarPracticaDocenteContent />
     </Suspense>
   );
@@ -113,17 +120,17 @@ function RevisarPracticaDocenteContent() {
       });
       
       if (res.ok) {
-        alert(`Calificación de ${grade}/${totalMaxScore} guardada con éxito.`);
+        await showAlert("Éxito", `Calificación de ${grade}/${totalMaxScore} guardada con éxito.`, "success");
         // Update local state to reflect the graded status without refetching all
         setStudents(prev => prev.map(s => 
           s.id === selectedStudent.id ? { ...s, status: 'COMPLETED', checklist: checklist } : s
         ));
         setViewMode('list');
       } else {
-        alert("Error al confirmar calificación");
+        await showAlert("Error", "Error al confirmar calificación", "error");
       }
     } catch (error) {
-      alert("Error de conexión");
+      await showAlert("Error", "Error de conexión", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +154,8 @@ function RevisarPracticaDocenteContent() {
   };
 
   const handleAssignZero = async (student) => {
-    if (!confirm(`¿Estás seguro de asignar 0 puntos a ${student.name}?`)) return;
+    const confirmed = await showConfirm("¿Estás seguro?", `¿Deseas asignar 0 puntos a ${student.name}?`);
+    if (!confirmed) return;
     try {
       const res = await fetch('/api/proxy/evaluations/assign-zero', {
         method: 'POST',
@@ -159,21 +167,18 @@ function RevisarPracticaDocenteContent() {
           s.id === student.id ? { ...s, status: 'COMPLETED' } : s
         ));
       } else {
-        alert("Error al asignar 0");
+        await showAlert("Error", "Error al asignar 0", "error");
       }
     } catch (error) {
-      alert("Error de conexión");
+      await showAlert("Error", "Error de conexión", "error");
     }
   };
 
   if (loading) {
-    // Sencillo skeleton (idealmente un componente aparte)
     return (
       <div className="flex h-screen bg-background overflow-hidden relative">
         <SidebarDocente />
-        <div className="flex-1 p-8 flex items-center justify-center">
-           <div className="animate-pulse text-indigo-500 font-bold text-xl"><i className="fa-solid fa-spinner fa-spin mr-3"></i>Cargando revisiones...</div>
-        </div>
+        <RevisarPracticaSkeleton />
       </div>
     );
   }

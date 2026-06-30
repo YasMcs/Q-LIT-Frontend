@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import ClassCard from "@/components/ClassCard";
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
+import { showAlert, showConfirm } from "@/utils/alerts";
 import "../dashboard-docente/dashboard-docente.css";
 
 export default function ArchivoDocentePage() {
@@ -33,7 +35,11 @@ export default function ArchivoDocentePage() {
   }, [status, session]);
 
   const handleUnarchive = async (cls) => {
-    if (!window.confirm(`¿Estás seguro de que deseas desarchivar el laboratorio "${cls.title}"?`)) return;
+    const confirmed = await showConfirm(
+      "¿Estás seguro?",
+      `¿Deseas desarchivar el laboratorio "${cls.title}"?`
+    );
+    if (!confirmed) return;
     try {
       const response = await fetch(`http://localhost:4000/api/classrooms/${cls.id}`, {
         method: "PATCH",
@@ -44,16 +50,26 @@ export default function ArchivoDocentePage() {
         setArchivedClasses(archivedClasses.filter(c => c.id !== cls.id));
       } else {
         const data = await response.json();
-        alert(data.error?.message || "Error al desarchivar el laboratorio");
+        await showAlert("Error", data.error?.message || "Error al desarchivar el laboratorio", "error");
       }
     } catch (error) {
       console.error("Error al desarchivar:", error);
-      alert("Error de conexión");
+      await showAlert("Error", "Error de conexión", "error");
     }
   };
 
   if (loading) {
-    return <main className="docente-main"><p>Cargando laboratorios archivados...</p></main>;
+    return (
+      <main className="docente-main">
+        <header className="docente-header-actions">
+          <div>
+            <h1>Archivados</h1>
+            <p className="text-muted text-sm mt-1">Laboratorios y grupos de semestres anteriores.</p>
+          </div>
+        </header>
+        <DashboardSkeleton count={3} />
+      </main>
+    );
   }
 
   return (

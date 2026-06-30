@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { showAlert } from "@/utils/alerts";
 
 export default function JoinClassModal({ isOpen, onClose, onJoin }) {
   const [classCode, setClassCode] = useState("");
@@ -23,10 +24,10 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
     setClassCode(formatted);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const rawCode = classCode.replace(/\s/g, "");
     if (rawCode.length < 5 || rawCode.length > 6) {
-      alert("El código de laboratorio debe tener entre 5 y 6 caracteres");
+      await showAlert("Código Inválido", "El código de laboratorio debe tener entre 5 y 6 caracteres", "warning");
       return;
     }
     onJoin(rawCode);

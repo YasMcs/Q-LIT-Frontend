@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import ClassCard from "@/components/ClassCard";
 import CreateClassModal from "@/components/CreateClassModal";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
+import { showAlert, showConfirm, showPrompt } from "@/utils/alerts";
 import "./dashboard-docente.css";
 
 export default function DashboardDocentePage() {
@@ -55,11 +56,11 @@ export default function DashboardDocentePage() {
         setClasses([...classes, data.data]);
         setIsModalOpen(false);
       } else {
-        alert(data.error?.message || "Error al crear el laboratorio");
+        await showAlert("Error", data.error?.message || "Error al crear el laboratorio", "error");
       }
     } catch (error) {
       console.error("Error al crear la clase:", error);
-      alert("Error de conexión al servidor");
+      await showAlert("Error de Conexión", "Error de conexión al servidor", "error");
     }
   };
 
@@ -113,43 +114,52 @@ export default function DashboardDocentePage() {
                   router.push(`/class-feed-docente?classroomId=${cls.id}&code=${cls.inviteCode}&title=${encodeURIComponent(cls.title)}`);
                 }}
                 onArchive={async () => {
-                  if (!window.confirm(`¿Estás seguro de que deseas archivar el laboratorio "${cls.title}"?`)) return;
-                  try {
-                    const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
-                      method: "DELETE"
-                    });
-                    if (response.ok) {
-                      setClasses(classes.filter(c => c.id !== cls.id));
-                    } else {
-                      const data = await response.json();
-                      alert(data.error?.message || "Error al archivar el laboratorio");
-                    }
-                  } catch (error) {
-                    console.error("Error al archivar el laboratorio:", error);
-                    alert("Error de conexión");
-                  }
-                }}
-                onEdit={async () => {
-                  const newTitle = window.prompt("Editar nombre del laboratorio:", cls.title);
-                  if (newTitle && newTitle !== cls.title) {
-                    try {
-                      const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ name: newTitle })
-                      });
-                      if (response.ok) {
-                        setClasses(classes.map(c => c.id === cls.id ? { ...c, title: newTitle } : c));
-                      } else {
-                        const data = await response.json();
-                        alert(data.error?.message || "Error al actualizar el laboratorio");
-                      }
-                    } catch (error) {
-                      console.error("Error al actualizar el laboratorio:", error);
-                      alert("Error de conexión");
-                    }
-                  }
-                }}
+                   const confirmed = await showConfirm(
+                     "¿Estás seguro?",
+                     `¿Deseas archivar el laboratorio "${cls.title}"?`
+                   );
+                   if (!confirmed) return;
+                   try {
+                     const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
+                       method: "DELETE"
+                     });
+                     if (response.ok) {
+                       setClasses(classes.filter(c => c.id !== cls.id));
+                     } else {
+                       const data = await response.json();
+                       await showAlert("Error", data.error?.message || "Error al archivar el laboratorio", "error");
+                     }
+                   } catch (error) {
+                     console.error("Error al archivar el laboratorio:", error);
+                     await showAlert("Error", "Error de conexión", "error");
+                   }
+                 }}
+                 onEdit={async () => {
+                   const newTitle = await showPrompt(
+                     "Editar Nombre",
+                     `Introduce el nuevo nombre para el laboratorio "${cls.title}":`,
+                     cls.title,
+                     "Nombre del laboratorio"
+                   );
+                   if (newTitle && newTitle.trim() !== "" && newTitle !== cls.title) {
+                     try {
+                       const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
+                         method: "PATCH",
+                         headers: { "Content-Type": "application/json" },
+                         body: JSON.stringify({ name: newTitle })
+                       });
+                       if (response.ok) {
+                         setClasses(classes.map(c => c.id === cls.id ? { ...c, title: newTitle } : c));
+                       } else {
+                         const data = await response.json();
+                         await showAlert("Error", data.error?.message || "Error al actualizar el laboratorio", "error");
+                       }
+                     } catch (error) {
+                       console.error("Error al actualizar el laboratorio:", error);
+                       await showAlert("Error", "Error de conexión", "error");
+                     }
+                   }
+                 }}
               />
             ))}
           </div>

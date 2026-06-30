@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import CustomSelect from "@/components/CustomSelect";
+import DirectorioSkeleton from "@/components/skeletons/DirectorioSkeleton";
 import "./directorio-docente.css";
 
 export default function DirectorioDocentePage() {
@@ -72,12 +73,7 @@ export default function DirectorioDocentePage() {
   }, [filteredStudents, selectedStudent]);
 
   if (loading) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center bg-main text-muted gap-2">
-        <i className="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
-        <span>Cargando alumnos inscritos...</span>
-      </div>
-    );
+    return <DirectorioSkeleton />;
   }
 
   return (

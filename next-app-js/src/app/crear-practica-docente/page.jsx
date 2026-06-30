@@ -2,6 +2,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { showAlert, showConfirm } from "@/utils/alerts";
 import "./crear-practica-docente.css";
 
 // Los datosPorDB hardcodeados han sido eliminados.
@@ -187,52 +188,56 @@ function CrearPracticaDocenteContent() {
         throw new Error(data.error?.message || "Error al guardar la práctica");
       }
 
-      alert(editId ? "Práctica actualizada con éxito." : "Práctica SQL asignada con éxito al laboratorio.");
+      await showAlert("Éxito", editId ? "Práctica actualizada con éxito." : "Práctica SQL asignada con éxito al laboratorio.", "success");
       if (selectedClassroomId) {
         router.push(`/class-feed-docente?classroomId=${selectedClassroomId}`);
       } else {
         router.push("/dashboard-docente");
       }
     } catch (error) {
-      alert(error.message);
+      await showAlert("Error", error.message, "error");
     } finally {
       setIsSaving(false);
       setShowConfirmModal(false);
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim()) {
-      alert("Por favor, introduce el título de la práctica.");
+      await showAlert("Falta Título", "Por favor, introduce el título de la práctica.", "warning");
       return;
     }
     if (!description.trim()) {
-      alert("Por favor, introduce las instrucciones u objetivo de la práctica.");
+      await showAlert("Falta Instrucciones", "Por favor, introduce las instrucciones u objetivo de la práctica.", "warning");
       return;
     }
     if (selectedFunctions.length === 0) {
-      alert("Por favor, selecciona al menos una función o cláusula SQL esperada.");
+      await showAlert("Falta Requisitos", "Por favor, selecciona al menos una función o cláusula SQL esperada.", "warning");
       return;
     }
     if (!activeDb) {
-      alert("Por favor, selecciona una base de datos temática para la práctica.");
+      await showAlert("Falta Base de Datos", "Por favor, selecciona una base de datos temática para la práctica.", "warning");
       return;
     }
     if (!maxScore || maxScore <= 0) {
-      alert("Por favor, asigna un valor total válido mayor a 0 para la práctica.");
+      await showAlert("Valor Inválido", "Por favor, asigna un valor total válido mayor a 0 para la práctica.", "warning");
       return;
     }
     if (!dueDate || !dueTime) {
-      alert("Por favor, establece la fecha y hora de entrega.");
+      await showAlert("Falta Fecha", "Por favor, establece la fecha y hora de entrega.", "warning");
       return;
     }
     // Only require classroomId for new practices
     if (!editId && !selectedClassroomId) {
-      alert("Por favor, selecciona a qué laboratorio asignar esta práctica.");
+      await showAlert("Falta Laboratorio", "Por favor, selecciona a qué laboratorio asignar esta práctica.", "warning");
       return;
     }
     if (criteriaSum !== maxScore) {
-      if (!confirm(`La suma de los criterios de la lista de cotejo (${criteriaSum} pts) no coincide con el valor total de la práctica (${maxScore} pts). ¿Deseas guardar de todas formas?`)) {
+      const confirmed = await showConfirm(
+        "Ajuste de Criterios",
+        `La suma de los criterios de la lista de cotejo (${criteriaSum} pts) no coincide con el valor total de la práctica (${maxScore} pts). ¿Deseas guardar de todas formas?`
+      );
+      if (!confirmed) {
         return;
       }
     }

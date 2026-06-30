@@ -6,6 +6,7 @@ import ChallengeManageCard from "@/components/ChallengeManageCard";
 import PracticeDetailModal from "@/components/PracticeDetailModal";
 import StatBox from "@/components/StatBox";
 import ClassFeedSkeleton from "@/components/skeletons/ClassFeedSkeleton";
+import { showAlert, showConfirm } from "@/utils/alerts";
 
 import "./class-feed-docente.css";
 
@@ -151,7 +152,7 @@ function ClassFeedDocenteContent() {
 
   const submitDateChange = async () => {
     if (!newDate || !newTime) {
-      alert("Por favor selecciona una fecha y hora válidas.");
+      await showAlert("Campos Incompletos", "Por favor selecciona una fecha y hora válidas.", "warning");
       return;
     }
 
@@ -180,10 +181,10 @@ function ClassFeedDocenteContent() {
       setIsDateModalOpen(false);
       setNewDate("");
       setNewTime("");
-      alert("Fecha límite actualizada con éxito.");
+      await showAlert("Éxito", "Fecha límite actualizada con éxito.", "success");
     } catch (err) {
       console.error(err);
-      alert("Error al actualizar la fecha. Inténtalo de nuevo.");
+      await showAlert("Error", "Error al actualizar la fecha. Inténtalo de nuevo.", "error");
     }
   };
 
@@ -192,7 +193,11 @@ function ClassFeedDocenteContent() {
   }
 
   const handleDelete = async (id) => {
-    if (confirm("¿Estás seguro de que deseas eliminar esta práctica? Esta acción no se puede deshacer.")) {
+    const confirmed = await showConfirm(
+      "¿Estás seguro?",
+      "¿Deseas eliminar esta práctica? Esta acción no se puede deshacer."
+    );
+    if (confirmed) {
       try {
         const res = await fetch(`/api/proxy/practices/${id}`, {
           method: "DELETE"
@@ -203,8 +208,9 @@ function ClassFeedDocenteContent() {
         }
         
         setChallenges(challenges.filter(c => c.id !== id));
+        await showAlert("Éxito", "Práctica eliminada exitosamente", "success");
       } catch (err) {
-        alert(err.message);
+        await showAlert("Error", err.message, "error");
       }
     }
   };

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import RoleCard from "@/components/RoleCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { showAlert } from "@/utils/alerts";
 import "../welcome.css";
 
 export default function OnboardingPage() {
@@ -37,11 +38,11 @@ export default function OnboardingPage() {
         const dest = role === "teacher" ? "/dashboard-docente" : "/class-feed-alumno";
         router.push(dest);
       } else {
-        alert("Hubo un error al asignar tu rol. Por favor, intenta de nuevo.");
+        await showAlert("Error de Rol", "Hubo un error al asignar tu rol. Por favor, intenta de nuevo.", "error");
       }
     } catch (err) {
       console.error("Error asignando rol:", err);
-      alert("Error de conexión al servidor");
+      await showAlert("Error de Conexión", "Error de conexión al servidor", "error");
     }
   };
 

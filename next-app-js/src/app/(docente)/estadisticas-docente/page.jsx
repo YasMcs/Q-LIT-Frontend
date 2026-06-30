@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import CustomSelect from "@/components/CustomSelect";
+import EstadisticasSkeleton from "@/components/skeletons/EstadisticasSkeleton";
 import "./estadisticas-docente.css";
 
 export default function EstadisticasDocentePage() {
@@ -53,12 +54,7 @@ export default function EstadisticasDocentePage() {
   ];
 
   if (loading || !stats) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center bg-main text-muted gap-2">
-        <i className="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
-        <span>Cargando estadísticas reales...</span>
-      </div>
-    );
+    return <EstadisticasSkeleton />;
   }
 
   const { globalStats, struggles, classStats } = stats;

@@ -8,6 +8,7 @@ import JoinClassModal from "@/components/JoinClassModal";
 import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
 import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
+import { showAlert } from "@/utils/alerts";
 
 export default function ClassFeedAlumnoPage() {
   const router = useRouter();
@@ -95,14 +96,14 @@ export default function ClassFeedAlumnoPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Te has unido exitosamente al laboratorio!");
+        await showAlert("¡Éxito!", "Te has unido exitosamente al laboratorio", "success");
         setIsJoinModalOpen(false);
         fetchData();
       } else {
-        alert(data.error?.message || "Error al unirse a la clase");
+        await showAlert("Error", data.error?.message || "Error al unirse a la clase", "error");
       }
     } catch (err) {
-      alert("Error de red");
+      await showAlert("Error", "Error de red", "error");
     }
   };
 

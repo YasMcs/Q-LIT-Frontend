@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { showAlert } from "@/utils/alerts";
 
 export default function CreateClassModal({ isOpen, onClose, onCreate }) {
   const [className, setClassName] = useState("");
@@ -7,9 +8,9 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!className || !classGroup) {
-      alert("Completa los parámetros del laboratorio");
+      await showAlert("Datos Incompletos", "Completa los parámetros del laboratorio", "warning");
       return;
     }
     onCreate({ title: className, group: classGroup });
