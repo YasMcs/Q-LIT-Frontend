@@ -53,7 +53,7 @@ export default function JoinClassModal({ isOpen, onClose, onJoin }) {
         
         <div className="flex gap-3 justify-end">
           <button 
-            className="px-6 py-3 rounded-xl font-bold text-foreground hover:bg-input border border-transparent transition-colors" 
+            className="px-6 py-3 rounded-xl font-bold text-muted bg-input hover:bg-border transition-colors cursor-pointer" 
             onClick={onClose}
           >
             Cancelar

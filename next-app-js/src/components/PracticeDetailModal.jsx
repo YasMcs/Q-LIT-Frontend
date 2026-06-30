@@ -178,16 +178,8 @@ export default function PracticeDetailModal({
                 >
                   <i className="fa-regular fa-trash-can"></i>
                 </button>
-                <div className="w-px h-6 bg-border mx-2"></div>
               </>
             )}
-            
-            <button
-              className="px-5 py-2.5 rounded-xl font-bold text-foreground hover:bg-input hover:text-foreground transition-all"
-              onClick={onClose}
-            >
-              Cerrar
-            </button>
           </div>
           
           {isStudent && practice.status === "solved" ? (
