@@ -5,7 +5,7 @@ export default function ClassFeedAlumnoSkeleton() {
   return (
     <div className="flex-1 overflow-hidden">
         <main className="h-full overflow-y-auto py-8">
-          <div className="w-full px-6 md:px-12">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
               {/* Columna Principal (Feed) */}
               <div className="xl:col-span-3">

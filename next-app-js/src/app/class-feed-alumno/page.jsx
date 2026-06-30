@@ -171,9 +171,8 @@ export default function ClassFeedAlumnoPage() {
         <ClassFeedAlumnoSkeleton />
       ) : (
       <div className="flex-1 overflow-hidden">
-        {/* Main Container */}
         <main className="h-full overflow-y-auto py-8">
-          <div className="w-full px-6 md:px-12">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
             {!isEnrolled ? (
 
               <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto py-20 animate-fade-in">
