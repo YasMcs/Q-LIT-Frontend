@@ -20,7 +20,10 @@ export default function ClassFeedAlumnoPage() {
   const [selectedPractice, setSelectedPractice] = useState(null);
   const [filter, setFilter] = useState("all"); 
   
+  // isEnrolled = tiene al menos UNA clase (activa o archivada)
+  // hasActiveOnly = tiene 1 activa y 0 archivadas (flujo directo al feed sin selector)
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [hasArchivedOnly, setHasArchivedOnly] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -37,62 +40,94 @@ export default function ClassFeedAlumnoPage() {
 
   const fetchData = async (selectedId = null) => {
     try {
-      const res = await fetch("/api/proxy/classrooms/student");
+      // Usamos el nuevo endpoint /student/status para distinguir activas vs archivadas
+      const res = await fetch("/api/proxy/classrooms/student/status");
       const data = await res.json();
-      
-      if (res.ok && data.data && data.data.length > 0) {
-        setClassrooms(data.data);
-        setIsEnrolled(true);
-        
-        const activeClassrooms = data.data.filter(c => !c.isArchived);
-        const hasArchived = data.data.some(c => c.isArchived);
-        
-        let targetClass = null;
-        if (selectedId) {
-          targetClass = data.data.find(c => c.id === selectedId);
-        }
-        
-        if (!targetClass && activeClassrooms.length === 1 && !hasArchived) {
-          targetClass = activeClassrooms[0];
-          setShowSelector(false);
-        } else if (!targetClass) {
-          setShowSelector(true);
-          setLoading(false);
-          return;
-        }
-        
-        if (targetClass) {
-          setClassInfo(targetClass);
-          const isCurrentArchived = targetClass.isArchived;
-          
-          const pr = await fetch(`/api/proxy/practices/classroom/${targetClass.id}`);
-          const prData = await pr.json();
-          if (pr.ok && Array.isArray(prData)) {
-            const formatted = prData.map(p => {
-              const studentSubmission = p.submissions?.[0];
-              const isSubmitted = studentSubmission && (studentSubmission.reviewStatus === "pendiente" || studentSubmission.reviewStatus === "calificada");
-              
-              let status = "assigned";
-              if (isSubmitted) {
-                status = "solved";
-              } else if (p.deadline && new Date(p.deadline) < new Date()) {
-                status = "overdue";
-              }
-              return {
-                ...p,
-                status,
-                score: studentSubmission?.score,
-                dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
-                assignDate: new Date(p.createdAt).toLocaleDateString("es-ES"),
-                isReadOnly: isCurrentArchived
-              };
-            });
-            setPractices(formatted);
-            setShowSelector(false);
-          }
-        }
-      } else {
+
+      if (!res.ok) {
         setIsEnrolled(false);
+        setHasArchivedOnly(false);
+        setLoading(false);
+        return;
+      }
+
+      const { hasActiveEnrollment, hasArchivedEnrollments, active, archived } = data;
+
+      // Construir la lista combinada para el selector
+      const combined = [
+        ...(active || []).map(c => ({ ...c, isArchived: false })),
+        ...(archived || []).map(c => ({ ...c, isArchived: true }))
+      ];
+
+      if (!hasActiveEnrollment && !hasArchivedEnrollments) {
+        // Sin ninguna inscripción → pantalla de "Aún no estás inscrito"
+        setIsEnrolled(false);
+        setHasArchivedOnly(false);
+        setClassrooms([]);
+        setLoading(false);
+        return;
+      }
+
+      // Tiene al menos una inscripción (activa o archivada)
+      setIsEnrolled(true);
+      setClassrooms(combined);
+
+      if (!hasActiveEnrollment && hasArchivedEnrollments) {
+        // Solo tiene archivadas → mostrar selector con solo la sección archivada, sin botón de unirse
+        setHasArchivedOnly(true);
+        setShowSelector(true);
+        setLoading(false);
+        return;
+      }
+
+      setHasArchivedOnly(false);
+
+      // Determinar a qué clase ir
+      let targetClass = null;
+      if (selectedId) {
+        targetClass = combined.find(c => c.id === selectedId);
+      }
+
+      // Auto-entrar si solo hay 1 activa y 0 archivadas (comportamiento original)
+      if (!targetClass && (active || []).length === 1 && !hasArchivedEnrollments) {
+        targetClass = active[0];
+        setShowSelector(false);
+      } else if (!targetClass) {
+        // Tiene varias activas o mezcla → mostrar selector
+        setShowSelector(true);
+        setLoading(false);
+        return;
+      }
+
+      if (targetClass) {
+        setClassInfo(targetClass);
+        const isCurrentArchived = targetClass.isArchived;
+
+        const pr = await fetch(`/api/proxy/practices/classroom/${targetClass.id}`);
+        const prData = await pr.json();
+        if (pr.ok && Array.isArray(prData)) {
+          const formatted = prData.map(p => {
+            const studentSubmission = p.submissions?.[0];
+            const isSubmitted = studentSubmission && (studentSubmission.reviewStatus === "pendiente" || studentSubmission.reviewStatus === "calificada");
+
+            let practiceStatus = "assigned";
+            if (isSubmitted) {
+              practiceStatus = "solved";
+            } else if (p.deadline && new Date(p.deadline) < new Date()) {
+              practiceStatus = "overdue";
+            }
+            return {
+              ...p,
+              status: practiceStatus,
+              score: studentSubmission?.score,
+              dueDate: p.deadline ? new Date(p.deadline).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "Sin límite",
+              assignDate: new Date(p.createdAt).toLocaleDateString("es-ES"),
+              isReadOnly: isCurrentArchived
+            };
+          });
+          setPractices(formatted);
+          setShowSelector(false);
+        }
       }
     } catch (err) {
       console.error("Error al obtener datos del estudiante:", err);
@@ -146,6 +181,7 @@ export default function ClassFeedAlumnoPage() {
       if (res.ok) {
         await showAlert("Éxito", "Has abandonado el laboratorio correctamente", "success");
         setClassInfo({ title: "Cargando...", envStatus: "" });
+        setPractices([]);
         fetchData();
       } else {
         const data = await res.json();
@@ -164,8 +200,8 @@ export default function ClassFeedAlumnoPage() {
     if (!confirmed) return;
     
     try {
-      const res = await fetch(`/api/proxy/classrooms/${cls.id}/unarchive`, {
-        method: "POST"
+      const res = await fetch(`/api/proxy/classrooms/${cls.id}/unarchive-student`, {
+        method: "PATCH"
       });
       
       if (res.ok) {
@@ -206,7 +242,7 @@ export default function ClassFeedAlumnoPage() {
             <span className="font-bold text-muted hidden md:block mr-2">
               {isEnrolled ? (showSelector ? "Mis Laboratorios" : classInfo.title) : "Mi Laboratorio"}
             </span>
-            {isEnrolled && !showSelector && (classrooms.length > 1 || classrooms.some(c => c.isArchived)) && (
+            {isEnrolled && !showSelector && (classrooms.length > 1 || classrooms.some(c => c.isArchived) || hasArchivedOnly) && (
               <button
                 onClick={() => setShowSelector(true)}
                 className="px-3.5 py-1.5 bg-input hover:bg-border text-muted hover:text-foreground rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ml-2"
@@ -279,17 +315,24 @@ export default function ClassFeedAlumnoPage() {
                     <div className="mb-6 flex justify-between items-center">
                       <div>
                         <h1 className="text-3xl font-extrabold text-foreground mb-2">Mis Laboratorios</h1>
-                        <p className="text-muted font-medium">Selecciona un laboratorio para ver tus prácticas y progresar.</p>
+                        <p className="text-muted font-medium">
+                          {hasArchivedOnly
+                            ? "Has abandonado todos tus laboratorios. Puedes reactivar uno si deseas volver a consultarlo."
+                            : "Selecciona un laboratorio para ver tus prácticas y progresar."
+                          }
+                        </p>
                       </div>
-                      <button
-                        onClick={() => setIsJoinModalOpen(true)}
-                        className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
-                      >
-                        <i className="fa-solid fa-plus" /> Unirse a una clase
-                      </button>
+                      {!hasArchivedOnly && (
+                        <button
+                          onClick={() => setIsJoinModalOpen(true)}
+                          className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                        >
+                          <i className="fa-solid fa-plus" /> Unirse a una clase
+                        </button>
+                      )}
                     </div>
 
-                    {classrooms.filter(c => !c.isArchived).length === 0 ? (
+                    {classrooms.filter(c => !c.isArchived).length === 0 && !hasArchivedOnly ? (
                       <div className="text-center py-16 text-muted border border-dashed border-border rounded-3xl bg-panel animate-fade-in">
                         <i className="fa-solid fa-laptop-code text-5xl mb-4 text-muted"></i>
                         <p className="font-bold text-lg text-muted mb-1">No tienes laboratorios activos</p>
