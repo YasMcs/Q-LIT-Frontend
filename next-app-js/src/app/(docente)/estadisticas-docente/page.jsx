@@ -85,7 +85,7 @@ export default function EstadisticasDocentePage() {
             </div>
             <div className="kpi-info">
               <h3>Aprendizaje Efectivo</h3>
-              <div className="kpi-value">{globalStats.learningPercentage}%</div>
+              <div className="kpi-value">{globalStats?.learningPercentage || 0}%</div>
             </div>
           </div>
           <div className="kpi-card">
@@ -94,7 +94,7 @@ export default function EstadisticasDocentePage() {
             </div>
             <div className="kpi-info">
               <h3>Tasa de Entrega</h3>
-              <div className="kpi-value">{globalStats.deliveryRate}%</div>
+              <div className="kpi-value">{globalStats?.deliveryRate || 0}%</div>
             </div>
           </div>
           <div className="kpi-card">
@@ -103,7 +103,20 @@ export default function EstadisticasDocentePage() {
             </div>
             <div className="kpi-info">
               <h3>Alumnos en Riesgo</h3>
-              <div className="kpi-value">{globalStats.studentsAtRisk}</div>
+              <div className="kpi-value">{globalStats?.studentsAtRisk || 0}</div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mejora */}
+        <section className="kpi-grid mt-4" style={{ gridTemplateColumns: '1fr', maxWidth: '300px' }}>
+          <div className="kpi-card" style={{ borderColor: '#8b5cf6' }}>
+            <div className="kpi-icon" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
+              <i className="fa-solid fa-chart-line"></i>
+            </div>
+            <div className="kpi-info">
+              <h3>Índice de Mejora</h3>
+              <div className="kpi-value" style={{ color: '#8b5cf6' }}>{globalStats?.improvementIndex ?? 100}%</div>
             </div>
           </div>
         </section>
@@ -117,7 +130,7 @@ export default function EstadisticasDocentePage() {
               <span className="widget-subtitle">Mayor índice de error</span>
             </div>
             <div className="struggles-list">
-              {struggles.map((item, idx) => (
+              {(struggles || []).map((item, idx) => (
                 <div key={idx} className="struggle-item">
                   <div className="struggle-header">
                     <span className="struggle-topic">{item.topic}</span>
@@ -151,7 +164,7 @@ export default function EstadisticasDocentePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {classStats.map((cls) => (
+                  {(classStats || []).map((cls) => (
                     <tr key={cls.id}>
                       <td className="font-semibold">{cls.name}</td>
                       <td>{cls.group}</td>

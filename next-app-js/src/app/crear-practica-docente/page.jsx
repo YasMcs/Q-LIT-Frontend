@@ -404,9 +404,26 @@ function CrearPracticaDocenteContent() {
                 <input
                   type="number"
                   className="sidebar-number-input"
-                  min="0"
-                  value={maxScore}
-                  onChange={(e) => setMaxScore(parseInt(e.target.value) || 0)}
+                  min="1"
+                  value={maxScore === '' ? '' : maxScore}
+                  onKeyDown={(e) => {
+                    // Prevenir que el usuario teclee el signo menos, más, punto o la letra "e" (que HTML5 permite en inputs number)
+                    if (['-', '+', 'e', 'E', '.', ','].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '') {
+                      setMaxScore('');
+                    } else {
+                      const num = parseInt(val, 10);
+                      setMaxScore(num > 0 ? num : '');
+                    }
+                  }}
+                  onBlur={() => {
+                    if (maxScore === '') setMaxScore(100);
+                  }}
                 />
               </div>
             </div>
