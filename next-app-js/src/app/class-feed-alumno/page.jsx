@@ -170,7 +170,7 @@ export default function ClassFeedAlumnoPage() {
     if (!classInfo || !classInfo.id) return;
     const confirmed = await showConfirm(
       "¿Abandonar Laboratorio?",
-      `¿Estás seguro de que deseas abandonar el laboratorio "${classInfo.title}"? Esta acción no se puede deshacer y no podrás volver a unirte a este grupo.`
+      `¿Estás seguro de que deseas abandonar el laboratorio "${classInfo.title}"? Podrás reactivarlo más adelante si lo necesitas.`
     );
     if (!confirmed) return;
     try {
