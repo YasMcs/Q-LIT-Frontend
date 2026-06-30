@@ -13,7 +13,7 @@
 .directorio-main {
   flex: 1;
   padding: 3rem 4rem;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -120,9 +120,6 @@
   overflow-y: auto;
   flex: 1;
   padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 
 .directorio-student-item {
@@ -134,6 +131,7 @@
   cursor: pointer;
   transition: all 0.2s;
   border: 1px solid transparent;
+  margin-bottom: 0.5rem;
 }
 
 .directorio-student-item:hover {
@@ -247,9 +245,6 @@
 }
 
 .practices-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
   overflow-y: auto;
   flex: 1;
   padding-right: 0.5rem;
@@ -309,6 +304,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
 .practice-history-card .prac-title {

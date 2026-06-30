@@ -112,10 +112,14 @@ export default function DirectorioDocentePage() {
                 <p>Selecciona un alumno de la lista derecha para ver su perfil completo.</p>
               </div>
             ) : (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
                 <div className="detail-header">
                   <div className="detail-header-avatar">
-                    {selectedStudent.name.charAt(0)}
+                    {selectedStudent.image ? (
+                      <img src={selectedStudent.image} alt={selectedStudent.name} style={{ width: '100%', height: '100%', borderRadius: '16px', objectFit: 'cover' }} />
+                    ) : (
+                      selectedStudent.name.charAt(0)
+                    )}
                   </div>
                   <div className="detail-header-info">
                     <h2>{selectedStudent.name}</h2>
@@ -163,8 +167,12 @@ export default function DirectorioDocentePage() {
                     className={`directorio-student-item ${selectedStudent?.id === student.id ? "active" : ""}`}
                   >
                     <div className="student-list-info">
-                      <div className="student-avatar">
-                        {student.name.charAt(0)}
+                      <div className="student-avatar" style={{ overflow: 'hidden' }}>
+                        {student.image ? (
+                          <img src={student.image} alt={student.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          student.name.charAt(0)
+                        )}
                       </div>
                       <div className="student-name-info">
                         <strong>{student.name}</strong>

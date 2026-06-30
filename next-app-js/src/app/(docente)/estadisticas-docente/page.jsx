@@ -106,10 +106,6 @@ export default function EstadisticasDocentePage() {
               <div className="kpi-value">{globalStats?.studentsAtRisk || 0}</div>
             </div>
           </div>
-        </section>
-
-        {/* Mejora */}
-        <section className="kpi-grid mt-4" style={{ gridTemplateColumns: '1fr', maxWidth: '300px' }}>
           <div className="kpi-card" style={{ borderColor: '#8b5cf6' }}>
             <div className="kpi-icon" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
               <i className="fa-solid fa-chart-line"></i>

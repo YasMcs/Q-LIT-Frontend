@@ -156,7 +156,11 @@ function PracticaSQLContent() {
       const data = await res.json();
       
       if (res.ok) {
-        await showAlert("¡Excelente!", "Tu código ha sido evaluado y la calificación se ha guardado exitosamente.", "success");
+        if (data.data?.aiFailed) {
+          await showAlert("Práctica Entregada", data.data.feedback || "La IA no pudo evaluar tu entrega, pero ha sido enviada con éxito a tu maestro para que la califique.", "info");
+        } else {
+          await showAlert("¡Excelente!", "Tu código ha sido evaluado y la calificación se ha guardado exitosamente.", "success");
+        }
         router.push("/class-feed-alumno");
       } else {
         await showAlert("Error de Evaluación", data.error?.message || "Hubo un error al evaluar tu práctica.", "error");
@@ -334,7 +338,10 @@ function PracticaSQLContent() {
                 <ul className="fields-list-sql">
                   {fields.map((field, idx) => (
                     <li key={idx} className="field-row-sql">
-                      <span className={`field-name-sql ${field.pk ? "pk-sql" : ""}`}>{field.name}</span>
+                      <span className={`field-name-sql ${field.pk ? "pk-sql" : ""}`}>
+                        {field.name}
+                        {field.pk && <i className="fa-solid fa-key" style={{ color: '#fbbf24', marginLeft: '6px', fontSize: '10px' }} />}
+                      </span>
                       <span className="field-type-sql">{field.type}</span>
                     </li>
                   ))}

@@ -62,7 +62,8 @@ function ClassFeedDocenteContent() {
           if (cls.enrollments) {
             const mappedStudents = cls.enrollments.map(e => ({
               id: e.user.id,
-              name: e.user.name || "Sin Nombre"
+              name: e.user.name || "Sin Nombre",
+              image: e.user.image || null
             }));
             setStudents(mappedStudents);
           }
@@ -74,7 +75,7 @@ function ClassFeedDocenteContent() {
             ...p,
             subtitle: p.description ? p.description.substring(0, 50) + "..." : "Práctica SQL",
             fecha_asignacion: p.createdAt,
-            pendingCount: 0,
+            pendingCount: p._count?.submissions || 0,
             status: p.deadline && new Date(p.deadline) < new Date() ? "closed" : "active"
           }));
           setChallenges(formatted);
@@ -323,8 +324,12 @@ function ClassFeedDocenteContent() {
               <div className="space-y-3">
                 {students.map(student => (
                   <div key={student.id} className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-[var(--bg-main)] transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-input text-accent flex items-center justify-center font-bold text-sm shrink-0 uppercase">
-                      {student.name.charAt(0)}
+                    <div className="w-8 h-8 rounded-full bg-input text-accent flex items-center justify-center font-bold text-sm shrink-0 uppercase" style={{ overflow: 'hidden' }}>
+                      {student.image ? (
+                        <img src={student.image} alt={student.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        student.name.charAt(0)
+                      )}
                     </div>
                     <span className="text-sm font-medium text-foreground truncate">{student.name}</span>
                   </div>

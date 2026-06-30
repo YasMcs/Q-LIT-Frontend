@@ -16,7 +16,7 @@ export default function EstadisticasSkeleton() {
 
       {/* KPIs Skeleton */}
       <section className="kpi-grid">
-        {Array.from({ length: 3 }).map((_, idx) => (
+        {Array.from({ length: 4 }).map((_, idx) => (
           <div key={idx} className="kpi-card border border-border bg-panel flex items-center gap-4 p-5 rounded-[24px]">
             <Skeleton width="48px" height="48px" borderRadius="14px" />
             <div className="kpi-info flex-1">

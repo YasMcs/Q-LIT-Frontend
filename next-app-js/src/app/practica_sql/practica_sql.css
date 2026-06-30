@@ -199,10 +199,6 @@
   border-bottom: none;
 }
 
-.field-name-sql.pk-sql::after {
-  content: ' 🔑';
-  font-size: 0.65rem;
-}
 
 .field-type-sql {
   color: #b5bac1;
