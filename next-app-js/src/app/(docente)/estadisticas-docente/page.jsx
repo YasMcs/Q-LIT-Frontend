@@ -164,10 +164,10 @@ export default function EstadisticasDocentePage() {
                     <tr key={cls.id}>
                       <td className="font-semibold">{cls.name}</td>
                       <td>{cls.group}</td>
-                      <td className="font-semibold">{cls.avgScore}/100</td>
+                      <td className="font-semibold">{cls.avgScore !== null ? `${cls.avgScore}/100` : '--'}</td>
                       <td>
                         <span className={`badge ${cls.status}`}>
-                          {cls.status === 'good' ? 'Óptimo' : cls.status === 'average' ? 'Regular' : 'En Riesgo'}
+                          {cls.status === 'good' ? 'Óptimo' : cls.status === 'average' ? 'Regular' : cls.status === 'poor' ? 'En Riesgo' : 'Sin datos'}
                         </span>
                       </td>
                     </tr>

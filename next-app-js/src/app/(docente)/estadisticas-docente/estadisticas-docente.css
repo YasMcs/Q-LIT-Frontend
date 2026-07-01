@@ -254,9 +254,13 @@
   font-size: 0.85rem;
   font-weight: 600;
   border: 1px solid transparent;
+  white-space: nowrap;
+  display: inline-block;
+  text-align: center;
 }
 
 .badge.good { background-color: rgba(74, 222, 128, 0.1); color: #4ade80; border-color: rgba(74, 222, 128, 0.2); }
 .badge.average { background-color: rgba(251, 191, 36, 0.1); color: #fbbf24; border-color: rgba(251, 191, 36, 0.2); }
 .badge.poor { background-color: rgba(248, 113, 113, 0.1); color: #f87171; border-color: rgba(248, 113, 113, 0.2); }
+.badge.empty { background-color: rgba(181, 186, 193, 0.1); color: #b5bac1; border-color: rgba(181, 186, 193, 0.2); }
 
