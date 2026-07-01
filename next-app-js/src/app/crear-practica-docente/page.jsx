@@ -105,15 +105,20 @@ function CrearPracticaDocenteContent() {
   const handleDateChange = (date) => {
     if (!date) {
       setDueDate("");
+      setDueTime("");
       return;
     }
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    const val = `${year}-${month}-${day}`;
-    setDueDate(val);
-    if (val && !dueTime) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    setDueDate(`${year}-${month}-${day}`);
+    if (hours === '00' && minutes === '00' && !dueTime) {
       setDueTime("23:59");
+    } else {
+      setDueTime(`${hours}:${minutes}`);
     }
   };
 
@@ -502,26 +507,19 @@ function CrearPracticaDocenteContent() {
               </label>
               <div className="due-datetime-inputs">
                 <DatePicker
+                  showIcon
+                  icon={<i className="fa-regular fa-calendar" style={{color: '#b5bac1', marginTop: '2px', paddingRight: '5px'}}></i>}
                   id="field-duedate"
                   className="sidebar-date-input w-full"
-                  selected={dueDate ? new Date(`${dueDate}T00:00:00`) : null}
+                  selected={(dueDate && dueTime) ? new Date(`${dueDate}T${dueTime}:00`) : (dueDate ? new Date(`${dueDate}T00:00:00`) : null)}
                   onChange={handleDateChange}
-                  dateFormat="dd/MM/yyyy"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="Hora"
+                  dateFormat="dd/MM/yyyy h:mm aa"
                   minDate={new Date()}
-                  placeholderText="DD/MM/YYYY"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      document.getElementById('field-duetime')?.focus();
-                    }
-                  }}
-                />
-                <input
-                  id="field-duetime"
-                  type="time"
-                  className="sidebar-time-input"
-                  value={dueTime}
-                  onChange={(e) => setDueTime(e.target.value)}
+                  placeholderText="Seleccionar fecha y hora"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
