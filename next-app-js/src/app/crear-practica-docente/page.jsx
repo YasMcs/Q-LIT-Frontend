@@ -700,15 +700,15 @@ function CrearPracticaDocenteContent() {
       {/* SQL Functions Modal */}
       {isFunctionsModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center animate-fade-in p-4" onClick={() => setIsFunctionsModalOpen(false)}>
-          <div className="bg-[var(--bg-panel)] rounded-2xl w-full max-w-2xl shadow-2xl border border-[var(--border-color)] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-[var(--border-color)] flex justify-between items-center">
+          <div className="bg-[var(--bg-panel)] rounded-2xl w-full max-w-2xl shadow-2xl border border-[var(--border-color)] overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-[var(--border-color)] flex justify-between items-center shrink-0">
               <h2 className="text-xl font-bold text-foreground">Seleccionar Funciones SQL</h2>
               <button onClick={() => setIsFunctionsModalOpen(false)} className="text-muted hover:text-foreground">
                 <i className="fa-solid fa-xmark text-xl"></i>
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto max-h-[60vh]">
+            <div className="p-6 overflow-y-auto">
               <div className="flex flex-col gap-6">
                 {[
                   { category: "DML (Manipulación)", options: ["SELECT", "INSERT", "UPDATE", "DELETE"] },
@@ -764,8 +764,8 @@ function CrearPracticaDocenteContent() {
       {/* Confirmation Modal for Edit */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-panel border border-border rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
-            <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex items-center gap-3">
+          <div className="bg-panel border border-border rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-8 py-6 border-b border-border bg-[var(--bg-main)] flex items-center gap-3 shrink-0">
               <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center">
                 <i className="fa-solid fa-triangle-exclamation text-lg"></i>
               </div>
@@ -774,7 +774,7 @@ function CrearPracticaDocenteContent() {
                 <p className="text-sm text-muted">Hay estudiantes trabajando en esta asignación</p>
               </div>
             </div>
-            <div className="p-8">
+            <div className="p-8 overflow-y-auto">
               <p className="text-muted mb-6 leading-relaxed">
                 ¿Deseas regenerar los enunciados de los alumnos que aún no terminan la práctica? <br/><br/>
                 <strong>Si regeneras:</strong> La IA leerá el nuevo objetivo y les generará un problema nuevo a los alumnos que aún no entregan (perderán su progreso actual). Las entregas ya realizadas <strong>no se verán afectadas</strong>.<br/>
