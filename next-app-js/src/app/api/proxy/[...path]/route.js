@@ -32,7 +32,7 @@ async function handleProxyRequest(req, params, method) {
 
   if (!cookieValue) {
     return NextResponse.json(
-      { error: { message: "No autorizado. Inicia sesión primero." } },
+      { error: { message: `[PROXY-DEBUG] Sin cookie: buscando '${cookieName}'` } },
       { status: 401 }
     );
   }
@@ -42,18 +42,21 @@ async function handleProxyRequest(req, params, method) {
     token = await decode({
       token: cookieValue,
       secret: process.env.NEXTAUTH_SECRET,
-      salt: cookieName, // Requerido en next-auth v4.22+: el salt es el nombre de la cookie
+      salt: cookieName,
     });
-  } catch {
+  } catch (err) {
     return NextResponse.json(
-      { error: { message: "No autorizado. Sesión inválida." } },
+      { error: { message: `[PROXY-DEBUG] Error al decodificar: ${err.message}` } },
       { status: 401 }
     );
   }
 
-  if (!token || !token.id) {
+  // token.id viene del jwt callback, token.sub es el fallback estándar JWT
+  const userId = token?.id || token?.sub;
+
+  if (!token || !userId) {
     return NextResponse.json(
-      { error: { message: "No autorizado. Inicia sesión primero." } },
+      { error: { message: `[PROXY-DEBUG] Token sin ID. Keys: ${token ? Object.keys(token).join(',') : 'token_null'}` } },
       { status: 401 }
     );
   }
