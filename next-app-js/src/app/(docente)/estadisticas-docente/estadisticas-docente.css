@@ -108,7 +108,7 @@
 /* Dashboard Widgets Grid */
 .dashboard-widgets-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 2rem;
   align-items: flex-start;
 }
@@ -214,6 +214,7 @@
 
 .groups-table {
   width: 100%;
+  min-width: 500px;
   border-collapse: separate;
   border-spacing: 0;
 }
