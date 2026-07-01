@@ -23,10 +23,16 @@ export async function DELETE(req, { params }) {
 
 async function handleProxyRequest(req, params, method) {
   // 1. Validar sesión leyendo el JWT directamente de la cookie (compatible con App Router)
+  // En producción HTTPS, NextAuth usa el prefijo __Secure- en el nombre de la cookie
+  const isProduction = process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
+  const cookieName = isProduction
+    ? "__Secure-next-auth.session-token"
+    : "next-auth.session-token";
+
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: process.env.NEXTAUTH_URL?.startsWith("https://") ?? false,
+    cookieName,
   });
 
   if (!token || !token.id) {
