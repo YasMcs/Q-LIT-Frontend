@@ -3,6 +3,8 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { showAlert, showConfirm } from "@/utils/alerts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "./crear-practica-docente.css";
 
 // Los datosPorDB hardcodeados han sido eliminados.
@@ -100,8 +102,15 @@ function CrearPracticaDocenteContent() {
   const criteriaSum = criteria.reduce((sum, item) => sum + item.points, 0);
 
   // Classroom-style due time defaulting to 23:59 when a date is selected
-  const handleDateChange = (e) => {
-    const val = e.target.value;
+  const handleDateChange = (date) => {
+    if (!date) {
+      setDueDate("");
+      return;
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const val = `${year}-${month}-${day}`;
     setDueDate(val);
     if (val && !dueTime) {
       setDueTime("23:59");
@@ -492,13 +501,14 @@ function CrearPracticaDocenteContent() {
                 <span className="text-[var(--danger-red)]">*</span>
               </label>
               <div className="due-datetime-inputs">
-                <input
+                <DatePicker
                   id="field-duedate"
-                  type="date"
-                  className="sidebar-date-input"
-                  min={new Date().toLocaleDateString("en-CA")}
-                  value={dueDate}
+                  className="sidebar-date-input w-full"
+                  selected={dueDate ? new Date(`${dueDate}T00:00:00`) : null}
                   onChange={handleDateChange}
+                  dateFormat="dd/MM/yyyy"
+                  minDate={new Date()}
+                  placeholderText="DD/MM/YYYY"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
