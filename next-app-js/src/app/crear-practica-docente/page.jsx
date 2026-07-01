@@ -704,8 +704,8 @@ function CrearPracticaDocenteContent() {
             <div className="p-8">
               <p className="text-muted mb-6 leading-relaxed">
                 ¿Deseas regenerar los enunciados de los alumnos que aún no terminan la práctica? <br/><br/>
-                <strong>Si regeneras:</strong> La IA leerá el nuevo objetivo y les generará un problema nuevo (perderán el código que llevan).<br/>
-                <strong>Si mantienes:</strong> Los alumnos actuales conservarán su problema original, y el nuevo objetivo solo aplicará para estudiantes nuevos.
+                <strong>Si regeneras:</strong> La IA leerá el nuevo objetivo y les generará un problema nuevo a los alumnos que aún no entregan (perderán su progreso actual). Las entregas ya realizadas <strong>no se verán afectadas</strong>.<br/>
+                <strong>Si mantienes:</strong> Todos los alumnos actuales conservarán su problema original, y el nuevo objetivo solo aplicará para estudiantes nuevos.
               </p>
               <div className="flex flex-col gap-3 mt-8">
                 <button 
