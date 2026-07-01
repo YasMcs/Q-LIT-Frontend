@@ -7,22 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth Required Models
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,18 +34,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  role          String?   // 'teacher' o 'student'
-  accounts      Account[]
-  sessions      Session[]
-
-  // --- Q-LIT Relations ---
-  classroomsCreated Classroom[]  @relation("TeacherClassrooms")
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  role              String?
+  accounts          Account[]
+  classroomsCreated Classroom[]        @relation("TeacherClassrooms")
   enrollments       Enrollment[]
+  PracticeErrorLog  PracticeErrorLog[]
+  sessions          Session[]
   submissions       Submission[]
 }
 
@@ -59,91 +56,107 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ==========================================
-// Q-LIT DOMAIN MODELS
-// ==========================================
-
 model Classroom {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   name        String
-  inviteCode  String   @unique
-  createdAt   DateTime @default(now())
-  
+  inviteCode  String       @unique
+  createdAt   DateTime     @default(now())
   teacherId   String
-  teacher     User     @relation("TeacherClassrooms", fields: [teacherId], references: [id], onDelete: Cascade)
-
+  group       String?
+  isArchived  Boolean      @default(false)
+  teacher     User         @relation("TeacherClassrooms", fields: [teacherId], references: [id], onDelete: Cascade)
   enrollments Enrollment[]
   practices   Practice[]
+
+  @@index([isArchived])
+  @@index([teacherId])
 }
 
 model Enrollment {
-  id          String   @id @default(cuid())
-  joinedAt    DateTime @default(now())
-
+  id          String    @id @default(cuid())
+  joinedAt    DateTime  @default(now())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   classroomId String
+  isArchived  Boolean   @default(false)
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, classroomId])
+  @@index([classroomId])
+  @@index([userId])
 }
 
 model Practice {
-  id                  String   @id @default(cuid())
-  title               String
-  description         String?
-  requiredFunctions   Json?    // ["SELECT", "WHERE"]
-  totalPoints         Int      @default(100)
-  createdAt           DateTime @default(now())
-  deadline            DateTime?
+  id                   String             @id @default(cuid())
+  title                String
+  description          String?
+  requiredFunctions    Json?
+  totalPoints          Int                @default(100)
+  createdAt            DateTime           @default(now())
+  deadline             DateTime?
+  classroomId          String
+  closeLateSubmissions Boolean            @default(false)
+  checklistItems       ChecklistItem[]
+  classroom            Classroom          @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  PracticeErrorLog     PracticeErrorLog[]
+  submissions          Submission[]
 
-  classroomId         String
-  classroom           Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-
-  checklistItems      ChecklistItem[]
-  submissions         Submission[]
+  @@index([classroomId])
 }
 
 model ChecklistItem {
-  id          String   @id @default(cuid())
+  id          String                @id @default(cuid())
   criterion   String
   maxPoints   Int
-
   practiceId  String
-  practice    Practice @relation(fields: [practiceId], references: [id], onDelete: Cascade)
-
   evaluations ChecklistEvaluation[]
+  practice    Practice              @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+
+  @@index([practiceId])
 }
 
 model Submission {
-  id                  String   @id @default(cuid())
-  studentSqlCode      String?  @db.Text
-  generatedStatement  String?  @db.Text // El enunciado único generado por la IA
-  reviewStatus        String   @default("pendiente") // pendiente, calificada, no_entregada
-  submittedAt         DateTime @default(now())
+  id                 String                @id @default(cuid())
+  studentSqlCode     String?
+  generatedStatement String?
+  reviewStatus       String                @default("en_progreso")
+  submittedAt        DateTime              @default(now())
+  userId             String
+  practiceId         String
+  setupSql           String?
+  executionResult    String?
+  evaluations        ChecklistEvaluation[]
+  practice           Practice              @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+  user               User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId              String
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  practiceId          String
-  practice            Practice @relation(fields: [practiceId], references: [id], onDelete: Cascade)
-
-  evaluations         ChecklistEvaluation[]
-
-  @@unique([userId, practiceId]) // Un alumno tiene 1 submission por práctica
+  @@unique([userId, practiceId])
+  @@index([practiceId])
+  @@index([userId])
 }
 
 model ChecklistEvaluation {
-  id                String   @id @default(cuid())
-  aiComplies        Boolean? // cumple_ia
-  teacherComplies   Boolean? // cumple_docente
-
-  submissionId      String
-  submission        Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-
-  checklistItemId   String
-  checklistItem     ChecklistItem @relation(fields: [checklistItemId], references: [id], onDelete: Cascade)
+  id              String        @id @default(cuid())
+  aiComplies      Boolean?
+  teacherComplies Boolean?
+  submissionId    String
+  checklistItemId String
+  checklistItem   ChecklistItem @relation(fields: [checklistItemId], references: [id], onDelete: Cascade)
+  submission      Submission    @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 
   @@unique([submissionId, checklistItemId])
+}
+
+model PracticeErrorLog {
+  id              String   @id
+  errorCategory   String
+  sqlConcept      String
+  originalMessage String?
+  createdAt       DateTime @default(now())
+  userId          String
+  practiceId      String
+  Practice        Practice @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+  User            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([practiceId])
+  @@index([userId])
 }
