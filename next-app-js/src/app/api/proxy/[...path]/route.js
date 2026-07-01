@@ -22,7 +22,8 @@ export async function DELETE(req, { params }) {
 }
 
 async function handleProxyRequest(req, params, method) {
-  // 1. Validar sesión leyendo y decodificando el JWE directamente desde la cookie
+  // 1. Validar sesión leyendo el JWE directamente desde la cookie
+  // En producción HTTPS, NextAuth usa el prefijo __Secure- en el nombre de la cookie
   const isProduction = process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
   const cookieName = isProduction
     ? "__Secure-next-auth.session-token"
@@ -32,7 +33,7 @@ async function handleProxyRequest(req, params, method) {
 
   if (!cookieValue) {
     return NextResponse.json(
-      { error: { message: `[PROXY-DEBUG] Sin cookie: buscando '${cookieName}'` } },
+      { error: { message: "No autorizado. Inicia sesión primero." } },
       { status: 401 }
     );
   }
@@ -43,19 +44,19 @@ async function handleProxyRequest(req, params, method) {
       token: cookieValue,
       secret: process.env.NEXTAUTH_SECRET,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
-      { error: { message: `[PROXY-DEBUG] Error al decodificar: ${err.message}` } },
+      { error: { message: "No autorizado. Sesión inválida." } },
       { status: 401 }
     );
   }
 
-  // token.id viene del jwt callback, token.sub es el fallback estándar JWT
+  // token.id viene del jwt callback; token.sub es el fallback estándar JWT
   const userId = token?.id || token?.sub;
 
   if (!token || !userId) {
     return NextResponse.json(
-      { error: { message: `[PROXY-DEBUG] Token sin ID. Keys: ${token ? Object.keys(token).join(',') : 'token_null'}` } },
+      { error: { message: "No autorizado. Inicia sesión primero." } },
       { status: 401 }
     );
   }
@@ -68,13 +69,13 @@ async function handleProxyRequest(req, params, method) {
   // 3. Preparar cabeceras y cuerpo
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
-  headers.append("x-api-key", "q-lit-internal-bff-secret-12345"); // hardcoded para diagnostico
-  headers.append("x-user-id", token.id);
+  headers.append("x-api-key", process.env.API_SECRET_KEY || "q-lit-internal-bff-secret-12345");
+  headers.append("x-user-id", userId);
   headers.append("x-user-role", token.role || "student");
 
   let body = null;
   if (method !== "GET" && method !== "HEAD") {
-    body = await req.text(); // Leemos el cuerpo original
+    body = await req.text();
   }
 
   try {
@@ -91,7 +92,7 @@ async function handleProxyRequest(req, params, method) {
       data = await response.json();
     } else {
       const text = await response.text();
-      throw new Error("El servidor devolvió un error inesperado (no es JSON): " + text.substring(0, 50));
+      throw new Error("El servidor devolvió un error inesperado: " + text.substring(0, 100));
     }
 
     // 5. Devolver la respuesta al cliente
