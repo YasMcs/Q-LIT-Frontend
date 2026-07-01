@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 export async function POST(req, { params }) {
@@ -23,10 +22,13 @@ export async function DELETE(req, { params }) {
 }
 
 async function handleProxyRequest(req, params, method) {
-  // 1. Validar sesión de usuario (Asegura que el frontend está logueado)
-  const session = await getServerSession(authOptions);
+  // 1. Validar sesión leyendo el JWT directamente de la cookie (compatible con App Router)
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  if (!session || !session.user) {
+  if (!token || !token.id) {
     return NextResponse.json(
       { error: { message: "No autorizado. Inicia sesión primero." } },
       { status: 401 }
@@ -42,8 +44,8 @@ async function handleProxyRequest(req, params, method) {
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
   headers.append("x-api-key", process.env.API_SECRET_KEY || "q-lit-internal-bff-secret-12345");
-  headers.append("x-user-id", session.user.id);
-  headers.append("x-user-role", session.user.role || "student");
+  headers.append("x-user-id", token.id);
+  headers.append("x-user-role", token.role || "student");
 
   let body = null;
   if (method !== "GET" && method !== "HEAD") {
