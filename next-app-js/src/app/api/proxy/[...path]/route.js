@@ -35,7 +35,8 @@ async function handleProxyRequest(req, params, method) {
 
   // 2. Construir la ruta de destino (Backend Express)
   const url = new URL(req.url);
-  const backendUrl = url.href.replace(url.origin + "/api/proxy", "http://localhost:4000/api");
+  const backendBase = process.env.BACKEND_URL || "http://localhost:4000";
+  const backendUrl = url.href.replace(url.origin + "/api/proxy", backendBase + "/api");
 
   // 3. Preparar cabeceras y cuerpo
   const headers = new Headers();
