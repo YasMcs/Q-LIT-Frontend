@@ -505,12 +505,11 @@ function CrearPracticaDocenteContent() {
                 <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="El límite de tiempo para que los alumnos entreguen sus consultas SQL."></i>
                 <span className="text-[var(--danger-red)]">*</span>
               </label>
-              <div className="due-datetime-inputs">
+              <div className="due-datetime-inputs relative">
+                <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
                 <DatePicker
-                  showIcon
-                  icon={<i className="fa-regular fa-calendar" style={{color: '#b5bac1', marginTop: '2px', paddingRight: '5px'}}></i>}
                   id="field-duedate"
-                  className="sidebar-date-input w-full"
+                  className="sidebar-date-input w-full pl-12"
                   selected={(dueDate && dueTime) ? new Date(`${dueDate}T${dueTime}:00`) : (dueDate ? new Date(`${dueDate}T00:00:00`) : null)}
                   onChange={handleDateChange}
                   showTimeSelect

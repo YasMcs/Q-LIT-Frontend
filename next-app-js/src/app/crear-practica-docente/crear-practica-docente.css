@@ -768,13 +768,3 @@
   background-color: #6767ea !important;
   color: white !important;
 }
-.react-datepicker__input-container .fa-calendar {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-.react-datepicker__input-container input {
-  padding-left: 2.5rem !important;
-}
