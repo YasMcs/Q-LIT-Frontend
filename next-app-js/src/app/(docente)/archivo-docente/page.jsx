@@ -17,7 +17,7 @@ export default function ArchivoDocentePage() {
   // Cargar las clases archivadas desde el backend real
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
-      fetch(`http://localhost:4000/api/classrooms?teacherId=${session.user.id}&archived=true`)
+      fetch(`/api/proxy/classrooms?teacherId=${session.user.id}&archived=true`)
         .then(res => res.json())
         .then(data => {
           if (data.data) {
@@ -41,7 +41,7 @@ export default function ArchivoDocentePage() {
     );
     if (!confirmed) return;
     try {
-      const response = await fetch(`http://localhost:4000/api/classrooms/${cls.id}`, {
+      const response = await fetch(`/api/proxy/classrooms/${cls.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isArchived: false })

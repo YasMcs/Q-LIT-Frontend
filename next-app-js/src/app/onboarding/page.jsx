@@ -25,7 +25,7 @@ export default function OnboardingPage() {
     if (!session?.user?.id) return;
     
     try {
-      const res = await fetch(`http://localhost:4000/api/users/${session.user.id}/role`, {
+      const res = await fetch(`/api/proxy/users/${session.user.id}/role`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role })
