@@ -68,7 +68,7 @@ async function handleProxyRequest(req, params, method) {
   // 3. Preparar cabeceras y cuerpo
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
-  headers.append("x-api-key", process.env.API_SECRET_KEY || "q-lit-internal-bff-secret-12345");
+  headers.append("x-api-key", "q-lit-internal-bff-secret-12345"); // hardcoded para diagnostico
   headers.append("x-user-id", token.id);
   headers.append("x-user-role", token.role || "student");
 
