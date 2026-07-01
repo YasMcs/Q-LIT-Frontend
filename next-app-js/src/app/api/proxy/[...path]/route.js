@@ -42,7 +42,6 @@ async function handleProxyRequest(req, params, method) {
     token = await decode({
       token: cookieValue,
       secret: process.env.NEXTAUTH_SECRET,
-      salt: cookieName,
     });
   } catch (err) {
     return NextResponse.json(
