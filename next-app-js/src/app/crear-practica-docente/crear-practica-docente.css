@@ -3,11 +3,11 @@
 .classroom-editor-body {
   background-color: var(--bg-main);
   color: var(--text-primary);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Navbar */
@@ -98,6 +98,7 @@
   width: 100%;
   margin: 0 auto;
   flex-grow: 1;
+  overflow: hidden;
 }
 
 /* Left Column */
@@ -107,6 +108,7 @@
   flex-direction: column;
   gap: 2rem;
   border-right: 1px solid var(--border-color);
+  overflow-y: auto;
 }
 
 .classroom-card-panel {
