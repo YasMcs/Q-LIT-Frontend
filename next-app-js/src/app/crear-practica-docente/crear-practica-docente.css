@@ -384,7 +384,9 @@
 
 /* Due datetime row */
 .due-datetime-inputs {
-  display: block;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
 }
 
 .sidebar-date-input, 

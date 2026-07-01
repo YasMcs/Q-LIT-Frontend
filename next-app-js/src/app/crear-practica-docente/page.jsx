@@ -101,25 +101,29 @@ function CrearPracticaDocenteContent() {
 
   const criteriaSum = criteria.reduce((sum, item) => sum + item.points, 0);
 
-  // Classroom-style due time defaulting to 23:59 when a date is selected
   const handleDateChange = (date) => {
     if (!date) {
       setDueDate("");
-      setDueTime("");
       return;
     }
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
+    const val = `${year}-${month}-${day}`;
+    setDueDate(val);
+    if (val && !dueTime) {
+      setDueTime("23:59");
+    }
+  };
+
+  const handleTimeChange = (date) => {
+    if (!date) {
+      setDueTime("");
+      return;
+    }
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
-    setDueDate(`${year}-${month}-${day}`);
-    if (hours === '00' && minutes === '00' && !dueTime) {
-      setDueTime("23:59");
-    } else {
-      setDueTime(`${hours}:${minutes}`);
-    }
+    setDueTime(`${hours}:${minutes}`);
   };
 
   const handleSelectDb = (dbName) => {
@@ -505,27 +509,34 @@ function CrearPracticaDocenteContent() {
                 <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="El límite de tiempo para que los alumnos entreguen sus consultas SQL."></i>
                 <span className="text-[var(--danger-red)]">*</span>
               </label>
-              <div className="due-datetime-inputs relative">
-                <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
-                <DatePicker
-                  id="field-duedate"
-                  className="sidebar-date-input w-full pl-12"
-                  selected={(dueDate && dueTime) ? new Date(`${dueDate}T${dueTime}:00`) : (dueDate ? new Date(`${dueDate}T00:00:00`) : null)}
-                  onChange={handleDateChange}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="Hora"
-                  dateFormat="dd/MM/yyyy h:mm aa"
-                  minDate={new Date()}
-                  placeholderText="Seleccionar fecha y hora"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      document.getElementById('field-criteria-0')?.focus();
-                    }
-                  }}
-                />
+              <div className="due-datetime-inputs">
+                <div className="relative">
+                  <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
+                  <DatePicker
+                    id="field-duedate"
+                    className="sidebar-date-input w-full pl-12"
+                    selected={dueDate ? new Date(`${dueDate}T00:00:00`) : null}
+                    onChange={handleDateChange}
+                    dateFormat="dd/MM/yyyy"
+                    minDate={new Date()}
+                    placeholderText="Fecha"
+                  />
+                </div>
+                <div className="relative">
+                  <i className="fa-regular fa-clock absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
+                  <DatePicker
+                    id="field-duetime"
+                    className="sidebar-time-input w-full pl-12"
+                    selected={dueTime ? new Date(`1970-01-01T${dueTime}:00`) : null}
+                    onChange={handleTimeChange}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption="Hora"
+                    dateFormat="h:mm aa"
+                    placeholderText="Hora"
+                  />
+                </div>
               </div>
               <p className="text-xs text-muted mt-1.5 flex items-center gap-1.5">
                 <i className="fa-regular fa-clock text-[11px]"></i>
