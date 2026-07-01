@@ -158,12 +158,18 @@ function ClassFeedDocenteContent() {
       return;
     }
 
-    const isoDateTime = new Date(`${newDate}T${newTime}:00`).toISOString();
     const selectedDateObj = new Date(`${newDate}T${newTime}:00`);
-    if (selectedDateObj < new Date()) {
-      await showAlert("Fecha Inválida", "La fecha y hora de entrega no pueden estar en el pasado.", "warning");
+    if (isNaN(selectedDateObj.getTime())) {
+      await showAlert("Fecha Inválida", "La fecha ingresada no es válida o no existe en el calendario.", "warning");
       return;
     }
+
+    if (selectedDateObj < new Date()) {
+      await showAlert("Fecha en el pasado", "La fecha y hora de entrega ya pasaron. Por favor selecciona una fecha futura.", "warning");
+      return;
+    }
+
+    const isoDateTime = selectedDateObj.toISOString();
 
     if (isSavingDate) return;
     setIsSavingDate(true);
@@ -374,6 +380,7 @@ function ClassFeedDocenteContent() {
                   <input 
                     type="date" 
                     className="w-full px-4 py-3 border border-border bg-[var(--bg-main)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] transition-all font-medium text-foreground"
+                    min={new Date().toLocaleDateString("en-CA")}
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
                   />

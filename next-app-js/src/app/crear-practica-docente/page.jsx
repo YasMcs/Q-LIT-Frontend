@@ -229,8 +229,13 @@ function CrearPracticaDocenteContent() {
     }
     
     const selectedDateObj = new Date(`${dueDate}T${dueTime}:00`);
+    if (isNaN(selectedDateObj.getTime())) {
+      await showAlert("Fecha Inválida", "La fecha ingresada no es válida o no existe en el calendario.", "warning");
+      return;
+    }
+    
     if (selectedDateObj < new Date()) {
-      await showAlert("Fecha Inválida", "La fecha y hora de entrega no pueden estar en el pasado.", "warning");
+      await showAlert("Fecha en el pasado", "La fecha y hora de entrega ya pasaron. Por favor selecciona una fecha futura.", "warning");
       return;
     }
     
@@ -457,6 +462,7 @@ function CrearPracticaDocenteContent() {
                 <input
                   type="date"
                   className="sidebar-date-input"
+                  min={new Date().toLocaleDateString("en-CA")}
                   value={dueDate}
                   onChange={handleDateChange}
                 />
