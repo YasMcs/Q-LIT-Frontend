@@ -158,9 +158,20 @@ function ClassFeedDocenteContent() {
       return;
     }
 
+    const [y, m, d] = newDate.split('-');
+    const parsedDate = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+    if (
+      parsedDate.getFullYear() !== parseInt(y, 10) ||
+      parsedDate.getMonth() !== parseInt(m, 10) - 1 ||
+      parsedDate.getDate() !== parseInt(d, 10)
+    ) {
+      await showAlert("Fecha Inválida", "La fecha ingresada no existe en el calendario (ej. un 31 en un mes de 30 días o año bisiesto).", "warning");
+      return;
+    }
+
     const selectedDateObj = new Date(`${newDate}T${newTime}:00`);
     if (isNaN(selectedDateObj.getTime())) {
-      await showAlert("Fecha Inválida", "La fecha ingresada no es válida o no existe en el calendario.", "warning");
+      await showAlert("Fecha Inválida", "La fecha ingresada no es válida.", "warning");
       return;
     }
 
