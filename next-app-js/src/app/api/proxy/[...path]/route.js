@@ -26,6 +26,7 @@ async function handleProxyRequest(req, params, method) {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: process.env.NEXTAUTH_URL?.startsWith("https://") ?? false,
   });
 
   if (!token || !token.id) {
