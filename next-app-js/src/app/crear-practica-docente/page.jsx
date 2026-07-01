@@ -101,6 +101,7 @@ function CrearPracticaDocenteContent() {
 
   const criteriaSum = criteria.reduce((sum, item) => sum + item.points, 0);
 
+  // Classroom-style due time defaulting to 23:59 when a date is selected
   const handleDateChange = (date) => {
     if (!date) {
       setDueDate("");
@@ -114,16 +115,6 @@ function CrearPracticaDocenteContent() {
     if (val && !dueTime) {
       setDueTime("23:59");
     }
-  };
-
-  const handleTimeChange = (date) => {
-    if (!date) {
-      setDueTime("");
-      return;
-    }
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    setDueTime(`${hours}:${minutes}`);
   };
 
   const handleSelectDb = (dbName) => {
@@ -514,7 +505,7 @@ function CrearPracticaDocenteContent() {
                   <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
                   <DatePicker
                     id="field-duedate"
-                    className="sidebar-date-input w-full pl-12"
+                    className="sidebar-date-input w-full pl-11"
                     selected={dueDate ? new Date(`${dueDate}T00:00:00`) : null}
                     onChange={handleDateChange}
                     dateFormat="dd/MM/yyyy"
@@ -522,21 +513,19 @@ function CrearPracticaDocenteContent() {
                     placeholderText="Fecha"
                   />
                 </div>
-                <div className="relative">
-                  <i className="fa-regular fa-clock absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
-                  <DatePicker
-                    id="field-duetime"
-                    className="sidebar-time-input w-full pl-12"
-                    selected={dueTime ? new Date(`1970-01-01T${dueTime}:00`) : null}
-                    onChange={handleTimeChange}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Hora"
-                    dateFormat="h:mm aa"
-                    placeholderText="Hora"
-                  />
-                </div>
+                <input
+                  id="field-duetime"
+                  type="time"
+                  className="sidebar-time-input w-full"
+                  value={dueTime}
+                  onChange={(e) => setDueTime(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      document.getElementById('field-criteria-0')?.focus();
+                    }
+                  }}
+                />
               </div>
               <p className="text-xs text-muted mt-1.5 flex items-center gap-1.5">
                 <i className="fa-regular fa-clock text-[11px]"></i>
