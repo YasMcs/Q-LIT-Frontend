@@ -394,6 +394,7 @@
   border-radius: 8px;
   color: var(--text-primary);
   padding: 0.8rem;
+  padding-left: 2.5rem; /* Espacio para el icono */
   font-family: inherit;
   font-size: 0.88rem;
   outline: none;
