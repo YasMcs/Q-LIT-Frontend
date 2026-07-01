@@ -1,4 +1,4 @@
-import { getToken } from "next-auth/jwt";
+import { decode } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 export async function POST(req, { params }) {
@@ -22,18 +22,33 @@ export async function DELETE(req, { params }) {
 }
 
 async function handleProxyRequest(req, params, method) {
-  // 1. Validar sesión leyendo el JWT directamente de la cookie (compatible con App Router)
-  // En producción HTTPS, NextAuth usa el prefijo __Secure- en el nombre de la cookie
+  // 1. Validar sesión leyendo y decodificando el JWE directamente desde la cookie
   const isProduction = process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
   const cookieName = isProduction
     ? "__Secure-next-auth.session-token"
     : "next-auth.session-token";
 
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-    cookieName,
-  });
+  const cookieValue = req.cookies.get(cookieName)?.value;
+
+  if (!cookieValue) {
+    return NextResponse.json(
+      { error: { message: "No autorizado. Inicia sesión primero." } },
+      { status: 401 }
+    );
+  }
+
+  let token;
+  try {
+    token = await decode({
+      token: cookieValue,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: { message: "No autorizado. Sesión inválida." } },
+      { status: 401 }
+    );
+  }
 
   if (!token || !token.id) {
     return NextResponse.json(
