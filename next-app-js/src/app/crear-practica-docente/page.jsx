@@ -320,11 +320,21 @@ function CrearPracticaDocenteContent() {
               </label>
               <div className="classroom-input-wrapper">
                 <input
+                  id="field-title"
                   type="text"
                   className="classroom-input-field title-field"
                   placeholder="Ej: Análisis de Ventas Mensuales"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTitle(val.length > 0 ? val.charAt(0).toUpperCase() + val.slice(1) : val);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      document.getElementById('field-description')?.focus();
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -338,12 +348,20 @@ function CrearPracticaDocenteContent() {
               </label>
               <div className="classroom-input-wrapper">
                 <textarea
+                  id="field-description"
                   className="classroom-textarea-field description-field"
                   placeholder="Ej: Que el estudiante comprenda la lógica de selectivas y condicionales (WHERE) al momento de buscar datos."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                      e.preventDefault();
+                      document.getElementById('field-maxscore')?.focus();
+                    }
+                  }}
                 />
               </div>
+              <p className="text-xs text-muted mt-1 px-1">Tip: Ctrl + Enter para avanzar al siguiente campo.</p>
             </div>
 
             {/* Funciones SQL Requeridas (Píldoras y Botón) */}
@@ -436,14 +454,18 @@ function CrearPracticaDocenteContent() {
               </label>
               <div className="puntos-input-wrapper">
                 <input
+                  id="field-maxscore"
                   type="number"
                   className="sidebar-number-input"
                   min="1"
                   value={maxScore === '' ? '' : maxScore}
                   onKeyDown={(e) => {
-                    // Prevenir que el usuario teclee el signo menos, más, punto o la letra "e" (que HTML5 permite en inputs number)
                     if (['-', '+', 'e', 'E', '.', ','].includes(e.key)) {
                       e.preventDefault();
+                    }
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      document.getElementById('field-duedate')?.focus();
                     }
                   }}
                   onChange={(e) => {
@@ -471,19 +493,37 @@ function CrearPracticaDocenteContent() {
               </label>
               <div className="due-datetime-inputs">
                 <input
+                  id="field-duedate"
                   type="date"
                   className="sidebar-date-input"
                   min={new Date().toLocaleDateString("en-CA")}
                   value={dueDate}
                   onChange={handleDateChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      document.getElementById('field-duetime')?.focus();
+                    }
+                  }}
                 />
                 <input
+                  id="field-duetime"
                   type="time"
                   className="sidebar-time-input"
                   value={dueTime}
                   onChange={(e) => setDueTime(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      document.getElementById('field-criteria-0')?.focus();
+                    }
+                  }}
                 />
               </div>
+              <p className="text-xs text-muted mt-1.5 flex items-center gap-1.5">
+                <i className="fa-regular fa-clock text-[11px]"></i>
+                El formato de hora es de 12 hrs (AM/PM). Ejemplo: 11:59 PM = hora limite del dia.
+              </p>
               <div className="checkbox-control-wrapper mt-3">
                 <input 
                   type="checkbox" 
@@ -516,21 +556,44 @@ function CrearPracticaDocenteContent() {
               </div>
 
               <div className="rubric-drawer-list">
-                {criteria.map((item) => (
+                {criteria.map((item, index) => (
                   <div key={item.id} className="rubric-drawer-row">
                     <input
+                      id={`field-criteria-${index}`}
                       type="text"
                       className="rubric-drawer-input-text"
                       placeholder="Descripción del criterio..."
                       value={item.text}
                       onChange={(e) => handleCriteriaTextChange(item.id, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          document.getElementById(`field-criteria-pts-${index}`)?.focus();
+                        }
+                      }}
                     />
                     <input
+                      id={`field-criteria-pts-${index}`}
                       type="number"
                       className="rubric-drawer-input-points"
                       placeholder="Pts"
                       value={item.points}
                       onChange={(e) => handleCriteriaPointsChange(item.id, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const nextIndex = index + 1;
+                          const nextEl = document.getElementById(`field-criteria-${nextIndex}`);
+                          if (nextEl) {
+                            nextEl.focus();
+                          } else {
+                            handleAddCriteria();
+                            setTimeout(() => {
+                              document.getElementById(`field-criteria-${nextIndex}`)?.focus();
+                            }, 50);
+                          }
+                        }
+                      }}
                     />
                     <button
                       type="button"
