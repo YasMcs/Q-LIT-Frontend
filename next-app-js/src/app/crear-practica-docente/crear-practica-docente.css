@@ -404,6 +404,15 @@
   color-scheme: dark;
 }
 
+.custom-time-col::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+.custom-time-col {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .sidebar-date-input:focus, 
 .sidebar-time-input:focus {
   border-color: var(--text-primary);

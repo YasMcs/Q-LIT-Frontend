@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { showAlert, showConfirm } from "@/utils/alerts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import CustomTimePicker from '@/components/CustomTimePicker';
 import "./crear-practica-docente.css";
 
 // Los datosPorDB hardcodeados han sido eliminados.
@@ -502,7 +503,7 @@ function CrearPracticaDocenteContent() {
               </label>
               <div className="due-datetime-inputs">
                 <div className="relative">
-                  <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-muted z-10 pointer-events-none text-lg"></i>
+                  <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-lg" style={{ color: '#b5bac1' }}></i>
                   <DatePicker
                     id="field-duedate"
                     className="sidebar-date-input w-full pl-11"
@@ -513,19 +514,21 @@ function CrearPracticaDocenteContent() {
                     placeholderText="Fecha"
                   />
                 </div>
-                <input
-                  id="field-duetime"
-                  type="time"
-                  className="sidebar-time-input w-full"
-                  value={dueTime}
-                  onChange={(e) => setDueTime(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      document.getElementById('field-criteria-0')?.focus();
-                    }
-                  }}
-                />
+                <div className="relative">
+                  <i className="fa-regular fa-clock absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-lg" style={{ color: '#b5bac1' }}></i>
+                  <CustomTimePicker
+                    id="field-duetime"
+                    className="sidebar-time-input w-full pl-11"
+                    value={dueTime}
+                    onChange={(e) => setDueTime(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.getElementById('field-criteria-0')?.focus();
+                      }
+                    }}
+                  />
+                </div>
               </div>
               <p className="text-xs text-muted mt-1.5 flex items-center gap-1.5">
                 <i className="fa-regular fa-clock text-[11px]"></i>
