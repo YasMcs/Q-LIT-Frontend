@@ -386,3 +386,49 @@ input[type=number] {
   border-radius: 8px;
 }
 
+/* Custom Tooltip Global */
+.custom-tooltip {
+  position: relative;
+}
+.custom-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-family-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  white-space: normal;
+  width: max-content;
+  max-width: 260px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+  pointer-events: none;
+  z-index: 100;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-transform: none;
+  line-height: 1.4;
+  letter-spacing: normal;
+}
+.custom-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+/* Variante Tooltip hacia abajo */
+.custom-tooltip-bottom::after {
+  bottom: auto;
+  top: 125%;
+}
+.custom-tooltip-bottom:hover::after {
+  transform: translateX(-50%) translateY(5px);
+}

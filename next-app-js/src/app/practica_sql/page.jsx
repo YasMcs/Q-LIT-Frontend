@@ -242,8 +242,8 @@ function PracticaSQLContent() {
              setCurrentStep(prev => prev + 1);
              setActiveStep(prev => prev + 1);
            } else {
-             // Terminado
-             submitFinalPractice(data.data);
+             // Terminado: Habilitar modo "Entregar"
+             setCurrentStep(parsedStatement.pasos.length);
            }
          }
       } else {
@@ -450,7 +450,7 @@ function PracticaSQLContent() {
                     <li key={idx} className="field-row-sql">
                       <span className={`field-name-sql ${field.pk ? "pk-sql" : ""}`}>
                         {field.name}
-                        {field.pk && <i className="fa-solid fa-key" style={{ color: '#fbbf24', marginLeft: '6px', fontSize: '10px' }} />}
+                        {field.pk && <i className="fa-solid fa-key text-indigo-400 ml-1.5 text-[10px]" title="Primary Key" />}
                       </span>
                       <span className="field-type-sql">{field.type}</span>
                     </li>
@@ -468,14 +468,31 @@ function PracticaSQLContent() {
               <span className="text-[11px] font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                 <i className="fa-solid fa-code" /> Editor SQL
               </span>
-              {!isReadOnly && (
-                <button 
-                  className="px-3 py-1.5 text-xs font-bold text-muted bg-panel border border-border/40 rounded-md shadow-sm hover:bg-input hover:text-foreground transition-colors flex items-center gap-1.5" 
-                  onClick={handleClear}
-                >
-                  <i className="fa-solid fa-eraser" /> Limpiar
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {!isReadOnly && (
+                  <div className="flex items-center gap-2 mr-2">
+                    <i 
+                      className="fa-solid fa-circle-info text-muted/60 hover:text-muted cursor-help custom-tooltip custom-tooltip-bottom text-sm mr-1" 
+                      data-tooltip="El sistema evalúa automáticamente si tu consulta cumple con el objetivo seleccionado."
+                    ></i>
+                    <button
+                      onClick={handleExecute}
+                      disabled={terminalState === "executing" || isSubmitting}
+                      className="px-4 py-1.5 rounded-md font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                    >
+                      <i className="fa-solid fa-play" /> {terminalState === "executing" ? "Ejecutando..." : "Ejecutar"}
+                    </button>
+                  </div>
+                )}
+                {!isReadOnly && (
+                  <button 
+                    className="px-3 py-1.5 text-xs font-bold text-muted bg-panel border border-border/40 rounded-md shadow-sm hover:bg-input hover:text-foreground transition-colors flex items-center gap-1.5" 
+                    onClick={handleClear}
+                  >
+                    <i className="fa-solid fa-eraser" /> Limpiar
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="flex-1 relative">
@@ -614,22 +631,7 @@ function PracticaSQLContent() {
         <aside className="panel-sidebar-sql bg-panel">
           <div className="sidebar-section-sql !pt-5 px-4">
             
-            {/* Controles */}
-            {!isReadOnly && (
-              <div className="mb-6 flex flex-col gap-3 pb-6">
-                <button 
-                  className="w-full py-3 text-sm font-bold text-white bg-indigo-600 rounded-xl shadow-sm hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" 
-                  onClick={handleExecute}
-                  disabled={terminalState === "executing" || isSubmitting}
-                >
-                  <i className="fa-solid fa-play" /> {terminalState === "executing" ? "Ejecutando..." : "Ejecutar Consulta"}
-                </button>
-                <div className="text-[10px] text-muted/60 flex items-start gap-1.5 px-1 leading-tight">
-                  <i className="fa-solid fa-circle-info mt-0.5 text-indigo-400/50" />
-                  El sistema evalúa automáticamente si tu consulta cumple con el objetivo seleccionado.
-                </div>
-              </div>
-            )}
+            {/* Controles de ejecución reubicados al header del editor */}
 
             <div className="mb-2">
               <div className="mb-4">
@@ -725,6 +727,24 @@ function PracticaSQLContent() {
                   )}
                 </div>
               </div>
+
+              {/* Botón de Entrega Final */}
+              {parsedStatement && parsedStatement.pasos && currentStep >= parsedStatement.pasos.length && !isReadOnly && (
+                <div className="mt-8 pt-6 border-t border-white/5">
+                  <button
+                    onClick={() => submitFinalPractice(executionResult)}
+                    disabled={isSubmitting}
+                    className="w-full py-3.5 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.25)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <><i className="fa-solid fa-circle-notch fa-spin"></i> Entregando...</>
+                    ) : (
+                      <><i className="fa-solid fa-paper-plane"></i> Entregar Práctica</>
+                    )}
+                  </button>
+                  <p className="text-center text-[10px] text-muted mt-3">Has completado todos los objetivos. Ya puedes entregar.</p>
+                </div>
+              )}
             </div>
           </div>
         </aside>

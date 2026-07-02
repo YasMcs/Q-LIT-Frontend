@@ -30,6 +30,13 @@ Para resolver problemas de CORS y proteger las rutas del backend, se implementó
 - ✅ Funcionalidades base (directorios, listados, UI).
 - ✅ UI Responsiva en dashboards para diferentes tamaños de laptops y PCs.
 - ⬜ Tareas pendientes o mejoras a futuro:
+  - **Refactorización de Revisión de Prácticas:**
+    - Quitar la generación automática de la lista de cotejo por IA, para generarla estrictamente a partir de las funciones/cláusulas exigidas que el docente elija.
+    - Rediseñar la vista de revisión del docente para visualizar:
+      - Los objetivos paso a paso con la consulta final ingresada por el alumno para cada uno.
+      - Métricas de reincidencia de errores en las consultas.
+      - La nueva lista de cotejo generada a partir de las cláusulas requeridas.
+      - Un campo de input numérico libre (validando que sea > 0) para que el docente asigne la calificación de forma manual.
   - Posibles mejoras en el parseo y feedback enriquecido al alumno.
   - Implementación de notificaciones en tiempo real o correos automatizados si no está completo.
   - Mayor personalización o paginación masiva en caso de que crezcan los usuarios.
