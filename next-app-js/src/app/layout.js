@@ -12,6 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://q-lit.online"),
   title: "Q-LIT",
   description: "Plataforma de laboratorio interactivo de bases de datos para la enseñanza de SQL.",
   icons: {
