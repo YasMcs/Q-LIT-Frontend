@@ -450,7 +450,7 @@ function PracticaSQLContent() {
           <div className="schema-container-sql !mt-0">
             <div className="px-4 pt-5 pb-3">
               <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
-                Diccionario de Entidades <i className="fa-solid fa-circle-info text-indigo-500/70 text-[10px]"></i>
+                Diccionario de Entidades
               </h3>
             </div>
 
@@ -658,7 +658,7 @@ function PracticaSQLContent() {
             <div className="mb-2">
               <div className="mb-4">
                 <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
-                  Objetivos de la práctica <i className="fa-solid fa-circle-info text-indigo-500/70 text-[10px]" />
+                  Objetivos de la práctica
                 </h3>
               </div>
               
@@ -743,7 +743,7 @@ function PracticaSQLContent() {
               
               <div className="pt-4 mt-6">
                 <h4 className="flex items-center gap-2 text-sm font-bold text-foreground mb-4">
-                  Funciones y Cláusulas Esperadas <i className="fa-solid fa-circle-info text-indigo-500/70 text-[10px]" />
+                  Funciones y Cláusulas Esperadas
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {requiredFunctions.length > 0 ? requiredFunctions.map((func, idx) => (
