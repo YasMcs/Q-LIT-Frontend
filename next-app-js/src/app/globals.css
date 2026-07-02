@@ -424,8 +424,12 @@ input[type=number] {
   transform: translateX(-50%) translateY(-5px);
 }
 
+.custom-tooltip-bottom::after {
+  bottom: auto !important;
+  top: 125% !important;
+}
 .custom-tooltip-bottom:hover::after {
-  transform: translateX(-50%) translateY(5px);
+  transform: translateX(-50%) translateY(5px) !important;
 }
 
 /* Variante Tooltip alineado a la derecha (crece hacia la izquierda) */
