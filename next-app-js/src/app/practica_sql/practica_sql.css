@@ -16,20 +16,31 @@
   width: 100vw;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .workspace-layout-sql {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 320px 1fr 380px;
   width: 100%;
-  height: 100vh;
+  flex: 1;
+  overflow: hidden;
+  gap: 16px;
+  padding: 16px;
+  padding-top: 0;
+  background-color: var(--bg-body);
 }
 
 /* Sidebar Panel */
-.panel-sidebar-sql {
+.panel-sidebar-sql, .center-workspace-sql {
   background: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+.panel-sidebar-sql {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -60,7 +71,6 @@
 
 .sidebar-section-sql {
   padding: 24px;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-section-sql h3 {
@@ -120,12 +130,12 @@
 }
 
 .accordion-table-item-sql {
-  margin-bottom: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-panel);
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: var(--bg-input);
   overflow: hidden;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .table-toggle-header-sql {
@@ -135,12 +145,12 @@
   padding: 12px 14px;
   cursor: pointer;
   user-select: none;
-  background: var(--bg-panel);
+  background: var(--bg-input);
   transition: background 0.2s ease;
 }
 
 .table-toggle-header-sql:hover {
-  background: var(--bg-main);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .table-name-sql {
@@ -161,7 +171,8 @@
 
 /* Open Accordion States */
 .accordion-table-item-sql.open {
-  border-color: rgba(67, 56, 202, 0.2);
+  box-shadow: 0 0 0 1px rgba(67, 56, 202, 0.3), 0 8px 16px rgba(0, 0, 0, 0.3);
+  background: rgba(67, 56, 202, 0.05);
 }
 
 .accordion-table-item-sql.open .table-name-sql {
@@ -175,11 +186,10 @@
 
 /* Fields list hidden by default */
 .fields-list-sql {
-  background: var(--bg-panel);
-  padding: 4px 14px 12px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 14px 14px 14px;
   list-style: none;
   display: none;
-  border-top: 1px dashed var(--border-color);
 }
 
 .accordion-table-item-sql.open .fields-list-sql {
@@ -192,7 +202,6 @@
   padding: 8px 0;
   font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-size: 0.78rem;
-  border-bottom: 1px dashed var(--border-color);
 }
 
 .field-row-sql:last-child {
@@ -219,7 +228,6 @@
 /* Top bar with buttons */
 .editor-top-bar-sql {
   background: var(--bg-panel);
-  border-bottom: 1px solid var(--border-color);
   padding: 16px 32px;
   display: flex;
   justify-content: space-between;
@@ -328,7 +336,6 @@
 /* Resizable Console panel */
 .terminal-zone-sql {
   background: var(--bg-panel);
-  border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -362,7 +369,6 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border-color);
   user-select: none;
 }
 
@@ -425,13 +431,11 @@
   font-weight: 700;
   position: sticky;
   top: 0;
-  border-bottom: 2px solid var(--border-color);
   z-index: 1;
 }
 
 .workbench-grid-sql td {
   padding: 11px 16px;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .workbench-grid-sql tr:hover {
