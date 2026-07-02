@@ -18,6 +18,7 @@ export default function OnboardingPage() {
     } else if (status === "authenticated" && session?.user?.role) {
       if (session.user.role === "teacher") router.push("/dashboard-docente");
       if (session.user.role === "student") router.push("/class-feed-alumno");
+      if (session.user.role === "admin") router.push("/admin/dashboard");
     }
   }, [status, session, router]);
 

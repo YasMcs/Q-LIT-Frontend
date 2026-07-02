@@ -23,6 +23,8 @@ export default function HomePage() {
         router.push("/dashboard-docente");
       } else if (session.user.role === "student") {
         router.push("/class-feed-alumno");
+      } else if (session.user.role === "admin") {
+        router.push("/admin/dashboard");
       }
     }
   }, [status, session, router]);

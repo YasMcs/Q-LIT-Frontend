@@ -32,6 +32,8 @@ export default function RoleGuard({ children, allowedRole, fallback = null }) {
         router.push("/dashboard-docente");
       } else if (currentRole === "student") {
         router.push("/class-feed-alumno");
+      } else if (currentRole === "admin") {
+        router.push("/admin/dashboard");
       }
     }
   }, [status, session, allowedRole, router]);
