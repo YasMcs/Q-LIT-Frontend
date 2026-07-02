@@ -6,7 +6,7 @@ import SidebarDocente from "@/components/SidebarDocente";
 import RevisarPracticaSkeleton from "@/components/skeletons/RevisarPracticaSkeleton";
 import { showAlert, showConfirm } from "@/utils/alerts";
 import { decodeId } from "@/utils/crypto";
-import "../dashboard-docente.css";
+import "@/app/(docente)/laboratorios/dashboard-docente.css";
 import "./revisar-practica-docente.css";
 
 export default function RevisarPracticaDocentePage() {
