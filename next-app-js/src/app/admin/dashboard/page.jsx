@@ -1,38 +1,37 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import CustomSelect from "@/components/CustomSelect";
 import { showAlert } from "@/utils/alerts";
 import "./admin.css";
 
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [classrooms, setClassrooms] = useState([]);
-  const [selectedClassroom, setSelectedClassroom] = useState("");
+  const [teachers, setTeachers] = useState([]);
+  const [selectedTeacher, setSelectedTeacher] = useState("");
 
   useEffect(() => {
-    fetchClassrooms();
+    fetchTeachers();
     fetchMetrics();
   }, []);
 
-  const fetchClassrooms = async () => {
+  const fetchTeachers = async () => {
     try {
-      // Intenta obtener los grupos si existe el endpoint en el proxy
-      const res = await fetch("/api/proxy/classrooms");
+      const res = await fetch("/api/proxy/admin/teachers");
       if (res.ok) {
-        const data = await res.json();
-        // Asumiendo que data o data.classrooms es un array
-        setClassrooms(Array.isArray(data) ? data : data.classrooms || []);
+        const result = await res.json();
+        setTeachers(result.data || []);
       }
     } catch (error) {
-      console.error("No se pudieron cargar los grupos", error);
+      console.error("No se pudieron cargar los docentes", error);
     }
   };
 
-  const fetchMetrics = async (classroomId = "") => {
+  const fetchMetrics = async (teacherId = "") => {
     setLoading(true);
     try {
-      const url = classroomId ? `/api/proxy/admin/metrics?classroomId=${classroomId}` : "/api/proxy/admin/metrics";
+      const url = teacherId ? `/api/proxy/admin/metrics?teacherId=${teacherId}` : "/api/proxy/admin/metrics";
       const res = await fetch(url);
       const data = await res.json();
 
@@ -49,9 +48,9 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleClassroomChange = (e) => {
+  const handleTeacherChange = (e) => {
     const value = e.target.value;
-    setSelectedClassroom(value);
+    setSelectedTeacher(value);
     fetchMetrics(value);
   };
 
@@ -79,28 +78,19 @@ export default function AdminDashboardPage() {
           <p>Validación de Hipótesis y Comportamiento de Usuarios</p>
         </div>
         
-        <div className="filter-container" style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            Filtrar por Grupo:
+        <div className="filter-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+            Filtrar por Docente:
           </label>
-          <select 
-            value={selectedClassroom} 
-            onChange={handleClassroomChange}
-            style={{ 
-              padding: '8px 12px', 
-              borderRadius: '6px', 
-              background: 'var(--bg-secondary)', 
-              color: 'var(--text-primary)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="">Todos los grupos (Global)</option>
-            {classrooms.map(c => (
-              <option key={c.id} value={c.id}>{c.name || `Grupo ${c.id}`}</option>
-            ))}
-          </select>
+          <CustomSelect
+            icon="fa-chalkboard-user"
+            value={selectedTeacher}
+            onChange={(val) => { setSelectedTeacher(val); fetchMetrics(val); }}
+            options={[
+              { value: "", label: "Global (Todos los docentes)" },
+              ...teachers.map(t => ({ value: t.id, label: t.name || t.email }))
+            ]}
+          />
         </div>
       </div>
 

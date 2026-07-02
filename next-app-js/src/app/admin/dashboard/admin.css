@@ -8,6 +8,13 @@
   gap: 30px;
 }
 
+/* Dropdown options styling */
+.admin-dashboard-wrapper select option {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  padding: 8px;
+}
+
 .admin-header {
   margin-bottom: 10px;
 }
