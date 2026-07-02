@@ -384,7 +384,22 @@ function PracticaSQLContent() {
             
             if (data.data.submission.isReadOnly) {
               setIsReadOnly(true);
-              setSqlQuery(data.data.submission.studentSqlCode || "");
+              
+              // Si está resuelta, permitir clickear todos los pasos
+              if (data.data.submission.generatedStatement) {
+                 try {
+                   const tempParsed = JSON.parse(data.data.submission.generatedStatement);
+                   if (tempParsed.pasos) {
+                     setCurrentStep(tempParsed.pasos.length);
+                   }
+                 } catch (e) {}
+              }
+              
+              // Cargar por defecto la consulta del primer paso (índice 0)
+              const firstStep = data.data.submission.steps?.find(s => s.stepIndex === 0);
+              setSqlQuery(firstStep?.finalSqlCode || data.data.submission.studentSqlCode || "");
+              setActiveStep(0);
+              
               if (data.data.submission.executionResult) {
                 setExecutionResult(data.data.submission.executionResult);
                 setTerminalState("success");
@@ -696,7 +711,13 @@ function PracticaSQLContent() {
                             key={idx} 
                             className={`p-2.5 rounded-xl transition-all cursor-pointer relative z-10 flex items-start gap-3 ${bgClass}`}
                             onClick={() => {
-                              if (idx <= currentStep) setActiveStep(idx);
+                              if (idx <= currentStep) {
+                                setActiveStep(idx);
+                                if (isReadOnly && practiceData?.submission?.steps) {
+                                  const savedStep = practiceData.submission.steps.find(s => s.stepIndex === idx);
+                                  setSqlQuery(savedStep?.finalSqlCode || "-- Sin código registrado para este objetivo --");
+                                }
+                              }
                             }}
                           >
                             <div className={`w-5 h-5 shrink-0 rounded-full flex items-center justify-center mt-1 transition-all ${ringClass}`}>

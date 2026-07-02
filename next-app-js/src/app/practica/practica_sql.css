@@ -41,8 +41,7 @@
 }
 
 .panel-sidebar-sql {
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100%;
   overflow-y: auto;
   position: relative;
@@ -72,7 +71,7 @@
 }
 
 .sidebar-section-sql {
-  padding: 24px;
+  padding: 20px 18px;
 }
 
 .sidebar-section-sql h3 {
