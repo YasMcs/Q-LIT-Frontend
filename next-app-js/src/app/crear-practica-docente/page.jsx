@@ -95,12 +95,7 @@ function CrearPracticaDocenteContent() {
     }
   }, [editId]);
 
-  // Rubric / checklist state (initially empty with one blank item)
-  const [criteria, setCriteria] = useState([
-    { id: 1, text: "", points: 100 }
-  ]);
 
-  const criteriaSum = criteria.reduce((sum, item) => sum + item.points, 0);
 
   // Classroom-style due time defaulting to 23:59 when a date is selected
   const handleDateChange = (date) => {
@@ -136,37 +131,6 @@ function CrearPracticaDocenteContent() {
     setActiveModalTable(null);
   };
 
-  const handleAddCriteria = () => {
-    const nextId = criteria.length ? Math.max(...criteria.map(c => c.id)) + 1 : 1;
-    setCriteria([...criteria, { id: nextId, text: "", points: 0 }]);
-  };
-
-  const handleCriteriaTextChange = (id, text) => {
-    setCriteria(criteria.map(c => c.id === id ? { ...c, text } : c));
-  };
-
-  const handleCriteriaPointsChange = (id, pointsVal) => {
-    const points = parseInt(pointsVal) || 0;
-    setCriteria(criteria.map(c => c.id === id ? { ...c, points } : c));
-  };
-
-  const handleDeleteCriteria = (id) => {
-    setCriteria(criteria.filter(c => c.id !== id));
-  };
-
-  const handleDistributePoints = () => {
-    if (!criteria.length) return;
-    const count = criteria.length;
-    const basePoints = Math.floor(maxScore / count);
-    const remainder = maxScore % count;
-
-    setCriteria(
-      criteria.map((c, index) => ({
-        ...c,
-        points: basePoints + (index < remainder ? 1 : 0)
-      }))
-    );
-  };
 
   const executeSave = async (forceRegenerate = false) => {
     setIsSaving(true);
@@ -186,7 +150,6 @@ function CrearPracticaDocenteContent() {
           dueTime,
           deadlineIso: new Date(`${dueDate}T${dueTime}`).toISOString(),
           activeDb,
-          criteria,
           classroomId: selectedClassroomId,
           forceRegenerate,
           closeLateSubmissions
@@ -268,23 +231,7 @@ function CrearPracticaDocenteContent() {
     
     if (isSaving) return;
     
-    // Validar que no haya criterios vacíos
-    const hasEmptyCriteria = criteria.some(item => !item.text.trim());
-    if (hasEmptyCriteria) {
-      await showAlert("Criterios Incompletos", "Hay campos vacíos en los criterios de la lista de cotejo. Por favor, completa o elimina los criterios vacíos.", "warning");
-      return;
-    }
 
-    if (criteriaSum !== maxScore) {
-      const confirmed = await showConfirm(
-        "Ajuste de Criterios",
-        `La suma de los criterios de la lista de cotejo (${criteriaSum} pts) no coincide con el valor total de la práctica (${maxScore} pts). ¿Deseas guardar de todas formas?`
-      );
-      if (!confirmed) {
-        return;
-      }
-    }
-    
     if (editId) {
       setShowConfirmModal(true);
     } else {
@@ -407,6 +354,13 @@ function CrearPracticaDocenteContent() {
                     ))}
                   </div>
                 )}
+              </div>
+              
+              <div className="text-[11px] text-muted/80 bg-accent/5 border border-accent/20 rounded-lg p-2.5 mt-1 flex gap-2 items-start">
+                <i className="fa-solid fa-circle-info mt-0.5 text-[var(--accent-color)]"></i>
+                <p>
+                  <strong>Aviso:</strong> Las funciones que selecciones aquí se convertirán automáticamente en la <strong>lista de cotejo</strong> de la práctica. Asegúrate de incluir todas las cláusulas clave.
+                </p>
               </div>
             </div>
           </div>
@@ -547,84 +501,7 @@ function CrearPracticaDocenteContent() {
             </div>
           </div>
 
-          {/* Panel de Rúbrica / Lista de Cotejo */}
-          <div className="classroom-card-panel flex flex-col flex-grow">
-            <div className="rubric-drawer-header mb-4">
-              <label className="sidebar-label flex items-center gap-2">
-                Lista de Cotejo
-                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Desglosa el valor total de la práctica en criterios específicos para que la IA sepa qué buscar en la respuesta del alumno."></i>
-                <span className="text-[var(--danger-red)]">*</span>
-              </label>
-              <button type="button" className="btn-add-criterio-drawer" onClick={handleAddCriteria}>
-                + Añadir Criterio
-              </button>
-            </div>
-
-            <div className="rubric-drawer-panel">
-              <div className="rubric-drawer-subtitle">
-                Asigna el puntaje a cada criterio. Total acumulado: <strong>{criteriaSum} / {maxScore}</strong> pts.
-              </div>
-
-              <div className="rubric-drawer-list">
-                {criteria.map((item, index) => (
-                  <div key={item.id} className="rubric-drawer-row">
-                    <input
-                      id={`field-criteria-${index}`}
-                      type="text"
-                      className="rubric-drawer-input-text"
-                      placeholder="Descripción del criterio..."
-                      value={item.text}
-                      onChange={(e) => handleCriteriaTextChange(item.id, e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          document.getElementById(`field-criteria-pts-${index}`)?.focus();
-                        }
-                      }}
-                    />
-                    <input
-                      id={`field-criteria-pts-${index}`}
-                      type="number"
-                      className="rubric-drawer-input-points"
-                      placeholder="Pts"
-                      value={item.points}
-                      onChange={(e) => handleCriteriaPointsChange(item.id, e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          const nextIndex = index + 1;
-                          const nextEl = document.getElementById(`field-criteria-${nextIndex}`);
-                          if (nextEl) {
-                            nextEl.focus();
-                          } else {
-                            handleAddCriteria();
-                            setTimeout(() => {
-                              document.getElementById(`field-criteria-${nextIndex}`)?.focus();
-                            }, 50);
-                          }
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="btn-delete-criterio-drawer"
-                      onClick={() => handleDeleteCriteria(item.id)}
-                      title="Eliminar fila"
-                    >
-                      &times;
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {criteriaSum !== maxScore && (
-                <div className="rubric-drawer-unbalanced-alert">
-                  <span>Los puntos no coinciden con {maxScore} pts.</span>
-                  <button type="button" onClick={handleDistributePoints}>Distribuir</button>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Eliminado Panel de Rúbrica por nuevo diseño de evaluación basada en funciones */}
         </aside>
       </div>
 

@@ -27,9 +27,9 @@ function RevisarPracticaDocenteContent() {
   const challengeId = searchParams.get("challengeId");
   
   const [students, setStudents] = useState([]);
-  const [practiceInfo, setPracticeInfo] = useState({ title: 'Cargando...', description: '', deadline: null });
+  const [practiceInfo, setPracticeInfo] = useState({ title: 'Cargando...', description: '', deadline: null, totalPoints: 100, practiceRequiredFunctions: { keywords: [] } });
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [checklist, setChecklist] = useState([]);
+  const [manualGrade, setManualGrade] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const [viewMode, setViewMode] = useState('list');
@@ -46,6 +46,8 @@ function RevisarPracticaDocenteContent() {
             setPracticeInfo({
               title: data.data.practiceTitle || "Práctica",
               description: data.data.practiceDescription || "Sin descripción asignada.",
+              totalPoints: data.data.totalPoints || 100,
+              practiceRequiredFunctions: data.data.practiceRequiredFunctions || { keywords: [] },
               deadline: data.data.deadline || null
             });
             const fetchedStudents = data.data.students.map(sub => ({
@@ -55,10 +57,12 @@ function RevisarPracticaDocenteContent() {
               email: sub.studentEmail,
               studentImage: sub.studentImage,
               status: sub.status,
+              score: sub.score || 0,
               submitted: sub.status !== "NOT_STARTED",
               sqlQuery: sub.sqlQuery || "",
-              executionResult: sub.executionResult,
-              checklist: sub.checklist || []
+              steps: sub.steps || [],
+              generatedStatement: sub.generatedStatement,
+              executionResult: sub.executionResult
             }));
             setStudents(fetchedStudents);
           }
@@ -73,25 +77,9 @@ function RevisarPracticaDocenteContent() {
 
   useEffect(() => {
     if (selectedStudent) {
-      setChecklist(selectedStudent.checklist.map((c) => ({
-        ...c,
-        teacherPoints: c.teacherPoints 
-      })));
-    } else {
-      setChecklist([]);
+      setManualGrade(selectedStudent.score || 0);
     }
   }, [selectedStudent]);
-
-  const totalMaxScore = checklist.reduce((sum, item) => sum + item.maxPoints, 0);
-  const grade = checklist.reduce((sum, item) => sum + item.teacherPoints, 0);
-
-  const handlePointChange = (id, newPoints) => {
-    let val = parseInt(newPoints);
-    if (isNaN(val)) val = 0;
-    setChecklist(prev => 
-      prev.map(item => item.id === id ? { ...item, teacherPoints: val } : item)
-    );
-  };
 
   const isClosed = practiceInfo.deadline ? new Date(practiceInfo.deadline) < new Date() : false;
   const entregados = students.filter(s => s.submitted);
@@ -103,14 +91,18 @@ function RevisarPracticaDocenteContent() {
 
   const handleConfirmGrade = async () => {
     if (!selectedStudent || !selectedStudent.submissionId) return;
+    
+    const parsedGrade = parseInt(manualGrade);
+    if (isNaN(parsedGrade) || parsedGrade <= 0 || parsedGrade > practiceInfo.totalPoints) {
+      await showAlert("Error", `Ingresa una calificación válida mayor a 0 y hasta ${practiceInfo.totalPoints}.`, "error");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
         submissionId: selectedStudent.submissionId,
-        evaluations: checklist.map(c => ({
-          checklistItemId: c.id,
-          teacherComplies: c.teacherPoints === c.maxPoints
-        }))
+        manualGrade: parsedGrade
       };
 
       const res = await fetch('/api/proxy/evaluations/teacher-grade', {
@@ -120,10 +112,10 @@ function RevisarPracticaDocenteContent() {
       });
       
       if (res.ok) {
-        await showAlert("Éxito", `Calificación de ${grade}/${totalMaxScore} guardada con éxito.`, "success");
+        await showAlert("Éxito", `Calificación de ${parsedGrade}/${practiceInfo.totalPoints} guardada con éxito.`, "success");
         // Update local state to reflect the graded status without refetching all
         setStudents(prev => prev.map(s => 
-          s.id === selectedStudent.id ? { ...s, status: 'COMPLETED', checklist: checklist } : s
+          s.id === selectedStudent.id ? { ...s, status: 'COMPLETED', score: parsedGrade } : s
         ));
         setViewMode('list');
       } else {
@@ -164,7 +156,7 @@ function RevisarPracticaDocenteContent() {
       });
       if (res.ok) {
         setStudents(prev => prev.map(s => 
-          s.id === student.id ? { ...s, status: 'COMPLETED' } : s
+          s.id === student.id ? { ...s, status: 'COMPLETED', score: 0 } : s
         ));
       } else {
         await showAlert("Error", "Error al asignar 0", "error");
@@ -202,9 +194,7 @@ function RevisarPracticaDocenteContent() {
             <p className="text-muted mt-2 text-lg">Revisión de entregas de los estudiantes</p>
           </header>
 
-          {/* Barra de Controles (Buscador y Métricas) */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-            {/* Buscador a la izquierda */}
             <div className="relative w-full max-w-md">
               <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-muted"></i>
               <input
@@ -216,7 +206,6 @@ function RevisarPracticaDocenteContent() {
               />
             </div>
 
-            {/* Métricas clickeables a la derecha */}
             <div className="flex items-center bg-panel border-2 border-border rounded-2xl overflow-hidden shadow-sm">
                <button 
                  onClick={() => setFilterMode(filterMode === 'ENTREGADOS' ? 'ALL' : 'ENTREGADOS')} 
@@ -240,7 +229,6 @@ function RevisarPracticaDocenteContent() {
             </div>
           </div>
 
-          {/* Grid de Alumnos Rediseñado */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
             {displayedStudents.map(student => (
               <div key={student.id} className="bg-panel border-2 border-border rounded-3xl p-6 flex flex-col relative overflow-hidden transition-all duration-300 hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1 group">
@@ -261,7 +249,7 @@ function RevisarPracticaDocenteContent() {
                 <div className="mb-6 flex gap-2 flex-wrap">
                   {student.status === 'COMPLETED' && (
                     <span className="px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-500 text-xs font-black uppercase tracking-widest border border-emerald-500/30">
-                      Calificado
+                      Calificado ({student.score})
                     </span>
                   )}
                   {student.status === 'PENDING' && (
@@ -323,7 +311,6 @@ function RevisarPracticaDocenteContent() {
   // --- MODO REVIEW (FOCUS) ---
   return (
     <div className="flex flex-col h-screen bg-main overflow-hidden animate-fade-in relative z-50">
-      {/* Topbar minimalista de navegación de estudiantes */}
       <header className="bg-panel border-b-2 border-border px-6 py-4 flex items-center justify-between shrink-0 shadow-sm relative z-20">
         <div className="flex items-center gap-6">
           <button
@@ -339,14 +326,13 @@ function RevisarPracticaDocenteContent() {
           </div>
         </div>
         
-        {/* Selector de estudiantes rápido */}
         <div className="flex items-center gap-4 bg-input p-1.5 rounded-2xl border border-border">
           <select 
             className="bg-transparent text-foreground font-bold outline-none cursor-pointer px-4 appearance-none"
             value={selectedStudent?.id || ''}
             onChange={(e) => {
               const st = displayedStudents.find(s => s.id === e.target.value);
-              if (st) setSelectedStudent(st);
+              if (st) openReview(st);
             }}
           >
             {displayedStudents.map(s => (
@@ -361,7 +347,6 @@ function RevisarPracticaDocenteContent() {
         </div>
       </header>
 
-      {/* Main Split Layout */}
       <div className="flex flex-1 overflow-hidden">
         {selectedStudent?.submitted ? (
           <>
@@ -370,18 +355,91 @@ function RevisarPracticaDocenteContent() {
               
               <section className="bg-panel rounded-3xl border-2 border-border p-8 shadow-sm">
                 <h2 className="text-xl font-black text-foreground flex items-center gap-3 mb-6">
-                  <i className="fa-solid fa-code text-indigo-500"></i> Código SQL Entregado
+                  <i className="fa-solid fa-bars-progress text-indigo-500"></i> Desglose de Pasos
                 </h2>
-                <div className="bg-[#0f111a] rounded-2xl p-6 overflow-x-auto border border-border/50 shadow-inner">
-                  <pre className="text-sm font-mono text-emerald-400 leading-relaxed">
-                    <code>{selectedStudent.sqlQuery || "-- No hay código SQL entregado"}</code>
-                  </pre>
+                
+                <div className="space-y-6">
+                  {selectedStudent.steps && selectedStudent.steps.length > 0 ? (
+                    selectedStudent.steps.map((step, idx) => {
+                      let instruction = `Paso ${step.stepIndex + 1}`;
+                      try {
+                        const parsed = JSON.parse(selectedStudent.generatedStatement);
+                        const paso = parsed.pasos?.find(p => p.step === step.stepIndex + 1);
+                        if (paso) instruction = paso.instruction;
+                      } catch (e) {}
+
+                      const fallos = step.attemptsCount > 0 ? step.attemptsCount - 1 : 0;
+                      const hasErrors = Array.isArray(step.errorLogs) && step.errorLogs.length > 0;
+
+                      return (
+                        <div key={idx} className="bg-input rounded-2xl border-2 border-border p-5">
+                          <h3 className="font-bold text-foreground mb-3 leading-relaxed">{instruction}</h3>
+                          
+                          <div className="mb-4">
+                            {fallos === 0 ? (
+                              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-bold border border-emerald-500/20">
+                                <i className="fa-solid fa-circle-check"></i> Resuelto al primer intento
+                              </span>
+                            ) : (
+                              <div className="flex flex-col items-start gap-2">
+                                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20">
+                                  <i className="fa-solid fa-triangle-exclamation"></i> Logrado después de {fallos} intento(s) fallido(s)
+                                </span>
+                                {hasErrors && (
+                                  <details className="mt-2 w-full text-sm group">
+                                    <summary className="cursor-pointer text-indigo-400 font-semibold mb-2 list-none flex items-center gap-2 select-none hover:text-indigo-300 transition-colors">
+                                      <i className="fa-solid fa-chevron-right transition-transform group-open:rotate-90 text-xs"></i>
+                                      Ver Historial de Errores ({step.errorLogs.length})
+                                    </summary>
+                                    <div className="space-y-3 mt-3 pl-4 border-l-2 border-indigo-500/30">
+                                      {step.errorLogs.map((log, lIdx) => (
+                                        <div key={lIdx} className="bg-main/50 rounded-xl p-4 border border-border/50 shadow-sm relative">
+                                          <div className="absolute top-2 right-3 text-xs text-muted/50 font-mono">
+                                            Intento {lIdx + 1}
+                                          </div>
+                                          <p className="font-mono text-indigo-400 text-xs mb-2 uppercase tracking-wider font-bold">Intentó correr:</p>
+                                          <pre className="text-xs text-foreground bg-black/30 p-3 rounded-lg mb-3 overflow-x-auto border border-border/30">
+                                            {log.query}
+                                          </pre>
+                                          <p className="font-mono text-rose-400 text-xs mb-1 uppercase tracking-wider font-bold">Error devuelto:</p>
+                                          <p className="text-xs text-rose-300/80 whitespace-pre-wrap">{log.errorMessage}</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </details>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="bg-[#0f111a] rounded-xl p-4 overflow-x-auto border border-border/50 shadow-inner mt-4">
+                            <p className="text-xs text-muted font-mono mb-2">Consulta final exitosa:</p>
+                            <pre className="text-sm font-mono text-emerald-400 leading-relaxed">
+                              <code>{step.finalSqlCode || "-- Sin código guardado"}</code>
+                            </pre>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-muted italic bg-input p-6 rounded-2xl text-center border-2 border-dashed border-border">
+                      El estudiante no tiene pasos registrados individuales. Su código final se muestra a continuación.
+                    </div>
+                  )}
+
+                  {(!selectedStudent.steps || selectedStudent.steps.length === 0) && (
+                    <div className="bg-[#0f111a] rounded-2xl p-6 overflow-x-auto border border-border/50 shadow-inner mt-4">
+                      <pre className="text-sm font-mono text-emerald-400 leading-relaxed">
+                        <code>{selectedStudent.sqlQuery || "-- No hay código SQL entregado"}</code>
+                      </pre>
+                    </div>
+                  )}
                 </div>
               </section>
 
               <section className="bg-panel rounded-3xl border-2 border-border p-8 shadow-sm">
                 <h2 className="text-xl font-black text-foreground flex items-center gap-3 mb-6">
-                  <i className="fa-solid fa-table text-indigo-500"></i> Tabla de Resultados
+                  <i className="fa-solid fa-table text-indigo-500"></i> Tabla de Resultados (Consulta Final)
                 </h2>
                 
                 {selectedStudent.executionResult && selectedStudent.executionResult.columns ? (
@@ -415,40 +473,68 @@ function RevisarPracticaDocenteContent() {
             </div>
 
             {/* Right Column (Grading) - 40% */}
-            <div className="w-full lg:w-[40%] bg-panel h-full overflow-y-auto flex flex-col">
-              <div className="p-6 lg:p-8 flex-1">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-2xl font-black text-foreground">Rúbrica</h2>
-                  <div className="bg-indigo-500/10 px-4 py-2 rounded-xl border border-indigo-500/20">
-                    <span className="text-2xl font-black text-indigo-500">{grade}</span>
-                    <span className="text-muted font-bold"> / {totalMaxScore} pts</span>
+            <div className="w-full lg:w-[40%] bg-panel h-full overflow-y-auto flex flex-col border-l-2 border-border shadow-xl">
+              <div className="p-6 lg:p-10 flex-1">
+                <div className="mb-10 text-center">
+                  <h2 className="text-3xl font-black text-foreground">Evaluación</h2>
+                  <p className="text-muted mt-2">Revisión manual del desempeño</p>
+                </div>
+
+                <div className="bg-input p-6 rounded-3xl border-2 border-border mb-8 shadow-sm">
+                  <label className="flex items-center gap-3 text-sm font-bold text-foreground uppercase tracking-widest mb-6">
+                    <i className="fa-solid fa-list-check text-indigo-500"></i> Cláusulas Requeridas
+                  </label>
+                  <div className="space-y-3">
+                    {practiceInfo.practiceRequiredFunctions?.keywords?.length > 0 ? (
+                      practiceInfo.practiceRequiredFunctions.keywords.map((kw, idx) => {
+                        const used = selectedStudent.sqlQuery?.toUpperCase().includes(kw);
+                        return (
+                          <div key={idx} className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${used ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-border bg-main'}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${used ? 'bg-emerald-500 text-white' : 'bg-muted/20 text-muted'}`}>
+                              <i className={`fa-solid ${used ? 'fa-check' : 'fa-minus'} text-sm`}></i>
+                            </div>
+                            <span className={`font-bold font-mono text-base ${used ? 'text-emerald-400' : 'text-muted'}`}>{kw}</span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center p-4 bg-main rounded-2xl border-2 border-dashed border-border">
+                        <p className="text-muted text-sm font-medium">Esta práctica no tiene cláusulas obligatorias.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  {checklist.map((item) => {
-                    const isChecked = item.teacherPoints > 0;
-                    return (
-                      <div key={item.id} onClick={() => handlePointChange(item.id, isChecked ? 0 : item.maxPoints)} className={`group p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-4 ${isChecked ? 'border-emerald-500 bg-emerald-500/5 shadow-sm' : 'border-border bg-input hover:border-emerald-500/50'}`}>
-                        <div className={`relative w-12 h-6 rounded-full transition-colors duration-300 shrink-0 ${isChecked ? 'bg-emerald-500' : 'bg-muted/50'}`}>
-                          <div className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 shadow-sm ${isChecked ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                        </div>
-                        <div className="flex-1">
-                          <p className={`font-semibold mb-1 transition-colors ${isChecked ? 'text-foreground' : 'text-muted'}`}>{item.text}</p>
-                          <span className={`text-xs font-black uppercase tracking-widest ${isChecked ? 'text-emerald-500' : 'text-muted'}`}>
-                            {item.maxPoints} pts
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="bg-input p-6 rounded-3xl border-2 border-border shadow-sm flex flex-col items-center">
+                  <label className="flex items-center gap-3 text-sm font-bold text-foreground uppercase tracking-widest mb-6 text-center w-full justify-center">
+                    <i className="fa-solid fa-star text-amber-500"></i> Calificación Final
+                  </label>
+                  
+                  <div className="flex items-end justify-center gap-4 bg-main p-6 rounded-3xl border-2 border-border shadow-inner w-full">
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        min="1" 
+                        max={practiceInfo.totalPoints} 
+                        value={manualGrade} 
+                        onChange={(e) => setManualGrade(e.target.value)}
+                        className="w-32 bg-transparent border-b-4 border-indigo-500 pb-2 text-6xl font-black text-indigo-500 focus:outline-none transition-all text-center placeholder-indigo-500/30"
+                        placeholder="0"
+                      />
+                    </div>
+                    <span className="text-2xl font-black text-muted mb-4 opacity-50">/ {practiceInfo.totalPoints}</span>
+                  </div>
+                  
+                  <p className="text-sm text-muted mt-4 text-center">
+                    Basado en las reincidencias y el uso de las funciones requeridas, asigna la nota final.
+                  </p>
                 </div>
               </div>
 
               {/* Action footer */}
               <div className="p-6 border-t-2 border-border bg-panel shrink-0 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
                 <button 
-                  className={`w-full py-4 rounded-2xl font-black text-white text-lg tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3 ${isSubmitting ? 'bg-muted cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600'}`}
+                  className={`w-full py-5 rounded-2xl font-black text-white text-lg tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3 ${isSubmitting ? 'bg-muted cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600'}`}
                   onClick={handleConfirmGrade}
                   disabled={isSubmitting || !selectedStudent?.submitted}
                 >
@@ -458,7 +544,7 @@ function RevisarPracticaDocenteContent() {
                     selectedStudent.status === 'COMPLETED' ? (
                       <><i className="fa-solid fa-pen-to-square"></i> Actualizar Calificación</>
                     ) : (
-                      <><i className="fa-solid fa-check-double"></i> Confirmar Calificación</>
+                      <><i className="fa-solid fa-check-double"></i> Confirmar Evaluación</>
                     )
                   )}
                 </button>
