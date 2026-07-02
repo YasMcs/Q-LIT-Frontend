@@ -4,19 +4,13 @@ import Skeleton from './Skeleton';
 export default function RevisarPracticaSkeleton() {
   return (
     <div className="flex-1 overflow-y-auto bg-main p-6 md:p-10 animate-fade-in" style={{ pointerEvents: 'none' }}>
-      {/* Breadcrumbs */}
-      <div className="flex items-center gap-3 mb-4">
-        <Skeleton width="90px" height="14px" />
-        <Skeleton width="8px" height="14px" />
-        <Skeleton width="60px" height="14px" />
-        <Skeleton width="8px" height="14px" />
-        <Skeleton width="80px" height="14px" />
-      </div>
-
-      {/* Header Title */}
-      <header className="mb-8">
-        <Skeleton width="380px" height="36px" style={{ marginBottom: '10px' }} />
-        <Skeleton width="280px" height="18px" />
+      {/* Header Title con botón de regresar simulado */}
+      <header className="mb-8 flex items-center gap-4">
+        <Skeleton width="40px" height="40px" borderRadius="50%" />
+        <div>
+          <Skeleton width="380px" height="36px" style={{ marginBottom: '10px' }} />
+          <Skeleton width="280px" height="18px" />
+        </div>
       </header>
 
       {/* Controls Bar */}

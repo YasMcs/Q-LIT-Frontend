@@ -6,10 +6,9 @@ export default function ClassFeedSkeleton({ isSidebarOpen = true }) {
     <div className="feed-app-container">
       {/* Header Skeleton */}
       <header className="feed-header flex justify-between items-center px-6 py-4 border-b border-border bg-panel">
-        <div className="flex gap-2 items-center">
-          <Skeleton width="120px" height="20px" />
-          <i className="fa-solid fa-chevron-right text-muted" />
-          <Skeleton width="150px" height="20px" />
+        <div className="flex gap-4 items-center">
+          <Skeleton width="40px" height="40px" borderRadius="50%" />
+          <Skeleton width="220px" height="28px" />
         </div>
         <div className="flex gap-4 items-center">
           <Skeleton width="100px" height="32px" borderRadius="16px" />
