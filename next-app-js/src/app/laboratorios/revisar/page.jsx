@@ -78,7 +78,7 @@ function RevisarPracticaDocenteContent() {
 
   useEffect(() => {
     if (selectedStudent) {
-      setManualGrade(selectedStudent.score || "");
+      setManualGrade(selectedStudent.score !== undefined && selectedStudent.score !== null ? selectedStudent.score : "");
     }
   }, [selectedStudent]);
 
@@ -98,8 +98,8 @@ function RevisarPracticaDocenteContent() {
     if (!selectedStudent || !selectedStudent.submissionId) return;
     
     const parsedGrade = parseInt(manualGrade);
-    if (isNaN(parsedGrade) || parsedGrade <= 0 || parsedGrade > practiceInfo.totalPoints) {
-      await showAlert("Error", `Ingresa una calificación válida mayor a 0 y hasta ${practiceInfo.totalPoints}.`, "error");
+    if (isNaN(parsedGrade) || parsedGrade < 0 || parsedGrade > practiceInfo.totalPoints) {
+      await showAlert("Error", `Ingresa una calificación válida desde 0 y hasta ${practiceInfo.totalPoints}.`, "error");
       return;
     }
 
