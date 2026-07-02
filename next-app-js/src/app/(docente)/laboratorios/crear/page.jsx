@@ -6,6 +6,7 @@ import { showAlert, showConfirm } from "@/utils/alerts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CustomTimePicker from '@/components/CustomTimePicker';
+import { encodeId, decodeId } from "@/utils/crypto";
 import "./crear-practica-docente.css";
 
 // Los datosPorDB hardcodeados han sido eliminados.
@@ -40,8 +41,8 @@ function CrearPracticaDocenteContent() {
   const [isSaving, setIsSaving] = useState(false);
 
   // Obtener parámetros de la URL
-  const selectedClassroomId = searchParams.get("classroomId");
-  const editId = searchParams.get("editId");
+  const selectedClassroomId = decodeId(searchParams.get("classroomId"));
+  const editId = decodeId(searchParams.get("editId"));
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [practiceToSave, setPracticeToSave] = useState(null);
@@ -163,9 +164,9 @@ function CrearPracticaDocenteContent() {
 
       await showAlert("Éxito", editId ? "Práctica actualizada con éxito." : "Práctica SQL asignada con éxito al laboratorio.", "success");
       if (selectedClassroomId) {
-        router.push(`/class-feed-docente?classroomId=${selectedClassroomId}`);
+        router.push(`/laboratorios/feed?classroomId=${encodeId(selectedClassroomId)}`);
       } else {
-        router.push("/dashboard-docente");
+        router.push("/laboratorios");
       }
     } catch (error) {
       await showAlert("Error", error.message, "error");

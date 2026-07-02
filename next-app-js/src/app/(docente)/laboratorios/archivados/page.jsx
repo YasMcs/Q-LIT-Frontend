@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import ClassCard from "@/components/ClassCard";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 import { showAlert, showConfirm } from "@/utils/alerts";
-import "../dashboard-docente/dashboard-docente.css";
+import { encodeId } from "@/utils/crypto";
+import "../dashboard-docente.css";
 
 export default function ArchivoDocentePage() {
   const router = useRouter();
@@ -100,7 +101,7 @@ export default function ArchivoDocentePage() {
                 studentsCount={cls.studentsCount}
                 pendingReviews={cls.pendingReviews}
                 isArchived={true}
-                onClick={() => router.push(`/class-feed-docente?classroomId=${cls.id}`)}
+                onClick={() => router.push(`/laboratorios/feed?classroomId=${encodeId(cls.id)}`)}
                 onUnarchive={() => handleUnarchive(cls)}
               />
             ))}

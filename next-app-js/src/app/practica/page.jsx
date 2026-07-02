@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
 import { showAlert, showConfirm } from "@/utils/alerts";
+import { decodeId } from "@/utils/crypto";
 import "./practica_sql.css";
 
 const DB_SCHEMAS = {
@@ -55,7 +56,7 @@ const DB_SCHEMAS = {
 function PracticaSQLContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const practiceId = searchParams.get("id");
+  const practiceId = decodeId(searchParams.get("id"));
 
   // Accordion open states
   const [accordions, setAccordions] = useState({});
@@ -121,7 +122,7 @@ function PracticaSQLContent() {
       
       if (res.ok) {
         await showAlert("¡Práctica Completada!", "Has superado todos los objetivos y tu práctica ha sido enviada con éxito.", "success");
-        router.push("/class-feed-alumno");
+        router.push("/clase");
       } else {
         const errorMsg = data.error?.details ? `${data.error.message}:\n${data.error.details.join(', ')}` : (data.error?.message || "Hubo un error al guardar tu práctica.");
         await showAlert("Error de Evaluación", errorMsg, "error");
@@ -264,7 +265,7 @@ function PracticaSQLContent() {
   };
 
   const handleBack = () => {
-    router.push("/class-feed-alumno");
+    router.push("/clase");
   };
 
   // Resize handler mouse events
@@ -366,7 +367,7 @@ function PracticaSQLContent() {
           const data = await res.json();
           if (!res.ok) {
             await showAlert("Aviso", data.error?.message || "Error al ingresar a la práctica", "info");
-            router.push("/class-feed-alumno");
+            router.push("/clase");
             return;
           }
           if (data.data) {

@@ -23,7 +23,7 @@ export default function SidebarAlumno({ activeKey = "laboratorios" }) {
   };
 
   const menuItems = [
-    { key: "laboratorios", label: "Mi Laboratorio", icon: "fa-flask", route: "/class-feed-alumno" },
+    { key: "laboratorios", label: "Mi Laboratorio", icon: "fa-flask", route: "/clase" },
     { key: "progreso", label: "Mi Progreso", icon: "fa-chart-pie", route: "#" },
     { key: "ajustes", label: "Ajustes", icon: "fa-sliders", route: "#" },
   ];

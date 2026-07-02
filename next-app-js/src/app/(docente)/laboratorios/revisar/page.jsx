@@ -5,7 +5,8 @@ import Link from "next/link";
 import SidebarDocente from "@/components/SidebarDocente";
 import RevisarPracticaSkeleton from "@/components/skeletons/RevisarPracticaSkeleton";
 import { showAlert, showConfirm } from "@/utils/alerts";
-import "../(docente)/dashboard-docente/dashboard-docente.css";
+import { decodeId } from "@/utils/crypto";
+import "../dashboard-docente.css";
 import "./revisar-practica-docente.css";
 
 export default function RevisarPracticaDocentePage() {
@@ -24,7 +25,7 @@ export default function RevisarPracticaDocentePage() {
 function RevisarPracticaDocenteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const challengeId = searchParams.get("challengeId");
+  const challengeId = decodeId(searchParams.get("challengeId"));
   
   const [students, setStudents] = useState([]);
   const [practiceInfo, setPracticeInfo] = useState({ title: 'Cargando...', description: '', deadline: null, totalPoints: 100, practiceRequiredFunctions: { keywords: [] } });

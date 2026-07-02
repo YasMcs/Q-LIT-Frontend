@@ -14,11 +14,10 @@ export default function SidebarDocente() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
-  const activeKey = pathname.includes("dashboard") ? "clases"
-                  : pathname.includes("directorio") ? "directorio"
+  const activeKey = pathname.includes("laboratorios") ? "clases"
+                  : pathname.includes("alumnos") ? "directorio"
                   : pathname.includes("estadisticas") ? "estadisticas"
-                  : pathname.includes("archivo") ? "archivo"
-                  : pathname.includes("class-feed") ? "clases"
+                  : pathname.includes("archivados") ? "archivo"
                   : "clases";
 
   useEffect(() => {
@@ -35,10 +34,10 @@ export default function SidebarDocente() {
   };
 
   const menuItems = [
-    { key: "clases", label: "Tus Laboratorios", icon: "fa-flask", route: "/dashboard-docente" },
-    { key: "directorio", label: "Alumnos", icon: "fa-users", route: "/directorio-docente" },
-    { key: "estadisticas", label: "Estadísticas", icon: "fa-chart-pie", route: "/estadisticas-docente" },
-    { key: "archivo", label: "Archivados", icon: "fa-box-archive", route: "/archivo-docente" },
+    { key: "clases", label: "Tus Laboratorios", icon: "fa-flask", route: "/laboratorios" },
+    { key: "directorio", label: "Alumnos", icon: "fa-users", route: "/alumnos" },
+    { key: "estadisticas", label: "Estadísticas", icon: "fa-chart-pie", route: "/estadisticas" },
+    { key: "archivo", label: "Archivados", icon: "fa-box-archive", route: "/laboratorios/archivados" },
   ];
 
   return (

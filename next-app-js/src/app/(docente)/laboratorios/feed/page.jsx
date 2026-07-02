@@ -8,6 +8,7 @@ import StatBox from "@/components/StatBox";
 import ClassFeedSkeleton from "@/components/skeletons/ClassFeedSkeleton";
 import { showAlert, showConfirm } from "@/utils/alerts";
 
+import { encodeId, decodeId } from "@/utils/crypto";
 import "./class-feed-docente.css";
 
 export default function ClassFeedDocentePage() {
@@ -21,7 +22,7 @@ export default function ClassFeedDocentePage() {
 function ClassFeedDocenteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const classroomId = searchParams.get("classroomId");
+  const classroomId = decodeId(searchParams.get("classroomId"));
   const codeParam = searchParams.get("code");
   const titleParam = searchParams.get("title");
   
@@ -98,7 +99,7 @@ function ClassFeedDocenteContent() {
   };
 
   const handleAddChallenge = () => {
-    router.push(`/crear-practica-docente?classroomId=${classroomId || ''}`);
+    router.push(`/laboratorios/crear?classroomId=${encodeId(classroomId) || ''}`);
   };
 
   const handleChallengeClick = (id) => {
@@ -107,11 +108,11 @@ function ClassFeedDocenteContent() {
   };
 
   const handleReview = (id) => {
-    router.push(`/revisar-practica-docente?challengeId=${id}`);
+    router.push(`/laboratorios/revisar?challengeId=${encodeId(id)}`);
   };
 
   const handleEdit = (id) => {
-    router.push(`/crear-practica-docente?editId=${id}`);
+    router.push(`/laboratorios/crear?editId=${encodeId(id)}`);
   };
 
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
@@ -252,7 +253,7 @@ function ClassFeedDocenteContent() {
 
   const handleCopyCode = async () => {
     try {
-      const textToCopy = `¡Únete a mi laboratorio "${classInfo.title}"!\nIngresa con el código: ${classInfo.code}`;
+      const textToCopy = `¡Únete a mi laboratorio "${classInfo.title}"!\nIngresa con el código: ${classInfo.code}\nPlataforma: ${window.location.origin}`;
       await navigator.clipboard.writeText(textToCopy);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
@@ -269,7 +270,7 @@ function ClassFeedDocenteContent() {
         <header className="feed-header">
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => router.push('/dashboard-docente')} 
+              onClick={() => router.push('/laboratorios')} 
               className="w-10 h-10 rounded-full flex items-center justify-center bg-input text-foreground hover:bg-indigo-500 hover:text-white transition-all shadow-sm shrink-0"
               title="Volver a tus laboratorios"
             >

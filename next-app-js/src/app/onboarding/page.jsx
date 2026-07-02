@@ -16,8 +16,8 @@ export default function OnboardingPage() {
     if (status === "unauthenticated") {
       router.push("/");
     } else if (status === "authenticated" && session?.user?.role) {
-      if (session.user.role === "teacher") router.push("/dashboard-docente");
-      if (session.user.role === "student") router.push("/class-feed-alumno");
+      if (session.user.role === "teacher") router.push("/laboratorios");
+      if (session.user.role === "student") router.push("/clase");
       if (session.user.role === "admin") router.push("/admin/dashboard");
     }
   }, [status, session, router]);
@@ -36,7 +36,7 @@ export default function OnboardingPage() {
         const data = await res.json();
         await update({ role: data.data.role });
         
-        const dest = role === "teacher" ? "/dashboard-docente" : "/class-feed-alumno";
+        const dest = role === "teacher" ? "/laboratorios" : "/clase";
         router.push(dest);
       } else {
         await showAlert("Error de Rol", "Hubo un error al asignar tu rol. Por favor, intenta de nuevo.", "error");

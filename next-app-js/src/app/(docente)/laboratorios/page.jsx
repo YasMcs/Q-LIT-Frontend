@@ -6,6 +6,7 @@ import ClassCard from "@/components/ClassCard";
 import CreateClassModal from "@/components/CreateClassModal";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 import { showAlert, showConfirm, showPrompt } from "@/utils/alerts";
+import { encodeId } from "@/utils/crypto";
 import "./dashboard-docente.css";
 
 export default function DashboardDocentePage() {
@@ -122,7 +123,7 @@ export default function DashboardDocentePage() {
                 studentsCount={cls.studentsCount}
                 pendingReviews={cls.pendingReviews}
                 onClick={() => {
-                  router.push(`/class-feed-docente?classroomId=${cls.id}&code=${cls.inviteCode}&title=${encodeURIComponent(cls.title)}`);
+                  router.push(`/laboratorios/feed?classroomId=${encodeId(cls.id)}&code=${cls.inviteCode}&title=${encodeURIComponent(cls.title)}`);
                 }}
                 onArchive={async () => {
                    const confirmed = await showConfirm(

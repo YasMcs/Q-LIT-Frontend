@@ -1,7 +1,7 @@
 import React from "react";
 import SidebarDocente from "@/components/SidebarDocente";
 import RoleGuard from "@/components/RoleGuard";
-import "../(docente)/dashboard-docente/dashboard-docente.css";
+import "./laboratorios/dashboard-docente.css";
 
 export default function DocenteLayout({ children }) {
   return (

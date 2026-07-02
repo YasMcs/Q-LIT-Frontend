@@ -20,9 +20,9 @@ export default function HomePage() {
       if (!session.user.role) {
         router.push("/onboarding");
       } else if (session.user.role === "teacher") {
-        router.push("/dashboard-docente");
+        router.push("/laboratorios");
       } else if (session.user.role === "student") {
-        router.push("/class-feed-alumno");
+        router.push("/clase");
       } else if (session.user.role === "admin") {
         router.push("/admin/dashboard");
       }

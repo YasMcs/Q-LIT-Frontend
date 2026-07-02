@@ -8,6 +8,7 @@ import JoinClassModal from "@/components/JoinClassModal";
 import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
 import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
+import { encodeId } from "@/utils/crypto";
 import { showAlert, showConfirm } from "@/utils/alerts";
 
 export default function ClassFeedAlumnoPage() {
@@ -147,7 +148,7 @@ export default function ClassFeedAlumnoPage() {
   };
 
   const handleEnterLab = (id) => {
-    router.push(`/practica_sql?id=${id}`);
+    router.push(`/practica?id=${encodeId(id)}`);
   };
 
   const handleJoinClass = async (code) => {

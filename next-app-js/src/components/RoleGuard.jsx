@@ -29,9 +29,9 @@ export default function RoleGuard({ children, allowedRole, fallback = null }) {
     } else {
       // Expulsar si no tiene el rol correcto
       if (currentRole === "teacher") {
-        router.push("/dashboard-docente");
+        router.push("/laboratorios");
       } else if (currentRole === "student") {
-        router.push("/class-feed-alumno");
+        router.push("/clase");
       } else if (currentRole === "admin") {
         router.push("/admin/dashboard");
       }
