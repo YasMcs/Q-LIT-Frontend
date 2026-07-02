@@ -105,6 +105,14 @@
   color: var(--text-primary);
 }
 
+.kpi-info .kpi-subtitle {
+  font-size: 0.8rem;
+  color: #8b949e;
+  display: block;
+  margin-top: 0.2rem;
+  font-weight: 500;
+}
+
 /* Dashboard Widgets Grid */
 .dashboard-widgets-grid {
   display: grid;
