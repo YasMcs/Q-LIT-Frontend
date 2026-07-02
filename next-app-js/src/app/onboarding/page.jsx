@@ -95,7 +95,7 @@ export default function OnboardingPage() {
             features={[
               "Crea laboratorios virtuales y define la estructura y datos de la Base de Datos (DDL/DML).",
               "Gestiona a tus alumnos con códigos de invitación y obtén métricas de desempeño.",
-              "Motor de IA integrado: Evalúa automáticamente si las consultas de los estudiantes cumplen con tus rubricas.",
+              "Motor de IA integrado: Evalúa automáticamente si las consultas de los estudiantes cumplen con los objetivos y funciones seleccionadas.",
               "Control anti-plagio avanzado y supervisión de entregas."
             ]}
             onRegister={() => handleRoleSelection("teacher")}
