@@ -6,52 +6,6 @@ import { showAlert, showConfirm } from "@/utils/alerts";
 import { decodeId } from "@/utils/crypto";
 import "./practica_sql.css";
 
-const DB_SCHEMAS = {
-  punto_venta_db: {
-    productos: [
-      { name: "sku", type: "int", pk: true },
-      { name: "articulo", type: "varchar(100)" },
-      { name: "precio", type: "numeric" },
-      { name: "stock", type: "int" }
-    ],
-    categorias: [
-      { name: "id_categoria", type: "int", pk: true },
-      { name: "nombre_categoria", type: "varchar(50)" }
-    ],
-    inventario: [
-      { name: "id_registro", type: "int", pk: true },
-      { name: "sku", type: "int" },
-      { name: "stock_disponible", type: "int" }
-    ]
-  },
-  control_escolar_db: {
-    alumnos: [
-      { name: "id_alumno", type: "int", pk: true },
-      { name: "nombre", type: "varchar(150)" },
-      { name: "materia", type: "varchar(50)" },
-      { name: "grupo", type: "char(1)" }
-    ],
-    materias: [
-      { name: "id_materia", type: "int", pk: true },
-      { name: "nombre_materia", type: "varchar(100)" },
-      { name: "creditos", type: "int" }
-    ]
-  },
-  hospital_central_db: {
-    citas: [
-      { name: "id_cita", type: "int", pk: true },
-      { name: "fecha", type: "date" },
-      { name: "hora", type: "time" },
-      { name: "especialidad", type: "varchar(50)" }
-    ],
-    pacientes: [
-      { name: "id_paciente", type: "int", pk: true },
-      { name: "nombre", type: "varchar(150)" },
-      { name: "fecha_nacimiento", type: "date" }
-    ]
-  }
-};
-
 // Componente principal del entorno SQL
 function PracticaSQLContent() {
   const router = useRouter();
@@ -63,7 +17,7 @@ function PracticaSQLContent() {
 
   const [loading, setLoading] = useState(true);
   const [practiceData, setPracticeData] = useState(null);
-  const [dbSchemas, setDbSchemas] = useState(DB_SCHEMAS);
+  const [dbSchemas, setDbSchemas] = useState({});
   const [generatedStatement, setGeneratedStatement] = useState("");
   const [parsedStatement, setParsedStatement] = useState(null);
   const [requiredFunctions, setRequiredFunctions] = useState([]);
