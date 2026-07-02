@@ -256,7 +256,7 @@ export default function PracticeDetailModal({
             >
               {isStudent ? (
                 <>
-                  <i className="fa-solid fa-code"></i> Ingresar al laboratorio
+                  <i className="fa-solid fa-code"></i> Ingresar a práctica
                 </>
               ) : (
                 <>
