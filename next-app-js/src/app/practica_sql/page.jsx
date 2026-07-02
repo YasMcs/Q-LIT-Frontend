@@ -123,7 +123,8 @@ function PracticaSQLContent() {
         await showAlert("¡Práctica Completada!", "Has superado todos los objetivos y tu práctica ha sido enviada con éxito.", "success");
         router.push("/class-feed-alumno");
       } else {
-        await showAlert("Error de Evaluación", data.error?.message || "Hubo un error al guardar tu práctica.", "error");
+        const errorMsg = data.error?.details ? `${data.error.message}:\n${data.error.details.join(', ')}` : (data.error?.message || "Hubo un error al guardar tu práctica.");
+        await showAlert("Error de Evaluación", errorMsg, "error");
       }
     } catch (err) {
       await showAlert("Error de Conexión", "Error de conexión al enviar la evaluación.", "error");
@@ -452,7 +453,12 @@ function PracticaSQLContent() {
                         {field.name}
                         {field.pk && <i className="fa-solid fa-key text-indigo-400 ml-1.5 text-[10px]" title="Primary Key" />}
                       </span>
-                      <span className="field-type-sql">{field.type}</span>
+                      <span 
+                        className="custom-tooltip custom-tooltip-left cursor-help" 
+                        data-tooltip={field.type}
+                      >
+                        <span className="field-type-sql">{field.type}</span>
+                      </span>
                     </li>
                   ))}
                 </ul>

@@ -245,7 +245,7 @@
 
 .attachment-card {
   background-color: var(--bg-panel);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: 12px;
   padding: 1rem 1.2rem;
   display: flex;
@@ -258,16 +258,19 @@
 }
 
 .attachment-card:hover {
-  border-color: var(--accent);
-  background-color: rgba(var(--accent-rgb), 0.05);
+  border-color: rgba(99, 102, 241, 0.5);
+  border-width: 2px;
+  background-color: rgba(99, 102, 241, 0.04);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3);
 }
 
 .attachment-card.active {
   border-color: var(--accent);
+  border-width: 2px;
   background-color: rgba(var(--accent-rgb), 0.1);
-  box-shadow: 0 0 0 1px var(--accent);
+  transform: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 4px 20px -4px rgba(99, 102, 241, 0.3);
 }
 
 .attachment-icon-wrapper {

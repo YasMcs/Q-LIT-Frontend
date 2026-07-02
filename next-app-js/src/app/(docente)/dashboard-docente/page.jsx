@@ -20,7 +20,18 @@ export default function DashboardDocentePage() {
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
       fetch(`/api/proxy/classrooms?teacherId=${session.user.id}`)
-        .then(res => res.json())
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) {
+            if (data?.error?.message) {
+              showAlert("Aviso", data.error.message, "error");
+            } else {
+              showAlert("Error", "No se pudo conectar con el servidor.", "error");
+            }
+            throw new Error(data?.error?.message || "Error al cargar las clases");
+          }
+          return data;
+        })
         .then(data => {
           if (data.data) {
             setClasses(data.data);

@@ -122,11 +122,17 @@ export default function SidebarDocente() {
             <div 
               onClick={() => setIsProfileModalOpen(true)}
               className="docente-user-info hide-on-collapse ml-3 overflow-hidden cursor-pointer hover:text-indigo-400 transition-colors" 
-              style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
               title="Ver perfil"
             >
               <span className="whitespace-nowrap font-bold text-sm truncate block">{session?.user?.name || "Panel Docente"}</span>
             </div>
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="hide-on-collapse ml-auto text-muted hover:text-indigo-400 transition-colors p-1"
+              title="Más opciones"
+            >
+              <i className="fa-solid fa-ellipsis-vertical text-xs"></i>
+            </button>
           </div>
 
           <UserProfileDropdown 

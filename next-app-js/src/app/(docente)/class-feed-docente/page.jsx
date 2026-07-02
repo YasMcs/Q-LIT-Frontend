@@ -38,6 +38,7 @@ function ClassFeedDocenteContent() {
   const [filterStatus, setFilterStatus] = useState("todas");
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("docente-feed-sidebar-open");
@@ -249,19 +250,42 @@ function ClassFeedDocenteContent() {
     return c.status === filterStatus;
   });
 
+  const handleCopyCode = async () => {
+    try {
+      const textToCopy = `¡Únete a mi laboratorio "${classInfo.title}"!\nIngresa con el código: ${classInfo.code}`;
+      await navigator.clipboard.writeText(textToCopy);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Error al copiar texto", err);
+    }
+  };
+
   return (
     <>
       {/* Main Container */}
       <div className="feed-app-container">
         {/* Header with Breadcrumbs & Class Code */}
         <header className="feed-header">
-          <div className="feed-breadcrumbs">
-            <Link href="/dashboard-docente">Tus Laboratorios</Link>
-            <i className="fa-solid fa-chevron-right" />
-            <span className="current-class">{classInfo.title}</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => router.push('/dashboard-docente')} 
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-input text-foreground hover:bg-indigo-500 hover:text-white transition-all shadow-sm shrink-0"
+              title="Volver a tus laboratorios"
+            >
+              <i className="fa-solid fa-arrow-left text-lg"></i>
+            </button>
+            <h1 className="text-3xl font-extrabold text-foreground tracking-tight m-0">{classInfo.title}</h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className="feed-code-badge">Código: {classInfo.code}</div>
+            <button 
+              onClick={handleCopyCode} 
+              className={`feed-code-badge flex items-center gap-2 transition-all cursor-pointer ${isCopied ? 'border-green-500/50 text-green-400' : 'hover:bg-indigo-500/10 hover:text-indigo-400 hover:border-indigo-500/30'}`}
+              title={isCopied ? "¡Copiado!" : "Copiar invitación"}
+            >
+              <span>Código: {classInfo.code}</span>
+              <i className={`text-sm ${isCopied ? 'fa-solid fa-check text-green-400' : 'fa-regular fa-copy opacity-70'}`}></i>
+            </button>
             <button 
               onClick={toggleSidebar}
               className="p-2 text-muted hover:text-accent hover:bg-input rounded-lg transition-colors"

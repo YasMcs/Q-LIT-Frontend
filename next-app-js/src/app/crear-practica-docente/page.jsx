@@ -28,7 +28,7 @@ function CrearPracticaDocenteContent() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedFunctions, setSelectedFunctions] = useState([]);
-  const [maxScore, setMaxScore] = useState(100);
+  const [maxScore, setMaxScore] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState("");
   const [closeLateSubmissions, setCloseLateSubmissions] = useState(false);
@@ -69,7 +69,7 @@ function CrearPracticaDocenteContent() {
             setTitle(data.title || "");
             setDescription(data.description || "");
             setSelectedFunctions(data.requiredFunctions?.keywords || []);
-            setMaxScore(data.totalPoints || 100);
+            setMaxScore(data.totalPoints || "");
             setActiveDb(data.requiredFunctions?.db || "punto_venta_db");
             setCloseLateSubmissions(data.closeLateSubmissions || false);
             if (data.deadline) {
@@ -258,15 +258,15 @@ function CrearPracticaDocenteContent() {
         </div>
         <div className="navbar-right-group">
           <button className="btn-create-task" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Guardando..." : (editId ? "Guardar cambios" : "Crear tarea")} <i className="fa-solid fa-caret-down classroom-caret" />
+            {isSaving ? "Guardando..." : (editId ? "Guardar cambios" : "Crear tarea")} <i className="fa-solid fa-check" />
           </button>
         </div>
       </header>
 
       {/* Cuadrícula de Diseño del Editor */}
-      <div className="classroom-layout-container">
+      <div className="flex w-full flex-grow overflow-hidden relative">
         {/* Columna Izquierda (Formularios y Adjuntos) */}
-        <main className="classroom-main-column">
+        <main className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col gap-6 bg-background">
           <div className="classroom-card-panel">
             {/* Título */}
             <div className="flex flex-col gap-2">
@@ -405,23 +405,26 @@ function CrearPracticaDocenteContent() {
           </div>
         </main>
 
-        {/* Barra Lateral Derecha (Configuración y Rúbrica) */}
-        <aside className="classroom-sidebar">
-          {/* Panel de Configuración General */}
-          <div className="classroom-card-panel flex flex-col gap-6">
-            {/* Puntos (Puntuación Máxima) */}
-            <div>
-              <label className="sidebar-label flex items-center gap-2 mb-2">
-                Valor total de la práctica
-                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="Los puntos totales que vale esta tarea."></i>
-                <span className="text-[var(--danger-red)]">*</span>
+        {/* Barra Lateral Derecha (Configuración) */}
+        <aside className="w-full lg:w-[30%] lg:min-w-[350px] bg-panel h-full overflow-hidden flex flex-col border-l-2 border-border shadow-xl z-10">
+          <div className="p-5 flex flex-col h-full overflow-y-auto">
+            <div className="mb-6 text-center shrink-0 mt-2">
+              <h2 className="text-2xl font-black text-foreground">Configuración</h2>
+              <p className="text-muted mt-1 text-sm">Opciones de la práctica</p>
+            </div>
+
+            <div className="bg-input p-5 rounded-2xl border-2 border-border shadow-sm flex flex-col shrink-0 mb-6">
+              <label className="flex items-center justify-center gap-3 text-xs font-bold text-foreground uppercase tracking-widest mb-4">
+                <i className="fa-solid fa-star text-amber-500"></i> Valor total de la práctica
               </label>
-              <div className="puntos-input-wrapper">
+              <div className="flex items-center justify-center bg-main p-4 rounded-2xl border-2 border-border shadow-inner w-full">
                 <input
                   id="field-maxscore"
                   type="number"
-                  className="sidebar-number-input"
+                  className="w-24 bg-transparent border-b-4 border-indigo-500 pb-1 text-5xl font-black text-indigo-500 focus:outline-none transition-all text-center placeholder-indigo-500/30"
                   min="1"
+                  max="100"
+                  placeholder="0"
                   value={maxScore === '' ? '' : maxScore}
                   onKeyDown={(e) => {
                     if (['-', '+', 'e', 'E', '.', ','].includes(e.key)) {
@@ -437,71 +440,78 @@ function CrearPracticaDocenteContent() {
                     if (val === '') {
                       setMaxScore('');
                     } else {
-                      const num = parseInt(val, 10);
-                      setMaxScore(num > 0 ? num : '');
+                      let num = parseInt(val, 10);
+                      if (num > 100) num = 100;
+                      if (num < 1) num = 1;
+                      setMaxScore(num);
                     }
-                  }}
-                  onBlur={() => {
-                    if (maxScore === '') setMaxScore(100);
                   }}
                 />
               </div>
             </div>
 
-            {/* Fecha y Hora de Entrega */}
-            <div>
-              <label className="sidebar-label flex items-center gap-2 mb-2">
-                Fecha y hora de entrega
-                <i className="fa-solid fa-circle-info text-muted cursor-help custom-tooltip" data-tooltip="El límite de tiempo para que los alumnos entreguen sus consultas SQL."></i>
-                <span className="text-[var(--danger-red)]">*</span>
-              </label>
-              <div className="due-datetime-inputs">
-                <div className="relative">
-                  <i className="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-lg" style={{ color: '#b5bac1' }}></i>
+            <div className="bg-input p-5 rounded-2xl border-2 border-border shadow-sm flex flex-col gap-4">
+              <p className="flex items-center gap-3 text-xs font-bold text-foreground uppercase tracking-widest">
+                <i className="fa-regular fa-clock text-indigo-500"></i> Fecha y hora de entrega
+              </p>
+
+              {/* Fecha */}
+              <div className="flex items-center gap-3 bg-main rounded-xl border-2 border-border px-4 py-3 focus-within:border-indigo-500 transition-all">
+                <i className="fa-regular fa-calendar text-muted shrink-0"></i>
+                <span className="text-xs font-bold text-muted uppercase tracking-wider shrink-0 w-14">Fecha</span>
+                <div className="flex-1 relative">
                   <DatePicker
                     id="field-duedate"
-                    className="sidebar-date-input w-full pl-11"
+                    className="w-full bg-transparent text-sm font-semibold text-foreground focus:outline-none placeholder-muted"
                     selected={dueDate ? new Date(`${dueDate}T00:00:00`) : null}
                     onChange={handleDateChange}
                     dateFormat="dd/MM/yyyy"
                     minDate={new Date()}
-                    placeholderText="Fecha"
+                    placeholderText="dd/mm/aaaa"
                   />
                 </div>
-                <div className="relative">
-                  <i className="fa-regular fa-clock absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-lg" style={{ color: '#b5bac1' }}></i>
+              </div>
+
+              {/* Hora */}
+              <div className="flex items-center gap-3 bg-main rounded-xl border-2 border-border px-4 py-3 focus-within:border-indigo-500 transition-all">
+                <i className="fa-regular fa-clock text-muted shrink-0"></i>
+                <span className="text-xs font-bold text-muted uppercase tracking-wider shrink-0 w-14">Hora</span>
+                <div className="flex-1">
                   <CustomTimePicker
                     id="field-duetime"
-                    className="sidebar-time-input w-full pl-11"
+                    className="w-full bg-transparent text-sm font-semibold text-foreground focus:outline-none"
                     value={dueTime}
                     onChange={(e) => setDueTime(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        document.getElementById('field-criteria-0')?.focus();
-                      }
+                      if (e.key === 'Enter') e.preventDefault();
                     }}
                   />
                 </div>
               </div>
-              <p className="text-xs text-muted mt-1.5 flex items-center gap-1.5">
-                <i className="fa-regular fa-clock text-[11px]"></i>
-                El formato de hora es de 12 hrs (AM/PM). Ejemplo: 11:59 PM = hora limite del dia.
+
+              <p className="text-xs text-muted flex items-center gap-1.5 leading-relaxed">
+                <i className="fa-solid fa-circle-info text-indigo-500/60"></i>
+                Formato 12 hrs (AM/PM). Ejemplo: 11:59 PM = limite del dia.
               </p>
-              <div className="checkbox-control-wrapper mt-3">
-                <input 
-                  type="checkbox" 
-                  id="close-late-submissions" 
-                  className="sidebar-checkbox" 
+
+              {/* Checkbox Cerrar Entregas */}
+              <label className="flex items-center gap-3 bg-main p-4 rounded-xl border-2 border-border cursor-pointer hover:border-indigo-500/50 transition-all select-none group">
+                <input
+                  type="checkbox"
+                  className="peer hidden"
                   checked={closeLateSubmissions}
                   onChange={(e) => setCloseLateSubmissions(e.target.checked)}
                 />
-                <label htmlFor="close-late-submissions" className="text-sm">Cerrar entregas después de la fecha límite</label>
-              </div>
+                <div className={`w-6 h-6 rounded-md flex items-center justify-center border-2 transition-all shrink-0 ${closeLateSubmissions ? 'bg-indigo-500 border-indigo-500' : 'border-muted group-hover:border-indigo-400 bg-input'}`}>
+                  <i className={`fa-solid fa-check text-white text-sm font-black transition-all duration-200 ${closeLateSubmissions ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}></i>
+                </div>
+                <span className={`text-sm font-semibold transition-colors ${closeLateSubmissions ? 'text-indigo-400' : 'text-foreground'}`}>
+                  Cerrar entregas después de la fecha límite
+                </span>
+              </label>
             </div>
-          </div>
 
-          {/* Eliminado Panel de Rúbrica por nuevo diseño de evaluación basada en funciones */}
+          </div>
         </aside>
       </div>
 

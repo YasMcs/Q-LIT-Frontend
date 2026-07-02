@@ -45,6 +45,11 @@ export default function ClassFeedAlumnoPage() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data?.error?.message) {
+          showAlert("Aviso", data.error.message, "error");
+        } else {
+          showAlert("Error", "No se pudo conectar con el servidor.", "error");
+        }
         setIsEnrolled(false);
         setHasArchivedOnly(false);
         setLoading(false);
@@ -262,14 +267,19 @@ export default function ClassFeedAlumnoPage() {
             </div>
             <div 
               onClick={() => setIsProfileModalOpen(true)}
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden cursor-pointer hover:scale-105 hover:opacity-85 transition-all duration-200"
+              className="relative w-10 h-10 cursor-pointer group"
               title="Ver perfil"
             >
-              {session?.user?.image ? (
-                <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                "AL"
-              )}
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md overflow-hidden group-hover:scale-105 group-hover:opacity-85 transition-all duration-200">
+                {session?.user?.image ? (
+                  <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  "AL"
+                )}
+              </div>
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-panel border border-border rounded-full flex items-center justify-center shadow-sm">
+                <i className="fa-solid fa-chevron-down text-muted" style={{ fontSize: '7px' }}></i>
+              </span>
             </div>
 
             <UserProfileDropdown 

@@ -29,7 +29,7 @@ function RevisarPracticaDocenteContent() {
   const [students, setStudents] = useState([]);
   const [practiceInfo, setPracticeInfo] = useState({ title: 'Cargando...', description: '', deadline: null, totalPoints: 100, practiceRequiredFunctions: { keywords: [] } });
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [manualGrade, setManualGrade] = useState(0);
+  const [manualGrade, setManualGrade] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [viewMode, setViewMode] = useState('list');
@@ -77,7 +77,7 @@ function RevisarPracticaDocenteContent() {
 
   useEffect(() => {
     if (selectedStudent) {
-      setManualGrade(selectedStudent.score || 0);
+      setManualGrade(selectedStudent.score || "");
     }
   }, [selectedStudent]);
 
@@ -85,9 +85,13 @@ function RevisarPracticaDocenteContent() {
   const entregados = students.filter(s => s.submitted);
   const noEntregados = students.filter(s => !s.submitted);
 
-  const displayedStudents = (filterMode === 'ALL' ? students : filterMode === 'ENTREGADOS' ? entregados : noEntregados).filter(s => 
-    s.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const displayedStudents = (filterMode === 'ALL' ? students : filterMode === 'ENTREGADOS' ? entregados : noEntregados)
+    .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => {
+      if (a.status === 'COMPLETED' && b.status !== 'COMPLETED') return 1;
+      if (a.status !== 'COMPLETED' && b.status === 'COMPLETED') return -1;
+      return a.name.localeCompare(b.name);
+    });
 
   const handleConfirmGrade = async () => {
     if (!selectedStudent || !selectedStudent.submissionId) return;
@@ -145,6 +149,19 @@ function RevisarPracticaDocenteContent() {
     setViewMode('review');
   };
 
+  const handleGradeChange = (e) => {
+    const val = e.target.value;
+    if (val === '') {
+      setManualGrade('');
+      return;
+    }
+    let numVal = parseInt(val, 10);
+    if (isNaN(numVal)) return;
+    if (numVal < 0) numVal = 0;
+    if (numVal > practiceInfo.totalPoints) numVal = practiceInfo.totalPoints;
+    setManualGrade(numVal.toString());
+  };
+
   const handleAssignZero = async (student) => {
     const confirmed = await showConfirm("¿Estás seguro?", `¿Deseas asignar 0 puntos a ${student.name}?`);
     if (!confirmed) return;
@@ -183,15 +200,20 @@ function RevisarPracticaDocenteContent() {
         <div className="flex-1 overflow-y-auto bg-main animate-fade-in relative p-6 md:p-10">
           
           <header className="mb-8">
-            <div className="flex items-center gap-3 text-muted text-sm font-semibold mb-3">
-              <Link href="/dashboard-docente" className="hover:text-accent transition-colors">Tus Laboratorios</Link>
-              <i className="fa-solid fa-chevron-right text-xs"></i>
-              <button onClick={() => router.back()} className="hover:text-accent transition-colors">Clase</button>
-              <i className="fa-solid fa-chevron-right text-xs"></i>
-              <span className="text-foreground">Revisión</span>
+
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => router.back()} 
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-input text-foreground hover:bg-indigo-500 hover:text-white transition-all shadow-sm shrink-0"
+                title="Volver a la clase"
+              >
+                <i className="fa-solid fa-arrow-left text-lg"></i>
+              </button>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">{practiceInfo.title}</h1>
+                <p className="text-muted mt-2 text-lg">Revisión de entregas de los estudiantes</p>
+              </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">{practiceInfo.title}</h1>
-            <p className="text-muted mt-2 text-lg">Revisión de entregas de los estudiantes</p>
           </header>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
@@ -316,33 +338,15 @@ function RevisarPracticaDocenteContent() {
           <button
             className="w-10 h-10 rounded-full flex items-center justify-center bg-input text-foreground hover:bg-indigo-500 hover:text-white transition-all shadow-sm"
             onClick={() => setViewMode('list')}
-            title="Volver a la cuadrícula de alumnos"
+            title="Volver a la vista de revisión"
           >
-            <i className="fa-solid fa-xmark text-lg" />
+            <i className="fa-solid fa-arrow-left text-lg" />
           </button>
           <div>
             <h1 className="text-xl font-black text-foreground">{practiceInfo.title}</h1>
-            <p className="text-sm font-bold text-indigo-500 uppercase tracking-widest mt-0.5">Modo Evaluación</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4 bg-input p-1.5 rounded-2xl border border-border">
-          <select 
-            className="bg-transparent text-foreground font-bold outline-none cursor-pointer px-4 appearance-none"
-            value={selectedStudent?.id || ''}
-            onChange={(e) => {
-              const st = displayedStudents.find(s => s.id === e.target.value);
-              if (st) openReview(st);
-            }}
-          >
-            {displayedStudents.map(s => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-          <div className="flex gap-1 border-l border-border pl-2">
-            <button className="w-8 h-8 rounded-xl bg-panel hover:bg-indigo-500 hover:text-white transition-colors flex items-center justify-center border border-border" onClick={handleSkipStudent} title="Siguiente Alumno">
-              <i className="fa-solid fa-chevron-right text-xs"></i>
-            </button>
+            <p className="text-sm font-bold text-indigo-500 uppercase tracking-widest mt-0.5">
+              Evaluando a: <span className="text-foreground">{selectedStudent?.name}</span>
+            </p>
           </div>
         </div>
       </header>
@@ -350,8 +354,8 @@ function RevisarPracticaDocenteContent() {
       <div className="flex flex-1 overflow-hidden">
         {selectedStudent?.submitted ? (
           <>
-            {/* Left Column (Code & Results) - 60% */}
-            <div className="w-full lg:w-[60%] flex flex-col h-full overflow-y-auto border-r-2 border-border bg-main p-6 lg:p-8 space-y-8">
+            {/* Left Column (Code & Results) - Flex */}
+            <div className="w-full lg:flex-1 flex flex-col h-full overflow-y-auto border-r-2 border-border bg-main p-6 lg:p-8 space-y-8">
               
               <section className="bg-panel rounded-3xl border-2 border-border p-8 shadow-sm">
                 <h2 className="text-xl font-black text-foreground flex items-center gap-3 mb-6">
@@ -368,57 +372,75 @@ function RevisarPracticaDocenteContent() {
                         if (paso) instruction = paso.instruction;
                       } catch (e) {}
 
+                      let errorLogsArray = [];
+                      if (Array.isArray(step.errorLogs)) {
+                        errorLogsArray = step.errorLogs;
+                      } else if (typeof step.errorLogs === 'string') {
+                        try {
+                          errorLogsArray = JSON.parse(step.errorLogs);
+                        } catch (e) {}
+                      }
+                      
                       const fallos = step.attemptsCount > 0 ? step.attemptsCount - 1 : 0;
-                      const hasErrors = Array.isArray(step.errorLogs) && step.errorLogs.length > 0;
+                      const hasErrors = errorLogsArray.length > 0;
 
                       return (
-                        <div key={idx} className="bg-input rounded-2xl border-2 border-border p-5">
-                          <h3 className="font-bold text-foreground mb-3 leading-relaxed">{instruction}</h3>
+                        <details key={idx} className="group bg-input rounded-2xl border-2 border-border mb-4 overflow-hidden">
+                          <summary className="cursor-pointer p-5 flex items-center justify-between font-bold text-foreground list-none hover:bg-input/80 transition-colors select-none">
+                            <div className="flex items-center gap-4">
+                              <i className="fa-solid fa-chevron-right transition-transform group-open:rotate-90 text-indigo-500 shrink-0"></i>
+                              <span className="leading-relaxed text-sm md:text-base pr-4">{instruction}</span>
+                            </div>
+                            <span className="text-xs font-semibold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full shrink-0 border border-indigo-500/20 whitespace-nowrap">
+                              Ver proceso
+                            </span>
+                          </summary>
                           
-                          <div className="mb-4">
-                            {fallos === 0 ? (
-                              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-bold border border-emerald-500/20">
-                                <i className="fa-solid fa-circle-check"></i> Resuelto al primer intento
-                              </span>
-                            ) : (
-                              <div className="flex flex-col items-start gap-2">
-                                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20">
-                                  <i className="fa-solid fa-triangle-exclamation"></i> Logrado después de {fallos} intento(s) fallido(s)
+                          <div className="p-5 border-t-2 border-border/50 bg-main/30">
+                            <div className="mb-4">
+                              {fallos === 0 ? (
+                                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-bold border border-emerald-500/20">
+                                  <i className="fa-solid fa-circle-check"></i> Resuelto al primer intento
                                 </span>
-                                {hasErrors && (
-                                  <details className="mt-2 w-full text-sm group">
-                                    <summary className="cursor-pointer text-indigo-400 font-semibold mb-2 list-none flex items-center gap-2 select-none hover:text-indigo-300 transition-colors">
-                                      <i className="fa-solid fa-chevron-right transition-transform group-open:rotate-90 text-xs"></i>
-                                      Ver Historial de Errores ({step.errorLogs.length})
-                                    </summary>
-                                    <div className="space-y-3 mt-3 pl-4 border-l-2 border-indigo-500/30">
-                                      {step.errorLogs.map((log, lIdx) => (
-                                        <div key={lIdx} className="bg-main/50 rounded-xl p-4 border border-border/50 shadow-sm relative">
-                                          <div className="absolute top-2 right-3 text-xs text-muted/50 font-mono">
-                                            Intento {lIdx + 1}
+                              ) : (
+                                <div className="flex flex-col items-start gap-2">
+                                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20">
+                                    <i className="fa-solid fa-triangle-exclamation"></i> Logrado después de {fallos} intento(s) fallido(s)
+                                  </span>
+                                  {hasErrors && (
+                                    <div className="w-full mt-4">
+                                      <p className="text-indigo-400 font-semibold mb-3 flex items-center gap-2">
+                                        <i className="fa-solid fa-clock-rotate-left"></i> Historial de Errores ({errorLogsArray.length})
+                                      </p>
+                                      <div className="space-y-3 pl-4 border-l-2 border-indigo-500/30">
+                                        {errorLogsArray.map((log, lIdx) => (
+                                          <div key={lIdx} className="bg-main/50 rounded-xl p-4 border border-border/50 shadow-sm relative">
+                                            <div className="absolute top-2 right-3 text-xs text-muted/50 font-mono">
+                                              Intento {lIdx + 1}
+                                            </div>
+                                            <p className="font-mono text-indigo-400 text-xs mb-2 uppercase tracking-wider font-bold">Intentó correr:</p>
+                                            <pre className="text-xs text-foreground bg-black/30 p-3 rounded-lg mb-3 overflow-x-auto border border-border/30">
+                                              {log.query}
+                                            </pre>
+                                            <p className="font-mono text-rose-400 text-xs mb-1 uppercase tracking-wider font-bold">Error devuelto:</p>
+                                            <p className="text-xs text-rose-300/80 whitespace-pre-wrap">{log.errorMessage}</p>
                                           </div>
-                                          <p className="font-mono text-indigo-400 text-xs mb-2 uppercase tracking-wider font-bold">Intentó correr:</p>
-                                          <pre className="text-xs text-foreground bg-black/30 p-3 rounded-lg mb-3 overflow-x-auto border border-border/30">
-                                            {log.query}
-                                          </pre>
-                                          <p className="font-mono text-rose-400 text-xs mb-1 uppercase tracking-wider font-bold">Error devuelto:</p>
-                                          <p className="text-xs text-rose-300/80 whitespace-pre-wrap">{log.errorMessage}</p>
-                                        </div>
-                                      ))}
+                                        ))}
+                                      </div>
                                     </div>
-                                  </details>
-                                )}
-                              </div>
-                            )}
-                          </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
 
-                          <div className="bg-[#0f111a] rounded-xl p-4 overflow-x-auto border border-border/50 shadow-inner mt-4">
-                            <p className="text-xs text-muted font-mono mb-2">Consulta final exitosa:</p>
-                            <pre className="text-sm font-mono text-emerald-400 leading-relaxed">
-                              <code>{step.finalSqlCode || "-- Sin código guardado"}</code>
-                            </pre>
+                            <div className="bg-[#0f111a] rounded-xl p-4 overflow-x-auto border border-border/50 shadow-inner mt-4">
+                              <p className="text-xs text-muted font-mono mb-2">Consulta final exitosa:</p>
+                              <pre className="text-sm font-mono text-emerald-400 leading-relaxed">
+                                <code>{step.finalSqlCode || "-- Sin código guardado"}</code>
+                              </pre>
+                            </div>
                           </div>
-                        </div>
+                        </details>
                       );
                     })
                   ) : (
@@ -437,104 +459,70 @@ function RevisarPracticaDocenteContent() {
                 </div>
               </section>
 
-              <section className="bg-panel rounded-3xl border-2 border-border p-8 shadow-sm">
-                <h2 className="text-xl font-black text-foreground flex items-center gap-3 mb-6">
-                  <i className="fa-solid fa-table text-indigo-500"></i> Tabla de Resultados (Consulta Final)
-                </h2>
-                
-                {selectedStudent.executionResult && selectedStudent.executionResult.columns ? (
-                  <div className="overflow-x-auto rounded-2xl border-2 border-border max-h-[400px]">
-                    <table className="w-full text-left border-collapse">
-                      <thead className="bg-input sticky top-0 z-10 shadow-sm">
-                        <tr>
-                          {selectedStudent.executionResult.columns.map((col, idx) => (
-                            <th key={idx} className="p-4 border-b-2 border-border font-bold text-muted uppercase tracking-wider text-xs">{col}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border">
-                        {selectedStudent.executionResult.rows && selectedStudent.executionResult.rows.map((row, rowIdx) => (
-                          <tr key={rowIdx} className="hover:bg-input transition-colors">
-                            {selectedStudent.executionResult.columns.map((col, colIdx) => (
-                              <td key={colIdx} className="p-4 font-mono text-sm text-foreground">{row[col]}</td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="p-12 text-center text-muted bg-input rounded-2xl border border-border border-dashed">
-                    <i className="fa-solid fa-table text-4xl mb-4 text-indigo-500/50"></i>
-                    <p className="font-bold">No hay resultados de ejecución para mostrar</p>
-                  </div>
-                )}
-              </section>
             </div>
 
-            {/* Right Column (Grading) - 40% */}
-            <div className="w-full lg:w-[40%] bg-panel h-full overflow-y-auto flex flex-col border-l-2 border-border shadow-xl">
-              <div className="p-6 lg:p-10 flex-1">
-                <div className="mb-10 text-center">
-                  <h2 className="text-3xl font-black text-foreground">Evaluación</h2>
-                  <p className="text-muted mt-2">Revisión manual del desempeño</p>
+            {/* Right Column (Grading) - 30% */}
+            <div className="w-full lg:w-[30%] lg:min-w-[350px] bg-panel h-full overflow-hidden flex flex-col border-l-2 border-border shadow-xl">
+              
+              <div className="p-5 flex flex-col h-full overflow-hidden">
+                <div className="mb-6 text-center shrink-0">
+                  <h2 className="text-2xl font-black text-foreground">Evaluación</h2>
+                  <p className="text-muted mt-1 text-sm">Revisión manual</p>
                 </div>
 
-                <div className="bg-input p-6 rounded-3xl border-2 border-border mb-8 shadow-sm">
-                  <label className="flex items-center gap-3 text-sm font-bold text-foreground uppercase tracking-widest mb-6">
+                <div className="bg-input p-5 rounded-2xl border-2 border-border shadow-sm flex flex-col items-center shrink-0 mb-6">
+                  <label className="flex items-center gap-3 text-xs font-bold text-foreground uppercase tracking-widest mb-4 text-center w-full justify-center">
+                    <i className="fa-solid fa-star text-amber-500"></i> Calificación Final
+                  </label>
+                  
+                  <div className="flex items-end justify-center gap-4 bg-main p-4 rounded-2xl border-2 border-border shadow-inner w-full">
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        min="0" 
+                        max={practiceInfo.totalPoints} 
+                        value={manualGrade} 
+                        onChange={handleGradeChange}
+                        className="w-24 bg-transparent border-b-4 border-indigo-500 pb-1 text-5xl font-black text-indigo-500 focus:outline-none transition-all text-center placeholder-indigo-500/30"
+                        placeholder="0"
+                      />
+                    </div>
+                    <span className="text-xl font-black text-muted mb-3 opacity-50">/ {practiceInfo.totalPoints}</span>
+                  </div>
+                  <p className="text-xs text-muted mt-4 text-center leading-relaxed">
+                    Basado en las reincidencias y el uso de las funciones requeridas, asigna la nota final.
+                  </p>
+                </div>
+
+                <div className="bg-input p-5 rounded-2xl border-2 border-border shadow-sm flex flex-col flex-1 overflow-hidden">
+                  <label className="flex items-center gap-3 text-xs font-bold text-foreground uppercase tracking-widest mb-4 shrink-0">
                     <i className="fa-solid fa-list-check text-indigo-500"></i> Cláusulas Requeridas
                   </label>
-                  <div className="space-y-3">
+                  
+                  <div className="overflow-y-auto pr-2 space-y-2 flex-1 scrollbar-thin scrollbar-thumb-indigo-500/20 scrollbar-track-transparent">
                     {practiceInfo.practiceRequiredFunctions?.keywords?.length > 0 ? (
                       practiceInfo.practiceRequiredFunctions.keywords.map((kw, idx) => {
                         const used = selectedStudent.sqlQuery?.toUpperCase().includes(kw);
                         return (
-                          <div key={idx} className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${used ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-border bg-main'}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${used ? 'bg-emerald-500 text-white' : 'bg-muted/20 text-muted'}`}>
-                              <i className={`fa-solid ${used ? 'fa-check' : 'fa-minus'} text-sm`}></i>
-                            </div>
-                            <span className={`font-bold font-mono text-base ${used ? 'text-emerald-400' : 'text-muted'}`}>{kw}</span>
+                          <div key={idx} className="flex items-center gap-3 py-1">
+                            <i className={`fa-solid ${used ? 'fa-check text-emerald-500' : 'fa-xmark text-rose-500'} w-4 text-center text-sm`}></i>
+                            <span className={`font-mono text-sm font-semibold ${used ? 'text-foreground' : 'text-muted'}`}>{kw}</span>
                           </div>
                         );
                       })
                     ) : (
-                      <div className="text-center p-4 bg-main rounded-2xl border-2 border-dashed border-border">
-                        <p className="text-muted text-sm font-medium">Esta práctica no tiene cláusulas obligatorias.</p>
+                      <div className="text-center p-4 bg-main rounded-xl border-2 border-dashed border-border">
+                        <p className="text-muted text-xs font-medium">Esta práctica no tiene cláusulas obligatorias.</p>
                       </div>
                     )}
                   </div>
                 </div>
-
-                <div className="bg-input p-6 rounded-3xl border-2 border-border shadow-sm flex flex-col items-center">
-                  <label className="flex items-center gap-3 text-sm font-bold text-foreground uppercase tracking-widest mb-6 text-center w-full justify-center">
-                    <i className="fa-solid fa-star text-amber-500"></i> Calificación Final
-                  </label>
-                  
-                  <div className="flex items-end justify-center gap-4 bg-main p-6 rounded-3xl border-2 border-border shadow-inner w-full">
-                    <div className="relative">
-                      <input 
-                        type="number" 
-                        min="1" 
-                        max={practiceInfo.totalPoints} 
-                        value={manualGrade} 
-                        onChange={(e) => setManualGrade(e.target.value)}
-                        className="w-32 bg-transparent border-b-4 border-indigo-500 pb-2 text-6xl font-black text-indigo-500 focus:outline-none transition-all text-center placeholder-indigo-500/30"
-                        placeholder="0"
-                      />
-                    </div>
-                    <span className="text-2xl font-black text-muted mb-4 opacity-50">/ {practiceInfo.totalPoints}</span>
-                  </div>
-                  
-                  <p className="text-sm text-muted mt-4 text-center">
-                    Basado en las reincidencias y el uso de las funciones requeridas, asigna la nota final.
-                  </p>
-                </div>
               </div>
 
               {/* Action footer */}
-              <div className="p-6 border-t-2 border-border bg-panel shrink-0 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+              <div className="p-5 border-t-2 border-border bg-panel shrink-0 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
                 <button 
-                  className={`w-full py-5 rounded-2xl font-black text-white text-lg tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3 ${isSubmitting ? 'bg-muted cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600'}`}
+                  className={`w-full py-4 rounded-xl font-black text-white text-base tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3 ${isSubmitting ? 'bg-muted cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600'}`}
                   onClick={handleConfirmGrade}
                   disabled={isSubmitting || !selectedStudent?.submitted}
                 >
@@ -542,7 +530,7 @@ function RevisarPracticaDocenteContent() {
                     <><i className="fa-solid fa-circle-notch fa-spin"></i> Guardando...</>
                   ) : (
                     selectedStudent.status === 'COMPLETED' ? (
-                      <><i className="fa-solid fa-pen-to-square"></i> Actualizar Calificación</>
+                      <><i className="fa-solid fa-pen-to-square"></i> Actualizar</>
                     ) : (
                       <><i className="fa-solid fa-check-double"></i> Confirmar Evaluación</>
                     )

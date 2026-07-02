@@ -424,11 +424,71 @@ input[type=number] {
   transform: translateX(-50%) translateY(-5px);
 }
 
-/* Variante Tooltip hacia abajo */
-.custom-tooltip-bottom::after {
-  bottom: auto;
-  top: 125%;
-}
 .custom-tooltip-bottom:hover::after {
   transform: translateX(-50%) translateY(5px);
+}
+
+/* Variante Tooltip alineado a la derecha (crece hacia la izquierda) */
+.custom-tooltip-left::after {
+  left: auto !important;
+  right: 0 !important;
+  transform: none !important;
+}
+.custom-tooltip-left:hover::after {
+  transform: translateY(-5px) !important;
+}
+
+/* =============================================
+   SWEETALERT2 - OVERRIDES GLOBALES
+   ============================================= */
+
+/* Popup principal */
+.swal2-popup {
+  border-radius: 24px !important;
+  padding: 2rem !important;
+  font-family: inherit !important;
+}
+
+/* Icono de alerta */
+.swal2-icon {
+  border-radius: 50% !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Título */
+.swal2-title {
+  border-radius: 0 !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+}
+
+/* Botones */
+.swal2-confirm,
+.swal2-cancel,
+.swal2-deny {
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 0.6rem 1.4rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.18s ease !important;
+}
+
+.swal2-confirm:focus,
+.swal2-cancel:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Input dentro del popup (prompt) */
+.swal2-input,
+.swal2-textarea {
+  border-radius: 12px !important;
+  font-size: 0.9rem !important;
+  padding: 0.7rem 1rem !important;
+}
+
+/* Acciones (contenedor de botones) */
+.swal2-actions {
+  gap: 0.5rem !important;
+  margin-top: 1.5rem !important;
 }
