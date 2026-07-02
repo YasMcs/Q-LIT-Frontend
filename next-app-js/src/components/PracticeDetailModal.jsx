@@ -122,6 +122,27 @@ export default function PracticeDetailModal({
                   </div>
                 </div>
               )}
+
+              {/* Expected Functions */}
+              <div>
+                <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-3">
+                  Funciones Esperadas
+                </h3>
+                {practice.requiredFunctions && practice.requiredFunctions.keywords && practice.requiredFunctions.keywords.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {practice.requiredFunctions.keywords.map((func, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1.5 bg-input border border-border rounded-lg text-sm font-mono font-bold text-foreground"
+                      >
+                        {func}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted italic text-sm">No se especificaron funciones.</p>
+                )}
+              </div>
             </div>
           ) : (
             <>
