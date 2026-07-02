@@ -253,7 +253,7 @@ function ClassFeedDocenteContent() {
 
   const handleCopyCode = async () => {
     try {
-      const textToCopy = `¡Únete a mi laboratorio "${classInfo.title}"!\nIngresa con el código: ${classInfo.code}\nPlataforma: ${window.location.origin}`;
+      const textToCopy = `¡Únete a mi laboratorio "${classInfo.title}"!\nIngresa con el código: ${classInfo.code}\nPlataforma: https://q-lit.online`;
       await navigator.clipboard.writeText(textToCopy);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
