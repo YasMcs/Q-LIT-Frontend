@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
       const res = await fetch("/api/proxy/admin/metrics");
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      if (res.ok && data.status === 'success') {
         setMetrics(data.data);
       } else {
         showAlert("Error", "No se pudieron cargar las métricas", "error");
