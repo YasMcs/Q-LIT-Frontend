@@ -122,15 +122,6 @@ export default function PracticeDetailModal({
                   </div>
                 </div>
               )}
-
-              <div>
-                <h3 className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
-                  Consulta SQL Enviada
-                </h3>
-                <pre className="p-4 bg-[var(--bg-main)] border border-border rounded-2xl text-sm font-mono text-indigo-400 overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner">
-                  {submission.studentSqlCode || "-- Sin código registrado --"}
-                </pre>
-              </div>
             </div>
           ) : (
             <>
