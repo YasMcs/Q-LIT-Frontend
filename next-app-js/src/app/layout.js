@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,8 +22,6 @@ export const metadata = {
     apple: "/iconoQLIT.svg",
   },
 };
-
-import AuthProvider from "@/components/AuthProvider";
 
 export default function RootLayout({ children }) {
   return (
