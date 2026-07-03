@@ -30,6 +30,9 @@ export default function Navbar() {
               alt="Profile" 
               style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid var(--border-color)' }}
             />
+            <a href="/Q-LIT%20Manual%20de%20Usuario%20-%20Estudiante.pdf" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '8px', color: 'inherit' }}>
+              <i className="fa-solid fa-file-pdf" title="Manual de Usuario"></i>
+            </a>
             <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{session.user.name}</span>
             <button 
               onClick={() => signOut()}
