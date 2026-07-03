@@ -54,7 +54,7 @@ export default function Features() {
       bullets: [
         "Bloqueo del pegado de texto externo (Comando Ctrl+V restringido).",
         "Desactivación del menú contextual (Clic derecho) en el editor.",
-        "Fomento del desarrollo de la memoria muscular y lógica propia."
+        "Fomento del desarrollo de la logica y agilidad mental que pueda desarrollar."
       ]
     },
     {
@@ -84,9 +84,9 @@ export default function Features() {
         {featuresList.map((feat, index) => {
           const isReversed = index % 2 !== 0;
           return (
-            <div 
+            <div
               className={`zigzag-row ${isReversed ? 'reversed' : ''}`}
-              key={index} 
+              key={index}
               ref={(el) => (cardsRef.current[index] = el)}
               style={{ transitionDelay: `${index * 0.15}s` }}
             >

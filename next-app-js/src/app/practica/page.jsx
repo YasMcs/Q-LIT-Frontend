@@ -371,6 +371,37 @@ function PracticaSQLContent() {
     }
   }, [practiceId, router]);
 
+  // Control Anti-Plagio: Bloquear Ctrl+V/Cmd+V, Pegado y Clic Derecho
+  useEffect(() => {
+    const handlePaste = (e) => {
+      e.preventDefault();
+      showAlert("Pegado Deshabilitado", "El pegado de texto externo está deshabilitado en esta práctica para garantizar un aprendizaje genuino.", "warning");
+    };
+
+    const handleKeyDown = (e) => {
+      // Bloquear Ctrl+V o Cmd+V (keyCode 86 para la tecla 'V')
+      if ((e.ctrlKey || e.metaKey) && (e.key === "v" || e.key === "V" || e.keyCode === 86)) {
+        e.preventDefault();
+        showAlert("Pegado Deshabilitado", "El pegado de texto (Ctrl+V) está deshabilitado para evitar la copia externa.", "warning");
+      }
+    };
+
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+      showAlert("Menú Deshabilitado", "El clic derecho está deshabilitado en este entorno para asegurar tu esfuerzo individual.", "warning");
+    };
+
+    document.addEventListener("paste", handlePaste);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("contextmenu", handleContextMenu);
+
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("contextmenu", handleContextMenu);
+    };
+  }, []);
+
   if (loading) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-main text-indigo-600">
@@ -511,6 +542,7 @@ function PracticaSQLContent() {
                   padding: { top: 24, bottom: 24 },
                   cursorStyle: "line",
                   automaticLayout: true,
+                  contextmenu: false,
                 }}
                 loading={<div className="flex items-center justify-center h-full text-muted font-mono text-sm bg-[#18181b]"><i className="fa-solid fa-spinner fa-spin mr-2" /> Cargando entorno SQL...</div>}
               />
