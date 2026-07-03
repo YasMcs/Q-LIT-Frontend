@@ -15,6 +15,10 @@ export default function Footer() {
           <p style={{ color: '#b5bac1', fontSize: '0.95rem', lineHeight: '1.6', maxWidth: '300px' }}>
             Plataforma interactiva avanzada para la enseñanza, gestión y evaluación de Bases de Datos.
           </p>
+          <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ color: '#b5bac1', fontSize: '0.85rem' }}>Desarrollado por</span>
+            <img src="/Logo empresa starcode.png" alt="Starcode Logo" style={{ height: '22px', width: 'auto', objectFit: 'contain' }} />
+          </div>
         </div>
         
         <div>
@@ -50,7 +54,7 @@ export default function Footer() {
         </div>
       </div>
       
-      <div style={{ maxWidth: '1200px', margin: '60px auto 0', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+      <div style={{ maxWidth: '1200px', margin: '60px auto 0', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <p style={{ color: '#b5bac1', fontSize: '0.9rem', margin: 0 }}>
           &copy; {currentYear} Q-LIT. Todos los derechos reservados.
         </p>
