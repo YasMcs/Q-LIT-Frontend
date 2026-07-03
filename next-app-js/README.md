@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+﻿# Q-LIT: Plataforma de Laboratorio Interactivo de Bases de Datos
 
-## Getting Started
+Bienvenido a **Q-LIT**, una plataforma educativa orientada a servicios (SOA) disenada para revolucionar la ensenanza de SQL. El sistema esta dividido en dos capas principales: un Frontend (Next.js) y un Backend (Express.js), garantizando alta cohesion y bajo acoplamiento.
 
-First, run the development server:
+## Documentacion del Proyecto
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Para cumplir con los criterios de evaluacion, la documentacion tecnica detallada se ha dividido de forma modular:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **[Contrato de API (API Specification)](./api_spec_db.md):** Detalle exhaustivo de endpoints, payloads, codigos HTTP, manejo de errores y modelos de base de datos.
+2. **[Arquitectura y Seguridad](./tech_stack_security.md):** Explicacion del Stack Tecnologico, justificacion de librerias, y la implementacion de controles de seguridad (Rate Limiting, CORS, JWT, BFF).
+3. **[Requerimientos de Base de Datos](./PROYECTO_INTEGRADOR_BD.md):** Justificacion tecnica sobre el uso de JOINs, Vistas (Views) y modelado de datos exigidos por la rubrica.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Guia de Instalacion y Ejecucion
 
-## Learn More
+El proyecto puede ser ejecutado localmente siguiendo estos pasos:
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Prerrequisitos
+- **Node.js** (v18 o superior)
+- **NPM** o Yarn
+- Instancia de PostgreSQL (Neon) y MySQL (Aiven) para los catalogos.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Configuracion del Backend (/backend-api)
+1. Navega a la carpeta del backend: cd backend-api
+2. Instala dependencias: 
+pm install
+3. Crea un archivo .env en la raiz de ackend-api basado en .env.example con las siguientes variables:
+   `env
+   PORT=4000
+   DATABASE_URL="postgresql://usuario:password@host/neondb?sslmode=require"
+   MYSQL_URL="mysql://usuario:password@host:port/defaultdb"
+   GEMINI_API_KEY="tu_api_key_de_google_gemini"
+   FRONTEND_URL="http://localhost:3000"
+   `
+4. Sincroniza la base de datos (Prisma): 
+px prisma db push
+5. Ejecuta el servidor: 
+pm run dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. Configuracion del Frontend (/next-app-js)
+1. Navega a la carpeta del frontend: cd next-app-js
+2. Instala dependencias: 
+pm install
+3. Crea un archivo .env con las variables de autenticacion y proxy:
+   `env
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="tu_secreto_super_seguro"
+   GOOGLE_CLIENT_ID="tu_google_client_id"
+   GOOGLE_CLIENT_SECRET="tu_google_client_secret"
+   BACKEND_API_URL="http://localhost:4000"
+   BACKEND_API_KEY="super-secret-api-key-123"
+   `
+4. Ejecuta el entorno de desarrollo: 
+pm run dev
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Recursos Externos
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+En cumplimiento estricto con las politicas de evaluacion de este proyecto integrador, el equipo declara de manera transparente lo siguiente:
+
+1. **Motor de IA Integrado (Feature del Sistema):** La plataforma consume activamente la API oficial de **Google Gemini** para la evaluacion en tiempo real de sentencias SQL escritas por los estudiantes. Esto no es codigo autogenerado para construir el proyecto, sino una caracteristica funcional (feature) del sistema evaluador.
+2. **Plantillas y Librerias Externas:** La interfaz fue construida con componentes estandar de HTML/CSS/Tailwind. No se utilizaron plantillas pre-fabricadas de terceros. Las unicas librerias de terceros empleadas son de infraestructura tecnologica (Next.js, Express, Prisma, NextAuth, Helmet, CORS), debidamente justificadas en la documentacion arquitectonica.
+
+> Toda la autoria logica, el diseno de la base de datos, los casos de uso, la integracion de servicios y el esfuerzo colaborativo (evidenciado en el historial de Git) corresponden 100% al equipo desarrollador.
