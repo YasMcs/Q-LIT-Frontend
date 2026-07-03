@@ -398,8 +398,8 @@ function ClassFeedDocenteContent() {
       {/* Date Picker Modal */}
       {isDateModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center animate-fade-in p-4">
-          <div className="bg-panel rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-border">
-            <div className="px-6 py-5 border-b border-border flex justify-between items-center bg-[var(--bg-main)]">
+          <div className="bg-panel rounded-2xl w-full max-w-md shadow-2xl border border-border">
+            <div className="px-6 py-5 border-b border-border flex justify-between items-center bg-[var(--bg-main)] rounded-t-2xl">
               <h2 className="text-lg font-bold text-foreground">Cambiar Fecha Límite</h2>
               <button 
                 onClick={() => setIsDateModalOpen(false)}
