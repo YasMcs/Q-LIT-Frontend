@@ -29,6 +29,7 @@ function PracticaSQLContent() {
   const [activeStep, setActiveStep] = useState(0);
   const [stepsStatus, setStepsStatus] = useState([]); 
   const [aiFeedback, setAiFeedback] = useState(null);
+  const [stepHistory, setStepHistory] = useState([]);
 
   // Query editor state
   const [sqlQuery, setSqlQuery] = useState("");
@@ -352,6 +353,7 @@ function PracticaSQLContent() {
               // Cargar por defecto la consulta del primer paso (índice 0)
               const firstStep = data.data.submission.steps?.find(s => s.stepIndex === 0);
               setSqlQuery(firstStep?.finalSqlCode || data.data.submission.studentSqlCode || "");
+              setStepHistory(firstStep?.errorLogs || []);
               setActiveStep(0);
               
               if (data.data.submission.executionResult) {
@@ -557,11 +559,36 @@ function PracticaSQLContent() {
               <span className="drag-indicator-sql"><i className="fa-solid fa-arrows-up-down" /> Arrastra para ajustar</span>
             </div>
 
-            <div className="terminal-body-sql">
-              {terminalState === "placeholder" && (
+            <div className="terminal-body-sql overflow-y-auto">
+              {terminalState === "placeholder" && !isReadOnly && (
                 <div className="terminal-placeholder-sql">Escribe tu consulta arriba y presiona &quot;Ejecutar Consulta&quot;.</div>
               )}
-              {terminalState === "empty" && (
+              {isReadOnly && stepHistory.length === 0 && (
+                <div className="terminal-placeholder-sql"><i className="fa-solid fa-check-circle text-emerald-500 mr-2"/> Superaste este objetivo al primer intento sin errores.</div>
+              )}
+              {isReadOnly && stepHistory.length > 0 && (
+                <div className="p-4 space-y-4">
+                  <div className="font-bold text-indigo-400 mb-2 border-b border-indigo-500/30 pb-2 flex items-center gap-2">
+                    <i className="fa-solid fa-clock-rotate-left" /> Historial de Intentos y Retroalimentación
+                  </div>
+                  {stepHistory.map((log, i) => (
+                    <div key={i} className="bg-[#1a1a1a] p-4 rounded-xl border border-white/5">
+                       <div className="text-[11px] text-muted mb-2 font-mono bg-[#121212] p-2.5 rounded-lg border border-white/5 whitespace-pre-wrap">{log.query}</div>
+                       <div className="text-red-400 text-[13px] font-medium"><i className="fa-solid fa-triangle-exclamation mr-1.5" /> {log.error}</div>
+                       {log.aiFeedback && log.aiFeedback.text && (
+                         <div className="mt-3 p-3 bg-indigo-500/10 border-l-2 border-indigo-500 text-indigo-200 text-[13px] rounded-r-lg">
+                           <strong className="block text-[10px] uppercase tracking-widest text-indigo-400 mb-1.5">Retroalimentación de Lumi (IA)</strong>
+                           {log.aiFeedback.text}
+                         </div>
+                       )}
+                    </div>
+                  ))}
+                  <div className="text-emerald-500 text-[13px] font-bold mt-3 pt-3 border-t border-emerald-500/20 flex items-center gap-2">
+                    <i className="fa-solid fa-check-double" /> Eventualmente superaste este objetivo con el código mostrado arriba.
+                  </div>
+                </div>
+              )}
+              {!isReadOnly && terminalState === "empty" && (
                 <div className="terminal-placeholder-sql"><i className="fa-solid fa-info-circle" /> Consola limpia. Esperando ejecución...</div>
               )}
               {terminalState === "executing" && (
@@ -702,6 +729,7 @@ function PracticaSQLContent() {
                                 if (isReadOnly && practiceData?.submission?.steps) {
                                   const savedStep = practiceData.submission.steps.find(s => s.stepIndex === idx);
                                   setSqlQuery(savedStep?.finalSqlCode || "-- Sin código registrado para este objetivo --");
+                                  setStepHistory(savedStep?.errorLogs || []);
                                 }
                               }
                             }}
