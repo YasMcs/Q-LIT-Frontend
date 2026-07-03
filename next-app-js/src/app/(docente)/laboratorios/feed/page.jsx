@@ -7,7 +7,9 @@ import PracticeDetailModal from "@/components/PracticeDetailModal";
 import StatBox from "@/components/StatBox";
 import ClassFeedSkeleton from "@/components/skeletons/ClassFeedSkeleton";
 import { showAlert, showConfirm } from "@/utils/alerts";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import CustomTimePicker from '@/components/CustomTimePicker';
 import { encodeId, decodeId } from "@/utils/crypto";
 import "./class-feed-docente.css";
 
@@ -413,24 +415,47 @@ function ClassFeedDocenteContent() {
                   <label className="block text-sm font-bold text-foreground mb-2">
                     Fecha de Entrega
                   </label>
-                  <input 
-                    type="date" 
-                    className="w-full px-4 py-3 border border-border bg-[var(--bg-main)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] transition-all font-medium text-foreground"
-                    min={new Date().toLocaleDateString("en-CA")}
-                    value={newDate}
-                    onChange={(e) => setNewDate(e.target.value)}
-                  />
+                  <div className="flex items-center gap-3 bg-[var(--bg-main)] rounded-xl border border-border px-4 py-2.5 focus-within:border-indigo-500 transition-all">
+                    <i className="fa-regular fa-calendar text-muted shrink-0"></i>
+                    <div className="flex-1 relative">
+                      <DatePicker
+                        id="modal-duedate"
+                        className="w-full bg-transparent text-sm font-semibold text-foreground focus:outline-none placeholder-muted"
+                        selected={newDate ? new Date(`${newDate}T00:00:00`) : null}
+                        onChange={(date) => {
+                          if (date) {
+                            const offset = date.getTimezoneOffset()
+                            const adjustedDate = new Date(date.getTime() - (offset*60*1000))
+                            setNewDate(adjustedDate.toISOString().split('T')[0]);
+                          } else {
+                            setNewDate('');
+                          }
+                        }}
+                        dateFormat="dd/MM/yyyy"
+                        minDate={new Date()}
+                        placeholderText="dd/mm/aaaa"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-foreground mb-2">
                     Hora Límite
                   </label>
-                  <input 
-                    type="time" 
-                    className="w-full px-4 py-3 border border-border bg-[var(--bg-main)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] transition-all font-medium text-foreground"
-                    value={newTime}
-                    onChange={(e) => setNewTime(e.target.value)}
-                  />
+                  <div className="flex items-center gap-3 bg-[var(--bg-main)] rounded-xl border border-border px-4 py-2.5 focus-within:border-indigo-500 transition-all">
+                    <i className="fa-regular fa-clock text-muted shrink-0"></i>
+                    <div className="flex-1">
+                      <CustomTimePicker
+                        id="modal-duetime"
+                        className="w-full bg-transparent text-sm font-semibold text-foreground focus:outline-none"
+                        value={newTime}
+                        onChange={(e) => setNewTime(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') e.preventDefault();
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
               <p className="text-sm text-muted mt-4">
