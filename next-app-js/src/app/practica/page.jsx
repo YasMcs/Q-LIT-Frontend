@@ -573,14 +573,13 @@ function PracticaSQLContent() {
                   </div>
                   {stepHistory.map((log, i) => (
                     <div key={i} className="bg-[#1a1a1a] p-4 rounded-xl border border-white/5">
-                       <div className="text-[11px] text-muted mb-2 font-mono bg-[#121212] p-2.5 rounded-lg border border-white/5 whitespace-pre-wrap">{log.query}</div>
-                       <div className="text-red-400 text-[13px] font-medium"><i className="fa-solid fa-triangle-exclamation mr-1.5" /> {log.error}</div>
-                       {log.aiFeedback && log.aiFeedback.text && (
-                         <div className="mt-3 p-3 bg-indigo-500/10 border-l-2 border-indigo-500 text-indigo-200 text-[13px] rounded-r-lg">
-                           <strong className="block text-[10px] uppercase tracking-widest text-indigo-400 mb-1.5">Retroalimentación de Lumi (IA)</strong>
-                           {log.aiFeedback.text}
-                         </div>
-                       )}
+                       <div className="text-[11px] text-muted mb-3 font-mono bg-[#121212] p-2.5 rounded-lg border border-white/5 whitespace-pre-wrap">{log.query}</div>
+                       <div className="p-3 bg-indigo-500/10 border-l-2 border-indigo-500 text-indigo-200 text-[13px] rounded-r-lg">
+                           <strong className="block text-[10px] uppercase tracking-widest text-indigo-400 mb-1.5">
+                             <i className="fa-solid fa-triangle-exclamation mr-1.5" /> Retroalimentación de Lumi (IA)
+                           </strong>
+                           <div className="leading-relaxed whitespace-pre-wrap">{log.errorMessage}</div>
+                       </div>
                     </div>
                   ))}
                   <div className="text-emerald-500 text-[13px] font-bold mt-3 pt-3 border-t border-emerald-500/20 flex items-center gap-2">
