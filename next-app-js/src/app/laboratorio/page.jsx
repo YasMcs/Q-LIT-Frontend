@@ -7,6 +7,7 @@ import PracticeDetailModal from "@/components/PracticeDetailModal";
 import JoinClassModal from "@/components/JoinClassModal";
 import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
+import HelpDropdown from "@/components/HelpDropdown";
 import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
 import ConfirmLogoutModal from "@/components/ConfirmLogoutModal";
 import { encodeId } from "@/utils/crypto";
@@ -29,6 +30,7 @@ export default function LaboratoryFeedAlumnoPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
@@ -256,15 +258,13 @@ export default function LaboratoryFeedAlumnoPage() {
           </div>
 
           <div className="flex items-center gap-4 relative">
-            <a 
-              href="/Q-LIT%20Manual%20de%20Usuario%20-%20Estudiante.pdf" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <button 
+              onClick={() => setIsHelpDropdownOpen(true)}
               className="w-10 h-10 rounded-xl bg-input border border-border flex items-center justify-center text-muted hover:text-indigo-400 hover:border-indigo-500/50 shadow-sm hover:shadow-md transition-all duration-200"
-              title="Manual de Usuario"
+              title="Manual de Usuario y Soporte"
             >
               <i className="fa-solid fa-circle-question text-lg"></i>
-            </a>
+            </button>
 
             <div 
               onClick={() => setIsProfileModalOpen(true)}
@@ -289,6 +289,12 @@ export default function LaboratoryFeedAlumnoPage() {
                 <i className="fa-solid fa-chevron-down text-muted" style={{ fontSize: '7px' }}></i>
               </span>
             </div>
+
+            <HelpDropdown 
+              isOpen={isHelpDropdownOpen}
+              onClose={() => setIsHelpDropdownOpen(false)}
+              positionClasses="top-[52px] right-[52px]"
+            />
 
             <UserProfileDropdown 
               isOpen={isProfileModalOpen}

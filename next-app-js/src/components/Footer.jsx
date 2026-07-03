@@ -17,7 +17,7 @@ export default function Footer() {
           </p>
           <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ color: '#b5bac1', fontSize: '0.85rem' }}>Desarrollado por</span>
-            <img src="/Logo empresa starcode.png" alt="Starcode Logo" style={{ height: '45px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/Logo empresa starcode.png" alt="Starcode Logo" style={{ height: '125px', width: 'auto', objectFit: 'contain' }} />
           </div>
         </div>
         
@@ -56,7 +56,7 @@ export default function Footer() {
       
       <div style={{ maxWidth: '1200px', margin: '60px auto 0', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <p style={{ color: '#b5bac1', fontSize: '0.9rem', margin: 0 }}>
-          &copy; {currentYear} Q-LIT. Todos los derechos reservados.
+          &copy; {currentYear} STARCODE. Todos los derechos reservados.
         </p>
       </div>
     </footer>
