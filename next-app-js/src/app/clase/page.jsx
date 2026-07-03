@@ -165,7 +165,7 @@ export default function ClassFeedAlumnoPage() {
         setIsJoinModalOpen(false);
         fetchData();
       } else {
-        await showAlert("Error", data.error?.message || "Error al unirse a la clase", "error");
+        await showAlert("Error", data.error?.message || "Error al unirse al laboratorio", "error");
       }
     } catch (err) {
       await showAlert("Error", "Error de red", "error");
@@ -191,10 +191,10 @@ export default function ClassFeedAlumnoPage() {
         fetchData();
       } else {
         const data = await res.json();
-        await showAlert("Error", data.error?.message || "No se pudo abandonar la clase", "error");
+        await showAlert("Error", data.error?.message || "No se pudo abandonar el laboratorio", "error");
       }
     } catch (err) {
-      await showAlert("Error", "Error de red al intentar abandonar la clase", "error");
+      await showAlert("Error", "Error de red al intentar abandonar el laboratorio", "error");
     }
   };
 
@@ -253,7 +253,7 @@ export default function ClassFeedAlumnoPage() {
                 onClick={() => setShowSelector(true)}
                 className="px-3.5 py-1.5 bg-input hover:bg-border text-muted hover:text-foreground rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ml-2"
               >
-                <i className="fa-solid fa-arrow-left"></i> Volver a mis clases
+                <i className="fa-solid fa-arrow-left"></i> Volver a mis laboratorios
               </button>
             )}
           </div>
@@ -315,7 +315,7 @@ export default function ClassFeedAlumnoPage() {
                   onClick={() => setIsJoinModalOpen(true)}
                   className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-lg transition-all duration-300"
                 >
-                  <i className="fa-solid fa-plus mr-2" /> Unirse a una clase
+                  <i className="fa-solid fa-plus mr-2" /> Unirse a un laboratorio
                 </button>
               </div>
             ) : (
@@ -332,7 +332,7 @@ export default function ClassFeedAlumnoPage() {
                         onClick={() => setIsJoinModalOpen(true)}
                         className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 hover:scale-105 hover:shadow-xl hover:shadow-indigo-600/20 text-white rounded-2xl font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
                       >
-                        <i className="fa-solid fa-plus" /> Unirse a una clase
+                        <i className="fa-solid fa-plus" /> Unirse a un laboratorio
                       </button>
                     </div>
 

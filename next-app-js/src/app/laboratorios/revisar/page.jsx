@@ -206,7 +206,7 @@ function RevisarPracticaDocenteContent() {
               <button 
                 onClick={() => router.back()} 
                 className="w-10 h-10 rounded-full flex items-center justify-center bg-input text-foreground hover:bg-indigo-500 hover:text-white transition-all shadow-sm shrink-0"
-                title="Volver a la clase"
+                title="Volver al laboratorio"
               >
                 <i className="fa-solid fa-arrow-left text-lg"></i>
               </button>

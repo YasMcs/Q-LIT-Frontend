@@ -25,7 +25,7 @@ El proyecto puede ser ejecutado localmente siguiendo estos pasos:
 1. Navega a la carpeta del backend: cd backend-api
 2. Instala dependencias: 
 pm install
-3. Crea un archivo .env en la raiz de ackend-api basado en .env.example con las siguientes variables:
+3. Crea un archivo .env en la raiz de backend-api basado en .env.example con las siguientes variables:
    `env
    PORT=4000
    DATABASE_URL="postgresql://usuario:password@host/neondb?sslmode=require"
