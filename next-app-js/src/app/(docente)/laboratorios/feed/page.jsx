@@ -415,8 +415,9 @@ function ClassFeedDocenteContent() {
                   <label className="block text-sm font-bold text-foreground mb-2">
                     Fecha de Entrega
                   </label>
-                  <div className="flex items-center gap-3 bg-[var(--bg-main)] rounded-xl border border-border px-4 py-2.5 focus-within:border-indigo-500 transition-all">
+                  <div className="flex items-center gap-3 bg-[var(--bg-main)] rounded-xl border-2 border-border px-4 py-3 focus-within:border-indigo-500 transition-all">
                     <i className="fa-regular fa-calendar text-muted shrink-0"></i>
+                    <span className="text-xs font-bold text-muted uppercase tracking-wider shrink-0 w-14">Fecha</span>
                     <div className="flex-1 relative">
                       <DatePicker
                         id="modal-duedate"
@@ -434,6 +435,7 @@ function ClassFeedDocenteContent() {
                         dateFormat="dd/MM/yyyy"
                         minDate={new Date()}
                         placeholderText="dd/mm/aaaa"
+                        portalId="root-portal"
                       />
                     </div>
                   </div>
@@ -442,8 +444,9 @@ function ClassFeedDocenteContent() {
                   <label className="block text-sm font-bold text-foreground mb-2">
                     Hora Límite
                   </label>
-                  <div className="flex items-center gap-3 bg-[var(--bg-main)] rounded-xl border border-border px-4 py-2.5 focus-within:border-indigo-500 transition-all">
+                  <div className="flex items-center gap-3 bg-[var(--bg-main)] rounded-xl border-2 border-border px-4 py-3 focus-within:border-indigo-500 transition-all">
                     <i className="fa-regular fa-clock text-muted shrink-0"></i>
+                    <span className="text-xs font-bold text-muted uppercase tracking-wider shrink-0 w-14">Hora</span>
                     <div className="flex-1">
                       <CustomTimePicker
                         id="modal-duetime"
