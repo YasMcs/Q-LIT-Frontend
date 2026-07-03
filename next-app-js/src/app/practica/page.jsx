@@ -406,7 +406,7 @@ function PracticaSQLContent() {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-main text-indigo-600">
         <i className="fa-solid fa-wand-magic-sparkles fa-bounce text-4xl mb-4"></i>
-        <h2 className="font-bold text-lg text-foreground">La IA está configurando tu entorno...</h2>
+        <h2 className="font-bold text-lg text-foreground">Lumi (IA) está configurando tu entorno...</h2>
         <p className="text-sm text-muted mt-2">Cargando dependencias de SQL</p>
       </div>
     );
@@ -580,7 +580,7 @@ function PracticaSQLContent() {
                       </div>
                       <div className="flex-1 pt-1">
                         <strong className="block mb-1.5 text-amber-400 text-[11px] tracking-widest uppercase">
-                          {executionError.isAiGenerated ? "Sugerencia del Asistente" : "Sugerencia Pedagógica"}
+                          {executionError.isAiGenerated ? "Sugerencia de Lumi (IA)" : "Sugerencia Pedagógica"}
                         </strong>
                         <p className="text-amber-100/90 leading-relaxed font-medium">{executionError.suggestion}</p>
                       </div>
@@ -602,7 +602,7 @@ function PracticaSQLContent() {
                        </div>
                        <div className="flex-1 pt-1">
                          <strong className="block mb-1.5 text-red-400 text-[11px] tracking-widest uppercase">
-                           Retroalimentación del Sistema
+                           Retroalimentación de Lumi (IA)
                          </strong>
                          <p className="text-red-200/90 leading-relaxed font-medium">{aiFeedback.text}</p>
                        </div>
