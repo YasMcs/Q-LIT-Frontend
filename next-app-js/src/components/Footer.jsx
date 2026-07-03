@@ -17,7 +17,7 @@ export default function Footer() {
           </p>
           <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ color: '#b5bac1', fontSize: '0.85rem' }}>Desarrollado por</span>
-            <img src="/Logo empresa starcode.png" alt="Starcode Logo" style={{ height: '22px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/Logo empresa starcode.png" alt="Starcode Logo" style={{ height: '45px', width: 'auto', objectFit: 'contain' }} />
           </div>
         </div>
         

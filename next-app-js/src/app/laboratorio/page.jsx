@@ -256,6 +256,16 @@ export default function LaboratoryFeedAlumnoPage() {
           </div>
 
           <div className="flex items-center gap-4 relative">
+            <a 
+              href="/Q-LIT%20Manual%20de%20Usuario%20-%20Estudiante.pdf" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-xl bg-input border border-border flex items-center justify-center text-muted hover:text-indigo-400 hover:border-indigo-500/50 shadow-sm hover:shadow-md transition-all duration-200"
+              title="Manual de Usuario"
+            >
+              <i className="fa-solid fa-circle-question text-lg"></i>
+            </a>
+
             <div 
               onClick={() => setIsProfileModalOpen(true)}
               className="text-sm font-bold text-muted hidden sm:flex flex-col items-end mr-2 cursor-pointer hover:text-indigo-400 transition-colors"
