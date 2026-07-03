@@ -76,14 +76,53 @@ export default function DashboardDocentePage() {
     }
   };
 
+  const handleJoinClass = async () => {
+    const code = await showPrompt("Unirse a Laboratorio", "Ingresa el código de invitación (6 caracteres):", "Código");
+    if (!code) return;
+
+    try {
+      const response = await fetch("/api/proxy/classrooms/join", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ inviteCode: code.toUpperCase().trim() })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        await showAlert("Éxito", "Te has unido al laboratorio como profesor de apoyo.", "success");
+        // Recargar las clases
+        setLoading(true);
+        fetch(`/api/proxy/classrooms?teacherId=${session.user.id}`)
+          .then(res => res.json())
+          .then(resData => {
+            if (resData.data) setClasses(resData.data);
+            setLoading(false);
+          });
+      } else {
+        await showAlert("Error", data.error?.message || "No se pudo unir al laboratorio", "error");
+      }
+    } catch (error) {
+      console.error("Error joining classroom:", error);
+      await showAlert("Error", "Ocurrió un problema de conexión.", "error");
+    }
+  };
+
   if (loading) {
     return (
       <main className="docente-main animate-fade-in">
         <div className="docente-header-actions">
           <h1>Tus grupos asignados</h1>
-          <button className="docente-btn-create" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
-            <i className="fa-solid fa-plus" /> Crear Nuevo Laboratorio
-          </button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button className="docente-btn-create" style={{ opacity: 0.5, cursor: 'not-allowed', backgroundColor: '#64748b' }}>
+              <i className="fa-solid fa-right-to-bracket" /> Unirse a Laboratorio
+            </button>
+            <button className="docente-btn-create" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+              <i className="fa-solid fa-plus" /> Crear Nuevo Laboratorio
+            </button>
+          </div>
         </div>
         <DashboardSkeleton count={6} />
       </main>
@@ -97,12 +136,21 @@ export default function DashboardDocentePage() {
         {/* Header */}
         <div className="docente-header-actions">
           <h1>Tus grupos asignados</h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="docente-btn-create"
-          >
-            <i className="fa-solid fa-plus" /> Crear Nuevo Laboratorio
-          </button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button
+              onClick={handleJoinClass}
+              className="docente-btn-create"
+              style={{ backgroundColor: '#64748b' }}
+            >
+              <i className="fa-solid fa-right-to-bracket" /> Unirse a Laboratorio
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="docente-btn-create"
+            >
+              <i className="fa-solid fa-plus" /> Crear Nuevo Laboratorio
+            </button>
+          </div>
         </div>
 
         {/* Classes Grid */}

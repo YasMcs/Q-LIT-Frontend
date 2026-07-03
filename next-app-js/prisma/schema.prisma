@@ -78,6 +78,7 @@ model Enrollment {
   userId      String
   classroomId String
   isArchived  Boolean   @default(false)
+  role        String    @default("student")
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
