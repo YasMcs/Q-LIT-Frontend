@@ -8,6 +8,7 @@ import JoinClassModal from "@/components/JoinClassModal";
 import ClassFeedAlumnoSkeleton from "@/components/skeletons/ClassFeedAlumnoSkeleton";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
 import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
+import ConfirmLogoutModal from "@/components/ConfirmLogoutModal";
 import { encodeId } from "@/utils/crypto";
 import { showAlert, showConfirm } from "@/utils/alerts";
 
@@ -29,6 +30,7 @@ export default function ClassFeedAlumnoPage() {
   const [loading, setLoading] = useState(true);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -288,6 +290,7 @@ export default function ClassFeedAlumnoPage() {
               onClose={() => setIsProfileModalOpen(false)}
               user={session?.user}
               onShowPrivacy={() => setIsPrivacyModalOpen(true)}
+              onShowLogout={() => setIsLogoutModalOpen(true)}
               onLeaveClass={!showSelector && classInfo.id && !classInfo.isArchived ? handleLeaveClass : null}
               positionClasses="top-[52px] right-0"
             />
@@ -548,6 +551,11 @@ export default function ClassFeedAlumnoPage() {
       <PrivacyNoticeModal 
         isOpen={isPrivacyModalOpen}
         onClose={() => setIsPrivacyModalOpen(false)}
+      />
+      
+      <ConfirmLogoutModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
       />
     </div>
   );
