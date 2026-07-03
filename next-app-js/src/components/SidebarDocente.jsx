@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
 import PrivacyNoticeModal from "@/components/PrivacyNoticeModal";
+import ConfirmLogoutModal from "@/components/ConfirmLogoutModal";
 
 export default function SidebarDocente() {
   const { data: session } = useSession();
@@ -14,6 +15,7 @@ export default function SidebarDocente() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const activeKey = pathname.includes("laboratorios") ? "clases"
                   : pathname.includes("alumnos") ? "directorio"
                   : pathname.includes("estadisticas") ? "estadisticas"
@@ -139,6 +141,7 @@ export default function SidebarDocente() {
             onClose={() => setIsProfileModalOpen(false)}
             user={session?.user}
             onShowPrivacy={() => setIsPrivacyModalOpen(true)}
+            onShowLogout={() => setIsLogoutModalOpen(true)}
             positionClasses={isCollapsed ? "bottom-[-16px] left-[72px]" : "bottom-[64px] left-[12px]"}
           />
         </div>
@@ -148,6 +151,10 @@ export default function SidebarDocente() {
       <PrivacyNoticeModal 
         isOpen={isPrivacyModalOpen}
         onClose={() => setIsPrivacyModalOpen(false)}
+      />
+      <ConfirmLogoutModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
       />
     </>
   );

@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
+import ConfirmLogoutModal from "./ConfirmLogoutModal";
 
 
 export default function SidebarAlumno({ activeKey = "laboratorios" }) {
   const { data: session } = useSession();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("alumno-sidebar-collapsed");
@@ -107,7 +109,7 @@ export default function SidebarAlumno({ activeKey = "laboratorios" }) {
               <span className="whitespace-nowrap font-bold text-sm truncate block">{session?.user?.name || "Panel Alumno"}</span>
               <small className="whitespace-nowrap opacity-80 truncate block mb-2">{session?.user?.email || "Estudiante"}</small>
               <button 
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={() => setIsLogoutModalOpen(true)}
                 className="text-xs font-bold text-[var(--danger-red)] hover:text-white bg-[var(--danger-red)]/10 hover:bg-[var(--danger-red)] px-2 py-1 rounded-md transition-colors self-start whitespace-nowrap"
               >
                 <i className="fa-solid fa-arrow-right-from-bracket mr-1"></i> Cerrar sesión
@@ -116,6 +118,10 @@ export default function SidebarAlumno({ activeKey = "laboratorios" }) {
           </div>
         </div>
       </aside>
+      <ConfirmLogoutModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+      />
     </>
   );
 }
