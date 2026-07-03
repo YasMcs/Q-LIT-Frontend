@@ -23,7 +23,10 @@ export const authOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 días de duración del token
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session?.role) {
+        token.role = session.role;
+      }
       if (user) {
         token.id = user.id;
         token.role = user.role;

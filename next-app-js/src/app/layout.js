@@ -21,6 +21,21 @@ export const metadata = {
     shortcut: "/iconoQLIT.svg",
     apple: "/iconoQLIT.svg",
   },
+  openGraph: {
+    title: "Q-LIT - Laboratorios SQL",
+    description: "Plataforma de laboratorio interactivo de bases de datos para la enseñanza de SQL.",
+    url: "https://q-lit.online",
+    siteName: "Q-LIT",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "es_MX",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }) {
