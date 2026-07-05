@@ -26,7 +26,7 @@ export default function CreateClassModal({ isOpen, onClose, onCreate }) {
     <div className="docente-overlay animate-fade-in">
       <div className="docente-modal">
         <h2>Crear espacio de laboratorio</h2>
-        <p>Configura las credenciales iniciales para tu nuevo grupo.</p>
+        <p>Configura las credenciales iniciales para tu nuevo laboratorio.</p>
         
         <div className="docente-input-group">
           <label>Nombre del Laboratorio</label>

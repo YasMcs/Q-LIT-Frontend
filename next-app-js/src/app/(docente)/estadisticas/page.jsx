@@ -45,7 +45,7 @@ export default function EstadisticasDocentePage() {
 
   // Mapear las opciones del filtro por grupo (ej. "Grupo A")
   const filterOptions = [
-    { value: "all", label: "Todos los grupos" },
+    { value: "all", label: "Todos los laboratorios" },
     ...classrooms.map(c => {
       const groupName = c.group || "";
       const label = groupName.toLowerCase().startsWith("grupo") ? groupName : `Grupo ${groupName}`;
@@ -65,7 +65,7 @@ export default function EstadisticasDocentePage() {
         <header className="estadisticas-header">
           <div>
             <h1>Estadísticas Globales</h1>
-            <p>Métricas de aprendizaje de todos tus grupos asignados.</p>
+            <p>Métricas de aprendizaje de todos tus laboratorios creados.</p>
           </div>
           <div className="estadisticas-filters">
             <CustomSelect 
@@ -150,7 +150,7 @@ export default function EstadisticasDocentePage() {
           {/* Desglose por Grupo */}
           <section className="dashboard-widget groups-section">
             <div className="widget-header">
-              <h2><i className="fa-solid fa-users-viewfinder"></i> Rendimiento por Grupo</h2>
+              <h2><i className="fa-solid fa-users-viewfinder"></i> Rendimiento por Laboratorio</h2>
               <span className="widget-subtitle">Vista general de laboratorios</span>
             </div>
             <div className="table-responsive">

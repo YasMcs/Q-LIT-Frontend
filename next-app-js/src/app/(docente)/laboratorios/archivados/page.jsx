@@ -65,7 +65,7 @@ export default function ArchivoDocentePage() {
         <header className="docente-header-actions">
           <div>
             <h1>Archivados</h1>
-            <p className="text-muted text-sm mt-1">Laboratorios y grupos de semestres anteriores.</p>
+            <p className="text-muted text-sm mt-1">Laboratorios de semestres anteriores.</p>
           </div>
         </header>
         <DashboardSkeleton count={3} />
@@ -80,7 +80,7 @@ export default function ArchivoDocentePage() {
         <header className="docente-header-actions">
           <div>
             <h1>Archivados</h1>
-            <p className="text-muted text-sm mt-1">Laboratorios y grupos de semestres anteriores.</p>
+            <p className="text-muted text-sm mt-1">Laboratorios de semestres anteriores.</p>
           </div>
         </header>
 

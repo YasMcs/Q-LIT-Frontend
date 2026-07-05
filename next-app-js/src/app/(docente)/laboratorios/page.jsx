@@ -114,7 +114,7 @@ export default function DashboardDocentePage() {
     return (
       <main className="docente-main animate-fade-in">
         <div className="docente-header-actions">
-          <h1>Tus grupos asignados</h1>
+          <h1>Tus laboratorios creados</h1>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button className="docente-btn-create" style={{ opacity: 0.5, cursor: 'not-allowed', backgroundColor: '#64748b' }}>
               <i className="fa-solid fa-right-to-bracket" /> Unirse a Laboratorio
@@ -135,7 +135,7 @@ export default function DashboardDocentePage() {
       <main className="docente-main animate-fade-in">
         {/* Header */}
         <div className="docente-header-actions">
-          <h1>Tus grupos asignados</h1>
+          <h1>Tus laboratorios creados</h1>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
               onClick={handleJoinClass}
