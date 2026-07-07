@@ -43,8 +43,8 @@ El backend utiliza la libreria **Helmet** para asegurar la aplicacion Express me
 
 ### 2.3. Limitacion de Peticiones (Rate Limiting)
 Se implementaron dos limitadores con la libreria `express-rate-limit`:
-1. **General Limiter**: Maximo 3000 peticiones cada 15 minutos por IP (elevado para permitir que multiples estudiantes compartan la red de una misma institucion educativa sin ser bloqueados).
-2. **Evaluation Limiter**: Maximo 800 peticiones por hora por IP en las rutas de evaluacion, previniendo el abuso de tokens en las llamadas a la API de Google Gemini.
+1. **General Limiter**: Maximo 1000 peticiones cada 15 minutos por usuario (identificado mediante `x-user-id` con fallback a IP), garantizando que los alumnos trabajen sin interferencia incluso si comparten la misma red del laboratorio escolar.
+2. **Evaluation Limiter**: Maximo 150 peticiones por hora por usuario en las rutas de evaluacion, previniendo el abuso de tokens en las llamadas a la API de Google Gemini.
 
 ### 2.4. Aislamiento y Transacciones en el Sandbox (SQL Sandbox)
 Para evitar que un alumno corrompa los datos de prueba de otros alumnos o dane el catalogo general:

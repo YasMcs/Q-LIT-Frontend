@@ -66,7 +66,7 @@ Q-LIT opera bajo un patron de arquitectura desacoplada en tres capas principales
 - **Seguridad**:
   - `helmet`: Configuracion automatica de cabeceras HTTP seguras.
   - `cors`: Control de origenes permitidos (localhost, q-lit.online, www.q-lit.online).
-  - `express-rate-limit`: Limite de 3000 peticiones cada 15 min por IP, y limite estricto de 800 consultas/hora en rutas de evaluacion.
+  - `express-rate-limit`: Limite de 1000 peticiones cada 15 min por usuario (identificado por `x-user-id` y con fallback a IP), y limite de 150 evaluaciones/hora en rutas de evaluacion para proteger el consumo de la IA.
 - **Comunicacion de Datos**: `mysql2/promise` para la comunicacion directa con el Sandbox.
 - **IA**: `@google/genai` para instanciar el cliente del modelo `gemini-2.5-flash`.
 
