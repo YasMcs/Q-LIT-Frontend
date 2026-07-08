@@ -342,7 +342,11 @@ function ClassFeedDocenteContent() {
             <div className="space-y-4">
               {filteredChallenges.length === 0 ? (
                 <div className="p-8 text-center bg-panel border border-border rounded-xl">
-                  <p className="text-muted">No hay laboratorios en esta categoría.</p>
+                  <p className="text-muted">
+                    {challenges.length === 0 
+                      ? "No hay prácticas." 
+                      : "No hay prácticas en esta categoría."}
+                  </p>
                 </div>
               ) : (
                 filteredChallenges.map((challenge) => (

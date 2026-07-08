@@ -487,7 +487,11 @@ export default function LaboratoryFeedAlumnoPage() {
                           <div className="text-center py-16 text-muted animate-fade-in">
                             <i className="fa-solid fa-folder-open text-5xl mb-4 text-muted"></i>
                             <p className="font-bold text-lg text-muted mb-1">Nada por aquí</p>
-                            <p className="text-sm">No hay prácticas que coincidan con este filtro.</p>
+                            <p className="text-sm">
+                              {practices.length === 0 
+                                ? "No hay prácticas." 
+                                : "No hay prácticas que coincidan con este filtro."}
+                            </p>
                           </div>
                         )}
                       </div>
