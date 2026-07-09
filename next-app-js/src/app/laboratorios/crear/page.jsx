@@ -599,7 +599,7 @@ function CrearPracticaDocenteContent() {
             <div className="p-6 overflow-y-auto">
               <div className="flex flex-col gap-6">
                 {[
-                  { category: "DML (Manipulación)", options: ["SELECT", "INSERT", "INTO", "VALUES", "UPDATE", "SET", "DELETE"] },
+                  { category: "DML (Manipulación)", options: ["SELECT", "FROM", "INSERT", "INTO", "VALUES", "UPDATE", "SET", "DELETE"] },
                   { category: "Cláusulas Básicas", options: ["WHERE", "ORDER BY", "GROUP BY", "HAVING", "LIMIT", "DISTINCT", "AS"] },
                   { category: "Joins (Relaciones)", options: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "ON"] },
                   { category: "Operadores y Filtros", options: ["IN", "LIKE", "BETWEEN", "AND", "OR", "NOT", "IS NULL"] },
