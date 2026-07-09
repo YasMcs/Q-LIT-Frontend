@@ -59,7 +59,7 @@ function RevisarPracticaDocenteContent() {
               studentImage: sub.studentImage,
               status: sub.status,
               score: sub.score || 0,
-              submitted: sub.status !== "NOT_STARTED",
+              submitted: sub.status === "PENDING" || sub.status === "COMPLETED",
               sqlQuery: sub.sqlQuery || "",
               steps: sub.steps || [],
               generatedStatement: sub.generatedStatement,
@@ -280,6 +280,11 @@ function RevisarPracticaDocenteContent() {
                       Entregado
                     </span>
                   )}
+                  {student.status === 'IN_PROGRESS' && (
+                    <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border ${isClosed ? 'bg-rose-500/15 text-rose-500 border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border-amber-500/30'}`}>
+                      {isClosed ? 'Sin Entregar (En Proceso)' : 'En Proceso'}
+                    </span>
+                  )}
                   {student.status === 'NOT_STARTED' && (
                     <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border ${isClosed ? 'bg-rose-500/15 text-rose-500 border-rose-500/30' : 'bg-slate-500/15 text-slate-400 border-slate-500/30'}`}>
                       {isClosed ? 'Sin Entregar' : 'Pendiente'}
@@ -287,7 +292,7 @@ function RevisarPracticaDocenteContent() {
                   )}
                 </div>
 
-                {student.status !== 'NOT_STARTED' ? (
+                {(student.status === 'COMPLETED' || student.status === 'PENDING') ? (
                   <button 
                     onClick={() => openReview(student)}
                     className="w-full mt-auto py-3 rounded-2xl border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white font-bold transition-all flex items-center justify-center gap-2 group-hover:scale-[1.02]"
@@ -299,20 +304,40 @@ function RevisarPracticaDocenteContent() {
                     )}
                   </button>
                 ) : (
+                  // Es IN_PROGRESS o NOT_STARTED
                   isClosed ? (
-                    <button 
-                      onClick={() => handleAssignZero(student)}
-                      className="w-full mt-auto py-3 rounded-2xl border-2 border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white font-bold transition-all flex items-center justify-center gap-2 group-hover:scale-[1.02]"
-                    >
-                      <i className="fa-solid fa-star-half-stroke"></i> Asignar 0
-                    </button>
+                    student.status === 'IN_PROGRESS' ? (
+                      <button 
+                        onClick={() => openReview(student)}
+                        className="w-full mt-auto py-3 rounded-2xl border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white font-bold transition-all flex items-center justify-center gap-2 group-hover:scale-[1.02]"
+                      >
+                        <i className="fa-regular fa-eye"></i> Revisar Incompleto
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleAssignZero(student)}
+                        className="w-full mt-auto py-3 rounded-2xl border-2 border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white font-bold transition-all flex items-center justify-center gap-2 group-hover:scale-[1.02]"
+                      >
+                        <i className="fa-solid fa-star-half-stroke"></i> Asignar 0
+                      </button>
+                    )
                   ) : (
-                    <button 
-                      disabled
-                      className="w-full mt-auto py-3 rounded-2xl bg-input text-muted font-bold cursor-not-allowed border-2 border-border border-dashed"
-                    >
-                      Sin Contenido
-                    </button>
+                    // Práctica abierta
+                    student.status === 'IN_PROGRESS' ? (
+                      <button 
+                        disabled
+                        className="w-full mt-auto py-3 rounded-2xl bg-input text-amber-500/60 font-bold cursor-not-allowed border-2 border-amber-500/10 border-dashed"
+                      >
+                        En Proceso
+                      </button>
+                    ) : (
+                      <button 
+                        disabled
+                        className="w-full mt-auto py-3 rounded-2xl bg-input text-muted font-bold cursor-not-allowed border-2 border-border border-dashed"
+                      >
+                        Sin Contenido
+                      </button>
+                    )
                   )
                 )}
               </div>
