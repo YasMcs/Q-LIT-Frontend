@@ -203,6 +203,16 @@ function PracticaSQLContent() {
              setCurrentStep(parsedStatement.pasos.length);
            }
          }
+      } else if (evalData.data.isAiOffline) {
+          // Si la IA no está disponible, no marcamos error (cruz roja), dejamos en neutral para reintentar.
+          setAiFeedback({ type: 'warning', text: evalData.data.feedback });
+          setStepsStatus(prev => {
+            const newStatus = [...prev];
+            if (newStatus[activeStep] === 'evaluating') {
+              newStatus[activeStep] = 'neutral';
+            }
+            return newStatus;
+          });
       } else {
          setAiFeedback({ type: 'error', text: evalData.data.feedback });
          setStepsStatus(prev => {
@@ -635,8 +645,22 @@ function PracticaSQLContent() {
                      </div>
                   )}
                   
+                  {aiFeedback && aiFeedback.type === 'warning' && (
+                     <div className="mt-4 p-5 bg-gradient-to-r from-amber-500/10 to-transparent border-l-4 border-amber-500 text-[14px] rounded-r-xl flex items-start gap-4 w-full text-left shadow-sm mb-5">
+                       <div className="bg-amber-500/20 p-2.5 rounded-lg text-amber-400 flex items-center justify-center shrink-0">
+                         <i className="fa-solid fa-triangle-exclamation text-lg" />
+                       </div>
+                       <div className="flex-1 pt-1">
+                         <strong className="block mb-1.5 text-amber-400 text-[11px] tracking-widest uppercase">
+                           Aviso de Lumi (IA)
+                         </strong>
+                         <p className="text-amber-200/90 leading-relaxed font-medium">{aiFeedback.text}</p>
+                       </div>
+                     </div>
+                  )}
+                  
                   {executionResult.columns && executionResult.columns.length > 0 && (
-                    <div className="mt-2">
+                    <div className="mt-2 overflow-x-auto max-w-full">
                       <table className="w-full text-left text-[13px] border-separate" style={{ borderSpacing: '0 8px' }}>
                         <thead>
                           <tr>{executionResult.columns.map((col, idx) => (<th key={idx} className="px-4 py-2 text-indigo-400 font-bold uppercase tracking-wider text-[11px]">{col}</th>))}</tr>
