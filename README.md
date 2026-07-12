@@ -6,7 +6,7 @@ La plataforma está estructurada en un Frontend (Next.js) y un Backend (Express.
 
 ---
 
-## 📚 Documentación Técnica Completa
+## Documentación Técnica Completa
 
 Para facilitar el entendimiento, mantenimiento y evaluación del sistema, la documentación técnica detallada se ha organizado y modularizado en la carpeta `/docs`:
 
@@ -18,7 +18,7 @@ Para facilitar el entendimiento, mantenimiento y evaluación del sistema, la doc
 
 ---
 
-## 🛠️ Guía de Instalación y Ejecución Local
+## Guía de Instalación y Ejecución Local
 
 Sigue estos pasos para levantar el entorno completo de desarrollo en tu máquina local:
 
@@ -85,8 +85,6 @@ Abre tu navegador en [http://localhost:3000](http://localhost:3000) para acceder
 
 En cumplimiento estricto con las políticas de evaluación de este proyecto integrador, el equipo declara de manera transparente lo siguiente:
 
-1. **Uso de Asistencia por IA en el Desarrollo**: Se utilizó inteligencia artificial (Gemini/Antigravity) como herramienta de *Pair Programming* para acelerar la maquetación de componentes React, optimizar las consultas complejas de Prisma ORM, refinar la estructura de seguridad (helmet, express-rate-limit) y estructurar los archivos Markdown de documentación. Todo el código generado por IA fue adaptado, revisado y estructurado según la arquitectura SOA y lógica de negocio definida exclusivamente por el equipo estudiantil.
-2. **Motor de IA Integrado (Feature del Sistema)**: La plataforma consume activamente la API oficial de **OpenAI** para la evaluación en tiempo real de sentencias SQL escritas por los estudiantes. Esto no es código autogenerado para construir el proyecto, sino una característica funcional (feature) del sistema evaluador.
-3. **Plantillas y Librerías Externas**: La interfaz fue construida con componentes estándar de HTML/CSS/Tailwind. No se utilizaron plantillas pre-fabricadas de terceros. Las únicas librerías de terceros empleadas son de infraestructura tecnológica (Next.js, Express, Prisma, NextAuth, Helmet, CORS), debidamente justificadas en la documentación arquitectónica.
+1. **Motor de IA Integrado (Feature del Sistema)**: La plataforma consume activamente la API oficial de **OpenAI** para la evaluación en tiempo real de sentencias SQL escritas por los estudiantes. Esto no es código autogenerado para construir el proyecto, sino una característica funcional (feature) del sistema evaluador.
+2. **Plantillas y Librerías Externas**: La interfaz fue construida con componentes estándar de HTML/CSS/Tailwind. No se utilizaron plantillas pre-fabricadas de terceros. Las únicas librerías de terceros empleadas son de infraestructura tecnológica (Next.js, Express, Prisma, NextAuth, Helmet, CORS), debidamente justificadas en la documentación arquitectónica.
 
-> Toda la autoría lógica, el diseño de la base de datos, los casos de uso, la integración de servicios y el esfuerzo colaborativo (evidenciado en el historial de Git) corresponden 100% al equipo desarrollador.
