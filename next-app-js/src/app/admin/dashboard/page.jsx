@@ -304,6 +304,17 @@ export default function AdminDashboardPage() {
           <div className="kpi-grid">
             <div className="kpi-card">
               <div className="kpi-title">
+                <i className="fa-solid fa-users"></i>
+                Usuarios Analizados
+              </div>
+              <div className="kpi-value">
+                {metrics?.overall?.totalUsersEvaluated || 0}
+              </div>
+              <div className="kpi-desc">Alumnos que han interactuado con la consola interactiva</div>
+            </div>
+
+            <div className="kpi-card">
+              <div className="kpi-title">
                 <i className="fa-solid fa-rotate-right"></i>
                 Tasa de Reincidencia Global
               </div>
@@ -323,161 +334,194 @@ export default function AdminDashboardPage() {
               </div>
               <div className="kpi-desc">Alumnos que logran el éxito tras equivocarse</div>
             </div>
-
-            <div className="kpi-card">
-              <div className="kpi-title">
-                <i className="fa-solid fa-users"></i>
-                Usuarios Analizados
-              </div>
-              <div className="kpi-value">
-                {metrics?.overall?.totalUsersEvaluated || 0}
-              </div>
-              <div className="kpi-desc">Alumnos que han interactuado con la consola interactiva</div>
-            </div>
           </div>
 
           {/* Gráficos / Secciones de métricas */}
           <div className="dashboard-content-grid">
-            <div className="dashboard-section">
-              <div className="section-header">
-                <i className="fa-solid fa-chart-line"></i>
-                Clasificación por Engagement (7 días)
-              </div>
-              <div style={{ overflowX: 'auto' }}>
-                <table className="engagement-table">
-                  <thead>
-                    <tr>
-                      <th>Grupo (Uso)</th>
-                      <th>Usuarios</th>
-                      <th>Errores Únicos</th>
-                      <th>Errores Totales</th>
-                      <th>Tasa de Reincidencia</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {metrics?.engagement && Object.entries(metrics.engagement).map(([key, groupData], idx) => {
-                      const rate = parseFloat(groupData.reincidenceRate || 0);
-                      const isConstant = key === 'constantUsers';
-                      return (
-                        <tr key={idx}>
-                          <td>
-                            {groupData.description}
-                            {isConstant && (
-                              <span className="badge good" style={{ marginLeft: '10px' }}>Constantes</span>
-                            )}
-                            {!isConstant && (
-                              <span className="badge warning" style={{ marginLeft: '10px' }}>Ocasionales</span>
-                            )}
-                          </td>
-                          <td>{groupData.userCount}</td>
-                          <td>{groupData.uniqueErrors}</td>
-                          <td>{groupData.totalErrors}</td>
-                          <td>
-                            <span className={`badge ${rate < 30 ? 'good' : 'warning'}`}>
-                              {rate.toFixed(1)}%
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
+            {/* COLUMNA 1 (2fr): Evolución de Aprendizaje (Impacto de Reincidencia) */}
             <div className="dashboard-section">
               <div className="section-header">
                 <i className="fa-solid fa-bolt"></i>
                 Evolución de Aprendizaje (Impacto)
               </div>
-              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* Bloque 1: Promedio de Errores */}
-                <div>
-                  <h4 style={{ margin: '0 0 12px 0', fontSize: '0.95rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
-                    Promedio de Errores por Alumno
-                  </h4>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '12px', marginBottom: '12px' }}>
-                    <div>
-                      <h3 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Errores 1ra Práctica</h3>
-                      <p style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--error-color)' }}>
-                        {metrics?.evolution?.firstInteractionAvgErrors || "0"}
-                      </p>
-                      <small style={{ color: 'var(--text-muted)' }}>Promedio por alumno</small>
+              <div style={{ padding: '15px 0', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                
+                {/* Secciones de Impacto e Historial Lado a Lado */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+                  
+                  {/* Bloque 1: Promedio de Errores */}
+                  <div>
+                    <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
+                      Promedio de Errores por Alumno
+                    </h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', marginBottom: '12px' }}>
+                      <div>
+                        <h3 style={{ margin: '0 0 3px 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Errores 1ra Práctica</h3>
+                        <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--error-color)' }}>
+                          {metrics?.evolution?.firstInteractionAvgErrors || "0"}
+                        </p>
+                      </div>
+                      <i className="fa-solid fa-arrow-right" style={{ fontSize: '1rem', color: 'var(--text-muted)' }}></i>
+                      <div style={{ textAlign: 'right' }}>
+                        <h3 style={{ margin: '0 0 3px 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Errores Última Práctica</h3>
+                        <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--success-color)' }}>
+                          {metrics?.evolution?.lastInteractionAvgErrors || "0"}
+                        </p>
+                      </div>
                     </div>
-                    <i className="fa-solid fa-arrow-right" style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}></i>
-                    <div style={{ textAlign: 'right' }}>
-                      <h3 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Errores Última Práctica</h3>
-                      <p style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--success-color)' }}>
-                        {metrics?.evolution?.lastInteractionAvgErrors || "0"}
+                    <div style={{ textAlign: 'center', padding: '10px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '12px' }}>
+                      <h3 style={{ margin: '0 0 2px 0', color: '#10b981', fontSize: '0.85rem', fontWeight: '600' }}>Mejora Global Demostrada</h3>
+                      <p style={{ margin: 0, fontSize: '1.6rem', fontWeight: '900', color: '#10b981' }}>
+                        {metrics?.evolution?.improvementPercentage || "0%"}
                       </p>
-                      <small style={{ color: 'var(--text-muted)' }}>Promedio por alumno</small>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '12px' }}>
-                    <h3 style={{ margin: '0 0 4px 0', color: '#10b981', fontSize: '0.95rem', fontWeight: '600' }}>Mejora Global Demostrada</h3>
-                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: '900', color: '#10b981' }}>
-                      {metrics?.evolution?.improvementPercentage || "0%"}
-                    </p>
+
+                  {/* Bloque 2: Tasa de Reincidencia */}
+                  <div>
+                    <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
+                      Impacto en Tasa de Reincidencia (Meta: Reducción 30%)
+                    </h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', marginBottom: '12px' }}>
+                      <div>
+                        <h3 style={{ margin: '0 0 3px 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Reincidencia 1ra Práctica</h3>
+                        <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--error-color)' }}>
+                          {metrics?.evolution?.firstPracticeReincidenceRate || "0.0%"}
+                        </p>
+                      </div>
+                      <i className="fa-solid fa-arrow-right" style={{ fontSize: '1rem', color: 'var(--text-muted)' }}></i>
+                      <div style={{ textAlign: 'right' }}>
+                        <h3 style={{ margin: '0 0 3px 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Reincidencia Última</h3>
+                        <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--success-color)' }}>
+                          {metrics?.evolution?.lastPracticeReincidenceRate || "0.0%"}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div style={{ 
+                      textAlign: 'center', 
+                      padding: '10px', 
+                      background: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 
+                        ? 'rgba(168, 85, 247, 0.08)' 
+                        : 'rgba(234, 179, 8, 0.08)', 
+                      border: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 
+                        ? '1px solid rgba(168, 85, 247, 0.2)' 
+                        : '1px solid rgba(234, 179, 8, 0.2)', 
+                      borderRadius: '12px' 
+                    }}>
+                      <h3 style={{ 
+                        margin: '0 0 2px 0', 
+                        color: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 ? '#c084fc' : '#facc15', 
+                        fontSize: '0.85rem',
+                        fontWeight: '600'
+                      }}>
+                        {parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 
+                          ? 'Hipótesis Validada: Meta Lograda' 
+                          : 'Reducción de Reincidencia'}
+                      </h3>
+                      <p style={{ 
+                        margin: 0, 
+                        fontSize: '1.6rem', 
+                        fontWeight: '900', 
+                        color: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 ? '#c084fc' : '#facc15' 
+                      }}>
+                        -{metrics?.evolution?.reincidenceRelativeReduction || "0.0%"}
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Desglose por Categorías de Error */}
+                <div style={{ marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '15px' }}>
+                  <h5 style={{ margin: '0 0 10px 0', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Desglose de Reincidencia por Tipo de Error
+                  </h5>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                    {/* Categoría Sintaxis */}
+                    <div style={{ background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#fff', fontWeight: '600', marginBottom: '4px' }}>Sintaxis SQL</div>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center', marginTop: '6px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                        <span>{metrics?.evolution?.byCategory?.sintaxis?.firstPracticeReincidenceRate || "0.0%"}</span>
+                        <i className="fa-solid fa-arrow-right text-[8px] text-muted"></i>
+                        <span style={{ fontWeight: 'bold', color: 'var(--success-color)' }}>{metrics?.evolution?.byCategory?.sintaxis?.lastPracticeReincidenceRate || "0.0%"}</span>
+                      </div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '950', color: '#c084fc', marginTop: '6px' }}>
+                        -{metrics?.evolution?.byCategory?.sintaxis?.reincidenceRelativeReduction || "0.0%"}
+                      </div>
+                    </div>
+
+                    {/* Categoría Esquema */}
+                    <div style={{ background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#fff', fontWeight: '600', marginBottom: '4px' }}>Identificadores (Esquema)</div>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center', marginTop: '6px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                        <span>{metrics?.evolution?.byCategory?.esquema?.firstPracticeReincidenceRate || "0.0%"}</span>
+                        <i className="fa-solid fa-arrow-right text-[8px] text-muted"></i>
+                        <span style={{ fontWeight: 'bold', color: 'var(--success-color)' }}>{metrics?.evolution?.byCategory?.esquema?.lastPracticeReincidenceRate || "0.0%"}</span>
+                      </div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '950', color: '#c084fc', marginTop: '6px' }}>
+                        -{metrics?.evolution?.byCategory?.esquema?.reincidenceRelativeReduction || "0.0%"}
+                      </div>
+                    </div>
+
+                    {/* Categoría Lógica */}
+                    <div style={{ background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#fff', fontWeight: '600', marginBottom: '4px' }}>Lógica y Restricciones</div>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center', marginTop: '6px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                        <span>{metrics?.evolution?.byCategory?.logica?.firstPracticeReincidenceRate || "0.0%"}</span>
+                        <i className="fa-solid fa-arrow-right text-[8px] text-muted"></i>
+                        <span style={{ fontWeight: 'bold', color: 'var(--success-color)' }}>{metrics?.evolution?.byCategory?.logica?.lastPracticeReincidenceRate || "0.0%"}</span>
+                      </div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '950', color: '#c084fc', marginTop: '6px' }}>
+                        -{metrics?.evolution?.byCategory?.logica?.reincidenceRelativeReduction || "0.0%"}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Bloque 2: Tasa de Reincidencia */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
-                  <h4 style={{ margin: '0 0 12px 0', fontSize: '0.95rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
-                    Impacto en Tasa de Reincidencia (Meta: Reducción 30%)
-                  </h4>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '12px', marginBottom: '12px' }}>
-                    <div>
-                      <h3 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Reincidencia 1ra Práctica</h3>
-                      <p style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--error-color)' }}>
-                        {metrics?.evolution?.firstPracticeReincidenceRate || "0.0%"}
+              </div>
+            </div>
+
+            {/* COLUMNA 2 (1fr): Clasificación por Uso Frecuente (Engagement) */}
+            <div className="dashboard-section">
+              <div className="section-header">
+                <i className="fa-solid fa-chart-line"></i>
+                Uso Frecuente (Engagement)
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
+                {metrics?.engagement && Object.entries(metrics.engagement).map(([key, groupData], idx) => {
+                  const rate = parseFloat(groupData.reincidenceRate || 0);
+                  const isConstant = key === 'constantUsers';
+                  return (
+                    <div key={idx} style={{ background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#fff' }}>
+                          {isConstant ? 'Alumnos Constantes' : 'Alumnos Ocasionales'}
+                        </span>
+                        <span className={`badge ${isConstant ? 'good' : 'warning'}`}>
+                          {isConstant ? '>= 7 días' : '< 7 días'}
+                        </span>
+                      </div>
+                      <p style={{ margin: '0 0 10px 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {groupData.description}
                       </p>
-                      <small style={{ color: 'var(--text-muted)' }}>Tasa inicial</small>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px', fontSize: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '10px' }}>
+                        <div>
+                          <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>Alumnos</div>
+                          <div style={{ fontWeight: 'bold', color: '#fff', fontSize: '1rem' }}>{groupData.userCount}</div>
+                        </div>
+                        <div>
+                          <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>Err. Totales</div>
+                          <div style={{ fontWeight: 'bold', color: '#fff', fontSize: '1rem' }}>{groupData.totalErrors}</div>
+                        </div>
+                        <div>
+                          <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>Reincidencia</div>
+                          <div style={{ fontWeight: 'bold', color: rate < 30 ? 'var(--success-color)' : 'var(--error-color)', fontSize: '1rem' }}>{rate.toFixed(1)}%</div>
+                        </div>
+                      </div>
                     </div>
-                    <i className="fa-solid fa-arrow-right" style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}></i>
-                    <div style={{ textAlign: 'right' }}>
-                      <h3 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Reincidencia Última</h3>
-                      <p style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--success-color)' }}>
-                        {metrics?.evolution?.lastPracticeReincidenceRate || "0.0%"}
-                      </p>
-                      <small style={{ color: 'var(--text-muted)' }}>Tasa actual</small>
-                    </div>
-                  </div>
-                  
-                  <div style={{ 
-                    textAlign: 'center', 
-                    padding: '12px', 
-                    background: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 
-                      ? 'rgba(168, 85, 247, 0.08)' 
-                      : 'rgba(234, 179, 8, 0.08)', 
-                    border: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 
-                      ? '1px solid rgba(168, 85, 247, 0.2)' 
-                      : '1px solid rgba(234, 179, 8, 0.2)', 
-                    borderRadius: '12px' 
-                  }}>
-                    <h3 style={{ 
-                      margin: '0 0 4px 0', 
-                      color: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 ? '#c084fc' : '#facc15', 
-                      fontSize: '0.95rem',
-                      fontWeight: '600'
-                    }}>
-                      {parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 
-                        ? 'Hipótesis Validada: Meta Lograda' 
-                        : 'Reducción de Reincidencia'}
-                    </h3>
-                    <p style={{ 
-                      margin: 0, 
-                      fontSize: '2rem', 
-                      fontWeight: '900', 
-                      color: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 ? '#c084fc' : '#facc15' 
-                    }}>
-                      -{metrics?.evolution?.reincidenceRelativeReduction || "0.0%"}
-                    </p>
-                    <small style={{ color: 'var(--text-muted)' }}>
-                      Reducción absoluta: {metrics?.evolution?.reincidenceAbsoluteReduction || "0.0%"}
-                    </small>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
           </div>
