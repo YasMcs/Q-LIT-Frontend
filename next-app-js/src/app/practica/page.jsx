@@ -301,7 +301,12 @@ function PracticaSQLContent() {
   useEffect(() => {
     if (generatedStatement) {
       try {
-        const parsed = JSON.parse(generatedStatement);
+        let cleaned = generatedStatement.trim();
+        if (cleaned.startsWith("```")) {
+          cleaned = cleaned.replace(/^```[a-zA-Z]*\n?/, "");
+          cleaned = cleaned.replace(/\n?```$/, "");
+        }
+        const parsed = JSON.parse(cleaned.trim());
         setParsedStatement(parsed);
         if (parsed.pasos) {
            const initialStatus = new Array(parsed.pasos.length).fill(null);
@@ -353,7 +358,12 @@ function PracticaSQLContent() {
               // Si está resuelta, permitir clickear todos los pasos
               if (data.data.submission.generatedStatement) {
                  try {
-                   const tempParsed = JSON.parse(data.data.submission.generatedStatement);
+                   let cleaned = data.data.submission.generatedStatement.trim();
+                   if (cleaned.startsWith("```")) {
+                     cleaned = cleaned.replace(/^```[a-zA-Z]*\n?/, "");
+                     cleaned = cleaned.replace(/\n?```$/, "");
+                   }
+                   const tempParsed = JSON.parse(cleaned.trim());
                    if (tempParsed.pasos) {
                      setCurrentStep(tempParsed.pasos.length);
                    }

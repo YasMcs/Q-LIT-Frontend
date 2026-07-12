@@ -393,7 +393,12 @@ function RevisarPracticaDocenteContent() {
                     selectedStudent.steps.map((step, idx) => {
                       let instruction = `Paso ${step.stepIndex + 1}`;
                       try {
-                        const parsed = JSON.parse(selectedStudent.generatedStatement);
+                        let cleaned = (selectedStudent.generatedStatement || '').trim();
+                        if (cleaned.startsWith("```")) {
+                          cleaned = cleaned.replace(/^```[a-zA-Z]*\n?/, "");
+                          cleaned = cleaned.replace(/\n?```$/, "");
+                        }
+                        const parsed = JSON.parse(cleaned.trim());
                         const paso = parsed.pasos?.find(p => p.step === step.stepIndex + 1);
                         if (paso) instruction = paso.instruction;
                       } catch (e) {}
