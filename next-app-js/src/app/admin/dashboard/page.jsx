@@ -18,6 +18,19 @@ export default function AdminDashboardPage() {
   const [loadingDirectory, setLoadingDirectory] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState({});
 
+  // Helper para formatear reducciones relativas sin signos duplicados
+  const formatRelativeReduction = (reductionStr) => {
+    if (!reductionStr) return "0.0%";
+    const cleanStr = reductionStr.replace('%', '').trim();
+    const val = parseFloat(cleanStr);
+    if (isNaN(val)) return "0.0%";
+    if (val === 0) return "0.0%";
+    if (val < 0) {
+      return `+${Math.abs(val).toFixed(1)}%`;
+    }
+    return `-${val.toFixed(1)}%`;
+  };
+
   useEffect(() => {
     fetchTeachers();
     fetchMetrics();
@@ -425,7 +438,7 @@ export default function AdminDashboardPage() {
                         fontWeight: '900', 
                         color: parseFloat(metrics?.evolution?.reincidenceRelativeReduction || '0') >= 30.0 ? '#c084fc' : '#facc15' 
                       }}>
-                        -{metrics?.evolution?.reincidenceRelativeReduction || "0.0%"}
+                        {formatRelativeReduction(metrics?.evolution?.reincidenceRelativeReduction)}
                       </p>
                     </div>
                   </div>
@@ -447,7 +460,7 @@ export default function AdminDashboardPage() {
                         <span style={{ fontWeight: 'bold', color: 'var(--success-color)' }}>{metrics?.evolution?.byCategory?.sintaxis?.lastPracticeReincidenceRate || "0.0%"}</span>
                       </div>
                       <div style={{ fontSize: '0.95rem', fontWeight: '950', color: '#c084fc', marginTop: '6px' }}>
-                        -{metrics?.evolution?.byCategory?.sintaxis?.reincidenceRelativeReduction || "0.0%"}
+                        {formatRelativeReduction(metrics?.evolution?.byCategory?.sintaxis?.reincidenceRelativeReduction)}
                       </div>
                     </div>
 
@@ -460,7 +473,7 @@ export default function AdminDashboardPage() {
                         <span style={{ fontWeight: 'bold', color: 'var(--success-color)' }}>{metrics?.evolution?.byCategory?.esquema?.lastPracticeReincidenceRate || "0.0%"}</span>
                       </div>
                       <div style={{ fontSize: '0.95rem', fontWeight: '950', color: '#c084fc', marginTop: '6px' }}>
-                        -{metrics?.evolution?.byCategory?.esquema?.reincidenceRelativeReduction || "0.0%"}
+                        {formatRelativeReduction(metrics?.evolution?.byCategory?.esquema?.reincidenceRelativeReduction)}
                       </div>
                     </div>
 
@@ -473,7 +486,7 @@ export default function AdminDashboardPage() {
                         <span style={{ fontWeight: 'bold', color: 'var(--success-color)' }}>{metrics?.evolution?.byCategory?.logica?.lastPracticeReincidenceRate || "0.0%"}</span>
                       </div>
                       <div style={{ fontSize: '0.95rem', fontWeight: '950', color: '#c084fc', marginTop: '6px' }}>
-                        -{metrics?.evolution?.byCategory?.logica?.reincidenceRelativeReduction || "0.0%"}
+                        {formatRelativeReduction(metrics?.evolution?.byCategory?.logica?.reincidenceRelativeReduction)}
                       </div>
                     </div>
                   </div>
