@@ -14,7 +14,7 @@ Para facilitar el entendimiento, mantenimiento y evaluación del sistema, la doc
 2. **[02. Especificación de la API (API Specification)](file:///c:/Users/yasbe/OneDrive/Escritorio/Q-LIT/docs/02_API_SPECIFICATION.md)**: Detalle exhaustivo de endpoints, cabeceras de autorización requeridas por el BFF, payloads de petición y esquemas de respuesta JSON para éxito y error.
 3. **[03. Estructura de Base de Datos y SQL Avanzado](file:///c:/Users/yasbe/OneDrive/Escritorio/Q-LIT/docs/03_DATABASE_AND_SQL_ADVANCED.md)**: Modelado físico de datos en Prisma (PostgreSQL) y la justificación técnica de la programación en base de datos avanzadas (JOINs, vistas, índices, funciones y procedimientos almacenados transaccionales).
 4. **[04. Motor de Inteligencia Artificial (Lumi)](file:///c:/Users/yasbe/OneDrive/Escritorio/Q-LIT/docs/04_AI_ENGINE_AND_PROMPTING.md)**: Integración de OpenAI (`gpt-4o-mini`), prompting de generación (3 a 4 pasos lógicos), Structured Outputs y el mecanismo de fallback local ante caídas de la IA.
-5. **[05. Convenciones de Desarrollo y Backlog](file:///c:/Users/yasbe/OneDrive/Escritorio/Q-LIT/docs/05_DEVELOPMENT_AND_BACKLOG.md)**: Guía de commits semánticos en español, reglamento de diseño (sin emojis, Vanilla CSS), declaración formal de uso de IA en el desarrollo y el roadmap del proyecto.
+5. **[05. Estándares de Diseño y Backlog](file:///c:/Users/yasbe/OneDrive/Escritorio/Q-LIT/docs/05_DEVELOPMENT_AND_BACKLOG.md)**: Reglamento de diseño (sin emojis, Tailwind CSS v4) y el roadmap/backlog actual del proyecto.
 
 ---
 
@@ -78,3 +78,15 @@ Sigue estos pasos para levantar el entorno completo de desarrollo en tu máquina
    ```
 
 Abre tu navegador en [http://localhost:3000](http://localhost:3000) para acceder a la aplicación.
+
+---
+
+## Declaración de Uso de IA y Recursos Externos
+
+En cumplimiento estricto con las políticas de evaluación de este proyecto integrador, el equipo declara de manera transparente lo siguiente:
+
+1. **Uso de Asistencia por IA en el Desarrollo**: Se utilizó inteligencia artificial (Gemini/Antigravity) como herramienta de *Pair Programming* para acelerar la maquetación de componentes React, optimizar las consultas complejas de Prisma ORM, refinar la estructura de seguridad (helmet, express-rate-limit) y estructurar los archivos Markdown de documentación. Todo el código generado por IA fue adaptado, revisado y estructurado según la arquitectura SOA y lógica de negocio definida exclusivamente por el equipo estudiantil.
+2. **Motor de IA Integrado (Feature del Sistema)**: La plataforma consume activamente la API oficial de **OpenAI** para la evaluación en tiempo real de sentencias SQL escritas por los estudiantes. Esto no es código autogenerado para construir el proyecto, sino una característica funcional (feature) del sistema evaluador.
+3. **Plantillas y Librerías Externas**: La interfaz fue construida con componentes estándar de HTML/CSS/Tailwind. No se utilizaron plantillas pre-fabricadas de terceros. Las únicas librerías de terceros empleadas son de infraestructura tecnológica (Next.js, Express, Prisma, NextAuth, Helmet, CORS), debidamente justificadas en la documentación arquitectónica.
+
+> Toda la autoría lógica, el diseño de la base de datos, los casos de uso, la integración de servicios y el esfuerzo colaborativo (evidenciado en el historial de Git) corresponden 100% al equipo desarrollador.

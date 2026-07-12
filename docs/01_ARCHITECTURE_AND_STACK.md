@@ -19,7 +19,7 @@ graph TD
 
 ### 1.1. Capa de Frontend (Next.js 14+ - App Router)
 * **React 18**: Permite el desarrollo de una interfaz de usuario reactiva, modular y de alto rendimiento. Esto es fundamental para actualizar dinámicamente el editor de código, el diccionario de entidades y la retroalimentación en tiempo real sin recargar la página.
-* **CSS Puro (Vanilla CSS)**: Se seleccionó CSS nativo para garantizar el máximo control de diseño, animaciones personalizadas (efectos de cristal, degradados de fondo y transiciones) y evitar la sobrecarga o limitaciones de clases de frameworks utilitarios, logrando una estética visual premium y altamente optimizada.
+* **Tailwind CSS (v4)**: Se utiliza Tailwind CSS para agilizar el diseño de la interfaz de usuario mediante clases de utilidad modernas y optimizadas, garantizando un diseño responsivo, modular y consistente en toda la aplicación.
 * **NextAuth.js (v4)**: Solución estándar de la industria para la gestión de sesiones mediante inicio de sesión social con Google OAuth 2.0. Protege la identidad en el navegador utilizando cookies seguras cifradas de solo lectura HTTP (`__Secure-next-auth.session-token`).
 
 ### 1.2. Capa de Backend (Express.js)
