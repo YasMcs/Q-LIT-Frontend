@@ -233,6 +233,31 @@ function PracticaSQLContent() {
     router.push("/clase");
   };
 
+  const handleReset = async () => {
+    const confirmed = await showConfirm(
+      "¿Reiniciar Práctica?",
+      "Esta acción borrará todo tu progreso y respuestas guardadas para esta práctica, y generará un nuevo enunciado. No se puede deshacer.",
+      "Reiniciar",
+      "Cancelar"
+    );
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/proxy/practices/${practiceId}/reset`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        await showAlert("Error", data.error?.message || "No se pudo reiniciar la práctica", "error");
+        setLoading(false);
+        return;
+      }
+      window.location.reload();
+    } catch (err) {
+      await showAlert("Error de Conexión", "No se pudo conectar con el servidor.", "error");
+      setLoading(false);
+    }
+  };
+
   // Resize handler mouse events
   const startResizing = (e) => {
     isResizing.current = true;
@@ -447,7 +472,16 @@ function PracticaSQLContent() {
            <i className="fa-solid fa-database text-indigo-500" />
            {practiceData?.title || "Práctica SQL"}
         </div>
-        <div className="w-[150px]"></div> {/* Spacer flex */}
+        <div className="flex justify-end items-center min-w-[150px]">
+          {!isReadOnly && (
+            <button 
+              className="text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20 transition-all flex items-center gap-1.5 select-none"
+              onClick={handleReset}
+            >
+              <i className="fa-solid fa-rotate-left"></i> Reiniciar Práctica
+            </button>
+          )}
+        </div>
       </header>
 
       <div className="workspace-layout-sql">
