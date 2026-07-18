@@ -6,6 +6,256 @@ import { showAlert, showConfirm, showPrompt } from "@/utils/alerts";
 import Swal from "sweetalert2";
 import "./admin.css";
 
+function ImprovementChart({ evolution }) {
+  // Parse rates
+  const parseRate = (rateStr) => {
+    if (!rateStr) return 0;
+    return parseFloat(rateStr.replace('%', '').trim()) || 0;
+  };
+
+  const getRelativeReduction = (first, last) => {
+    if (first === 0) return 0;
+    return ((first - last) / first) * 100;
+  };
+
+  // Extract values
+  let sintaxisInit = parseRate(evolution?.byCategory?.sintaxis?.firstPracticeReincidenceRate);
+  let sintaxisEnd = parseRate(evolution?.byCategory?.sintaxis?.lastPracticeReincidenceRate);
+  let esquemaInit = parseRate(evolution?.byCategory?.esquema?.firstPracticeReincidenceRate);
+  let esquemaEnd = parseRate(evolution?.byCategory?.esquema?.lastPracticeReincidenceRate);
+  let logicaInit = parseRate(evolution?.byCategory?.logica?.firstPracticeReincidenceRate);
+  let logicaEnd = parseRate(evolution?.byCategory?.logica?.lastPracticeReincidenceRate);
+
+  // Fallback a mock data si todo es 0 (para propósitos de demostración y que siempre se vea viva la gráfica)
+  const isMock = sintaxisInit === 0 && sintaxisEnd === 0 && esquemaInit === 0 && esquemaEnd === 0 && logicaInit === 0 && logicaEnd === 0;
+  if (isMock) {
+    sintaxisInit = 48.5;
+    sintaxisEnd = 34.0; // ~30% reduccion relativa
+    esquemaInit = 35.0;
+    esquemaEnd = 26.2; // ~25% reduccion relativa
+    logicaInit = 42.0;
+    logicaEnd = 33.6; // ~20% reduccion relativa
+  }
+
+  const data = [
+    {
+      name: "Sintaxis SQL",
+      init: sintaxisInit,
+      end: sintaxisEnd,
+      reduction: isMock ? 29.9 : getRelativeReduction(sintaxisInit, sintaxisEnd)
+    },
+    {
+      name: "Identificadores (Esquema)",
+      init: esquemaInit,
+      end: esquemaEnd,
+      reduction: isMock ? 25.1 : getRelativeReduction(esquemaInit, esquemaEnd)
+    },
+    {
+      name: "Lógica y Restricciones",
+      init: logicaInit,
+      end: logicaEnd,
+      reduction: isMock ? 20.0 : getRelativeReduction(logicaInit, logicaEnd)
+    }
+  ];
+
+  // SVG parameters
+  const width = 500;
+  const height = 240;
+  const paddingLeft = 50;
+  const paddingRight = 20;
+  const paddingTop = 20;
+  const paddingBottom = 45;
+
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+  
+  // Encontrar el valor máximo de Y
+  const maxVal = Math.max(100, sintaxisInit, esquemaInit, logicaInit);
+  const scaleY = chartHeight / maxVal;
+
+  const getY = (val) => paddingTop + (chartHeight - (val * scaleY));
+  const getBarHeight = (val) => val * scaleY;
+
+  return (
+    <div style={{
+      background: 'rgba(255, 255, 255, 0.01)',
+      border: '1px solid rgba(255, 255, 255, 0.04)',
+      borderRadius: '16px',
+      padding: '20px',
+      marginTop: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '15px'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
+          Gráfica de Reducción de Reincidencia por Categoría {isMock && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 'normal' }}>(Datos de simulación Q-LIT)</span>}
+        </h4>
+        <div style={{ display: 'flex', gap: '15px', fontSize: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #f43f5e, #be123c)' }}></span>
+            <span style={{ color: 'var(--text-muted)' }}>Primera Práctica</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #c084fc, #7c3aed)' }}></span>
+            <span style={{ color: 'var(--text-muted)' }}>Última Práctica</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ position: 'relative', width: '100%', height: `${height}px` }}>
+        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+          <defs>
+            <linearGradient id="roseGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f43f5e" />
+              <stop offset="100%" stopColor="#be123c" />
+            </linearGradient>
+            <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#c084fc" />
+              <stop offset="100%" stopColor="#7c3aed" />
+            </linearGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#7c3aed" floodOpacity="0.15" />
+            </filter>
+          </defs>
+
+          {/* Grid lines */}
+          {[0, 25, 50, 75, 100].map((tick) => {
+            const y = getY(tick);
+            return (
+              <g key={tick}>
+                <line 
+                  x1={paddingLeft} 
+                  y1={y} 
+                  x2={width - paddingRight} 
+                  y2={y} 
+                  stroke="rgba(255,255,255,0.06)" 
+                  strokeWidth="1"
+                  strokeDasharray={tick === 0 ? "none" : "4 4"}
+                />
+                <text 
+                  x={paddingLeft - 10} 
+                  y={y + 4} 
+                  fill="rgba(255,255,255,0.3)" 
+                  fontSize="10" 
+                  textAnchor="end"
+                  fontFamily="monospace"
+                >
+                  {tick}%
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Bars */}
+          {data.map((cat, idx) => {
+            const centerX = paddingLeft + (chartWidth * (idx * 2 + 1)) / 6;
+            const barWidth = 20;
+            const spacing = 4;
+
+            const x1 = centerX - barWidth - spacing;
+            const x2 = centerX + spacing;
+
+            const y1 = getY(cat.init);
+            const h1 = getBarHeight(cat.init);
+
+            const y2 = getY(cat.end);
+            const h2 = getBarHeight(cat.end);
+
+            return (
+              <g key={idx}>
+                {/* Bar 1 (Initial) */}
+                <rect 
+                  x={x1} 
+                  y={y1} 
+                  width={barWidth} 
+                  height={h1} 
+                  fill="url(#roseGradient)" 
+                  rx="4"
+                />
+                {/* Tooltip value for Bar 1 */}
+                <text 
+                  x={x1 + barWidth/2} 
+                  y={y1 - 6} 
+                  fill="#f43f5e" 
+                  fontSize="10" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                  fontFamily="monospace"
+                >
+                  {cat.init.toFixed(1)}%
+                </text>
+
+                {/* Bar 2 (Final) */}
+                <rect 
+                  x={x2} 
+                  y={y2} 
+                  width={barWidth} 
+                  height={h2} 
+                  fill="url(#purpleGradient)" 
+                  rx="4"
+                  filter="url(#glow)"
+                />
+                {/* Tooltip value for Bar 2 */}
+                <text 
+                  x={x2 + barWidth/2} 
+                  y={y2 - 6} 
+                  fill="#c084fc" 
+                  fontSize="10" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                  fontFamily="monospace"
+                >
+                  {cat.end.toFixed(1)}%
+                </text>
+
+                {/* X Axis Label */}
+                <text 
+                  x={centerX} 
+                  y={height - paddingBottom + 20} 
+                  fill="rgba(255,255,255,0.5)" 
+                  fontSize="11" 
+                  fontWeight="500" 
+                  textAnchor="middle"
+                >
+                  {cat.name}
+                </text>
+
+                {/* Improvement Badge indicator */}
+                {cat.reduction > 0 && (
+                  <g transform={`translate(${centerX}, ${Math.min(y1, y2) + (Math.abs(y1 - y2) / 2) - 10})`}>
+                    <rect 
+                      x="-25" 
+                      y="-8" 
+                      width="50" 
+                      height="16" 
+                      rx="8" 
+                      fill="rgba(16, 185, 129, 0.15)" 
+                      stroke="rgba(16, 185, 129, 0.3)" 
+                      strokeWidth="1"
+                    />
+                    <text 
+                      x="0" 
+                      y="4" 
+                      fill="#10b981" 
+                      fontSize="9" 
+                      fontWeight="bold" 
+                      textAnchor="middle"
+                      fontFamily="monospace"
+                    >
+                      -{cat.reduction.toFixed(0)}%
+                    </text>
+                  </g>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -442,8 +692,9 @@ export default function AdminDashboardPage() {
                       </p>
                     </div>
                   </div>
-
                 </div>
+
+                <ImprovementChart evolution={metrics?.evolution} />
 
                 {/* Desglose por Categorías de Error */}
                 <div style={{ marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '15px' }}>
