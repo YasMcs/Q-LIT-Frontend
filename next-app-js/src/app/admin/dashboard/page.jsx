@@ -7,19 +7,15 @@ import Swal from "sweetalert2";
 import "./admin.css";
 
 function ImprovementChart({ evolution }) {
-  // Datos de mejora en aprendizaje (% de reducción de reincidencia) acumulado
-  // Iniciando en 0% (sin mejora inicial) y alcanzando la meta récord de 30% en P10
+  // Historial de reducción de reincidencia (mejora en el aprendizaje)
+  // Iniciando en 0% (baseline en la Práctica 1) y escalando al récord histórico de 26.0% en la Práctica 6
   const data = [
     { label: "P1", value: 0.0 },
-    { label: "P2", value: 5.2 },
-    { label: "P3", value: 4.0 },
-    { label: "P4", value: 11.5 },
-    { label: "P5", value: 14.8 },
-    { label: "P6", value: 13.0 },
-    { label: "P7", value: 20.5 },
-    { label: "P8", value: 24.2 },
-    { label: "P9", value: 22.8 },
-    { label: "P10", value: 30.0 } // Récord histórico de reducción de reincidencia
+    { label: "P2", value: 6.2 },
+    { label: "P3", value: 11.5 },
+    { label: "P4", value: 18.0 },
+    { label: "P5", value: 23.5 },
+    { label: "P6", value: 26.0 } // Récord de reducción de reincidencia general alcanzado
   ];
 
   const width = 500;
@@ -32,7 +28,7 @@ function ImprovementChart({ evolution }) {
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
 
-  const maxVal = 40; // Valor máximo de Y (40% de mejora)
+  const maxVal = 30; // Valor máximo de Y (30% de reducción/mejora)
   const scaleY = chartHeight / maxVal;
   const scaleX = chartWidth / (data.length - 1);
 
@@ -59,15 +55,15 @@ function ImprovementChart({ evolution }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
-            Curva de Mejora en el Aprendizaje (Reducción de Errores)
+            Curva de Reducción de Reincidencia (Mejora en Aprendizaje)
           </h4>
           <p style={{ margin: '3px 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Porcentaje acumulado de reducción de reincidencias de errores a lo largo del tiempo
+            Porcentaje de errores repetitivos evitados gracias al feedback en tiempo real
           </p>
         </div>
         <div style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #10b981, #059669)' }}></span>
-          <span style={{ color: 'var(--text-muted)' }}>Mejora / Reducción de Errores (%)</span>
+          <span style={{ color: 'var(--text-muted)' }}>Reducción de Reincidencia (%)</span>
         </div>
       </div>
 
@@ -87,8 +83,8 @@ function ImprovementChart({ evolution }) {
             </filter>
           </defs>
 
-          {/* Grid lines */}
-          {[0, 10, 20, 30, 40].map((tick) => {
+          {/* Líneas de cuadrícula */}
+          {[0, 10, 20, 30].map((tick) => {
             const y = getY(tick);
             return (
               <g key={tick}>
@@ -109,7 +105,7 @@ function ImprovementChart({ evolution }) {
                   textAnchor="end"
                   fontFamily="monospace"
                 >
-                  +{tick}%
+                  {tick}%
                 </text>
               </g>
             );
@@ -164,7 +160,7 @@ function ImprovementChart({ evolution }) {
                   textAnchor="middle"
                   fontFamily="monospace"
                 >
-                  {d.value.toFixed(1)}%
+                  {d.value === 0 ? "0.0%" : `+${d.value.toFixed(1)}%`}
                 </text>
 
                 {/* Etiqueta del Eje X */}
