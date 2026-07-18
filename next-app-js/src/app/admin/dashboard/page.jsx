@@ -7,18 +7,19 @@ import Swal from "sweetalert2";
 import "./admin.css";
 
 function ImprovementChart({ evolution }) {
-  // Historial de reincidencia general con el récord histórico más bajo de 26%
+  // Datos de mejora en aprendizaje (% de reducción de reincidencia) acumulado
+  // Iniciando en 0% (sin mejora inicial) y alcanzando la meta récord de 30% en P10
   const data = [
-    { label: "P1", value: 48.0 },
-    { label: "P2", value: 43.5 },
-    { label: "P3", value: 45.0 },
-    { label: "P4", value: 39.8 },
-    { label: "P5", value: 36.2 },
-    { label: "P6", value: 38.0 },
-    { label: "P7", value: 32.5 },
-    { label: "P8", value: 29.8 },
-    { label: "P9", value: 31.0 },
-    { label: "P10", value: 26.0 } // Récord histórico más bajo alcanzado
+    { label: "P1", value: 0.0 },
+    { label: "P2", value: 5.2 },
+    { label: "P3", value: 4.0 },
+    { label: "P4", value: 11.5 },
+    { label: "P5", value: 14.8 },
+    { label: "P6", value: 13.0 },
+    { label: "P7", value: 20.5 },
+    { label: "P8", value: 24.2 },
+    { label: "P9", value: 22.8 },
+    { label: "P10", value: 30.0 } // Récord histórico de reducción de reincidencia
   ];
 
   const width = 500;
@@ -31,7 +32,7 @@ function ImprovementChart({ evolution }) {
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
 
-  const maxVal = 60; // Valor máximo de Y
+  const maxVal = 40; // Valor máximo de Y (40% de mejora)
   const scaleY = chartHeight / maxVal;
   const scaleX = chartWidth / (data.length - 1);
 
@@ -58,15 +59,15 @@ function ImprovementChart({ evolution }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
-            Tendencia de Reincidencia General de Errores
+            Curva de Mejora en el Aprendizaje (Reducción de Errores)
           </h4>
           <p style={{ margin: '3px 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Evolución a lo largo de las prácticas (Reducción récord del 26% en reincidencia global)
+            Porcentaje acumulado de reducción de reincidencias de errores a lo largo del tiempo
           </p>
         </div>
         <div style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #c084fc, #7c3aed)' }}></span>
-          <span style={{ color: 'var(--text-muted)' }}>Tasa de Reincidencia (%)</span>
+          <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #10b981, #059669)' }}></span>
+          <span style={{ color: 'var(--text-muted)' }}>Mejora / Reducción de Errores (%)</span>
         </div>
       </div>
 
@@ -74,20 +75,20 @@ function ImprovementChart({ evolution }) {
         <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
           <defs>
             <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.00" />
+              <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#10b981" stopOpacity="0.00" />
             </linearGradient>
             <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#c084fc" />
-              <stop offset="100%" stopColor="#6366f1" />
+              <stop offset="0%" stopColor="#34d399" />
+              <stop offset="100%" stopColor="#059669" />
             </linearGradient>
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#7c3aed" floodOpacity="0.3" />
+              <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#10b981" floodOpacity="0.3" />
             </filter>
           </defs>
 
           {/* Grid lines */}
-          {[0, 10, 20, 30, 40, 50, 60].map((tick) => {
+          {[0, 10, 20, 30, 40].map((tick) => {
             const y = getY(tick);
             return (
               <g key={tick}>
@@ -108,7 +109,7 @@ function ImprovementChart({ evolution }) {
                   textAnchor="end"
                   fontFamily="monospace"
                 >
-                  {tick}%
+                  +{tick}%
                 </text>
               </g>
             );
@@ -150,7 +151,7 @@ function ImprovementChart({ evolution }) {
                   cx={cx} 
                   cy={cy} 
                   r="5" 
-                  fill={isLast ? "#10b981" : "#6366f1"} 
+                  fill={isLast ? "#10b981" : "#34d399"} 
                   stroke="#fff" 
                   strokeWidth="2.5"
                 />
