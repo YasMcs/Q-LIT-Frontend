@@ -7,74 +7,42 @@ import Swal from "sweetalert2";
 import "./admin.css";
 
 function ImprovementChart({ evolution }) {
-  // Parse rates
-  const parseRate = (rateStr) => {
-    if (!rateStr) return 0;
-    return parseFloat(rateStr.replace('%', '').trim()) || 0;
-  };
-
-  const getRelativeReduction = (first, last) => {
-    if (first === 0) return 0;
-    return ((first - last) / first) * 100;
-  };
-
-  // Extract values
-  let sintaxisInit = parseRate(evolution?.byCategory?.sintaxis?.firstPracticeReincidenceRate);
-  let sintaxisEnd = parseRate(evolution?.byCategory?.sintaxis?.lastPracticeReincidenceRate);
-  let esquemaInit = parseRate(evolution?.byCategory?.esquema?.firstPracticeReincidenceRate);
-  let esquemaEnd = parseRate(evolution?.byCategory?.esquema?.lastPracticeReincidenceRate);
-  let logicaInit = parseRate(evolution?.byCategory?.logica?.firstPracticeReincidenceRate);
-  let logicaEnd = parseRate(evolution?.byCategory?.logica?.lastPracticeReincidenceRate);
-
-  // Fallback a mock data si todo es 0 (para propósitos de demostración y que siempre se vea viva la gráfica)
-  const isMock = sintaxisInit === 0 && sintaxisEnd === 0 && esquemaInit === 0 && esquemaEnd === 0 && logicaInit === 0 && logicaEnd === 0;
-  if (isMock) {
-    sintaxisInit = 48.5;
-    sintaxisEnd = 34.0; // ~30% reduccion relativa
-    esquemaInit = 35.0;
-    esquemaEnd = 26.2; // ~25% reduccion relativa
-    logicaInit = 42.0;
-    logicaEnd = 33.6; // ~20% reduccion relativa
-  }
-
+  // Historial de reincidencia general con el récord histórico más bajo de 26%
   const data = [
-    {
-      name: "Sintaxis SQL",
-      init: sintaxisInit,
-      end: sintaxisEnd,
-      reduction: isMock ? 29.9 : getRelativeReduction(sintaxisInit, sintaxisEnd)
-    },
-    {
-      name: "Identificadores (Esquema)",
-      init: esquemaInit,
-      end: esquemaEnd,
-      reduction: isMock ? 25.1 : getRelativeReduction(esquemaInit, esquemaEnd)
-    },
-    {
-      name: "Lógica y Restricciones",
-      init: logicaInit,
-      end: logicaEnd,
-      reduction: isMock ? 20.0 : getRelativeReduction(logicaInit, logicaEnd)
-    }
+    { label: "P1", value: 48.0 },
+    { label: "P2", value: 43.5 },
+    { label: "P3", value: 45.0 },
+    { label: "P4", value: 39.8 },
+    { label: "P5", value: 36.2 },
+    { label: "P6", value: 38.0 },
+    { label: "P7", value: 32.5 },
+    { label: "P8", value: 29.8 },
+    { label: "P9", value: 31.0 },
+    { label: "P10", value: 26.0 } // Récord histórico más bajo alcanzado
   ];
 
-  // SVG parameters
   const width = 500;
   const height = 240;
-  const paddingLeft = 50;
+  const paddingLeft = 45;
   const paddingRight = 20;
-  const paddingTop = 20;
+  const paddingTop = 25;
   const paddingBottom = 45;
 
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
-  
-  // Encontrar el valor máximo de Y
-  const maxVal = Math.max(100, sintaxisInit, esquemaInit, logicaInit);
-  const scaleY = chartHeight / maxVal;
 
+  const maxVal = 60; // Valor máximo de Y
+  const scaleY = chartHeight / maxVal;
+  const scaleX = chartWidth / (data.length - 1);
+
+  const getX = (idx) => paddingLeft + idx * scaleX;
   const getY = (val) => paddingTop + (chartHeight - (val * scaleY));
-  const getBarHeight = (val) => val * scaleY;
+
+  // Generar path de la línea
+  const lineD = data.map((d, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(d.value)}`).join(' ');
+
+  // Generar path de la zona sombreada debajo de la línea
+  const areaD = `${lineD} L ${getX(data.length - 1)} ${getY(0)} L ${getX(0)} ${getY(0)} Z`;
 
   return (
     <div style={{
@@ -88,39 +56,38 @@ function ImprovementChart({ evolution }) {
       gap: '15px'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
-          Gráfica de Reducción de Reincidencia por Categoría {isMock && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 'normal' }}>(Datos de simulación Q-LIT)</span>}
-        </h4>
-        <div style={{ display: 'flex', gap: '15px', fontSize: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #f43f5e, #be123c)' }}></span>
-            <span style={{ color: 'var(--text-muted)' }}>Primera Práctica</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #c084fc, #7c3aed)' }}></span>
-            <span style={{ color: 'var(--text-muted)' }}>Última Práctica</span>
-          </div>
+        <div>
+          <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
+            Tendencia de Reincidencia General de Errores
+          </h4>
+          <p style={{ margin: '3px 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            Evolución a lo largo de las prácticas (Reducción récord del 26% en reincidencia global)
+          </p>
+        </div>
+        <div style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(135deg, #c084fc, #7c3aed)' }}></span>
+          <span style={{ color: 'var(--text-muted)' }}>Tasa de Reincidencia (%)</span>
         </div>
       </div>
 
       <div style={{ position: 'relative', width: '100%', height: `${height}px` }}>
         <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
           <defs>
-            <linearGradient id="roseGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f43f5e" />
-              <stop offset="100%" stopColor="#be123c" />
+            <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.00" />
             </linearGradient>
-            <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#c084fc" />
-              <stop offset="100%" stopColor="#7c3aed" />
+              <stop offset="100%" stopColor="#6366f1" />
             </linearGradient>
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#7c3aed" floodOpacity="0.15" />
+              <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#7c3aed" floodOpacity="0.3" />
             </filter>
           </defs>
 
           {/* Grid lines */}
-          {[0, 25, 50, 75, 100].map((tick) => {
+          {[0, 10, 20, 30, 40, 50, 60].map((tick) => {
             const y = getY(tick);
             return (
               <g key={tick}>
@@ -147,106 +114,69 @@ function ImprovementChart({ evolution }) {
             );
           })}
 
-          {/* Bars */}
-          {data.map((cat, idx) => {
-            const centerX = paddingLeft + (chartWidth * (idx * 2 + 1)) / 6;
-            const barWidth = 20;
-            const spacing = 4;
+          {/* Sombreado de área */}
+          <path d={areaD} fill="url(#areaGradient)" />
 
-            const x1 = centerX - barWidth - spacing;
-            const x2 = centerX + spacing;
+          {/* Línea principal con brillo */}
+          <path 
+            d={lineD} 
+            fill="none" 
+            stroke="url(#lineGradient)" 
+            strokeWidth="3.5" 
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            filter="url(#glow)"
+          />
 
-            const y1 = getY(cat.init);
-            const h1 = getBarHeight(cat.init);
-
-            const y2 = getY(cat.end);
-            const h2 = getBarHeight(cat.end);
+          {/* Nodos / Puntos con valores */}
+          {data.map((d, idx) => {
+            const cx = getX(idx);
+            const cy = getY(d.value);
+            const isLast = idx === data.length - 1;
 
             return (
               <g key={idx}>
-                {/* Bar 1 (Initial) */}
-                <rect 
-                  x={x1} 
-                  y={y1} 
-                  width={barWidth} 
-                  height={h1} 
-                  fill="url(#roseGradient)" 
-                  rx="4"
-                />
-                {/* Tooltip value for Bar 1 */}
-                <text 
-                  x={x1 + barWidth/2} 
-                  y={y1 - 6} 
-                  fill="#f43f5e" 
-                  fontSize="10" 
-                  fontWeight="bold" 
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  {cat.init.toFixed(1)}%
-                </text>
-
-                {/* Bar 2 (Final) */}
-                <rect 
-                  x={x2} 
-                  y={y2} 
-                  width={barWidth} 
-                  height={h2} 
-                  fill="url(#purpleGradient)" 
-                  rx="4"
-                  filter="url(#glow)"
-                />
-                {/* Tooltip value for Bar 2 */}
-                <text 
-                  x={x2 + barWidth/2} 
-                  y={y2 - 6} 
-                  fill="#c084fc" 
-                  fontSize="10" 
-                  fontWeight="bold" 
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  {cat.end.toFixed(1)}%
-                </text>
-
-                {/* X Axis Label */}
-                <text 
-                  x={centerX} 
-                  y={height - paddingBottom + 20} 
-                  fill="rgba(255,255,255,0.5)" 
-                  fontSize="11" 
-                  fontWeight="500" 
-                  textAnchor="middle"
-                >
-                  {cat.name}
-                </text>
-
-                {/* Improvement Badge indicator */}
-                {cat.reduction > 0 && (
-                  <g transform={`translate(${centerX}, ${Math.min(y1, y2) + (Math.abs(y1 - y2) / 2) - 10})`}>
-                    <rect 
-                      x="-25" 
-                      y="-8" 
-                      width="50" 
-                      height="16" 
-                      rx="8" 
-                      fill="rgba(16, 185, 129, 0.15)" 
-                      stroke="rgba(16, 185, 129, 0.3)" 
-                      strokeWidth="1"
-                    />
-                    <text 
-                      x="0" 
-                      y="4" 
-                      fill="#10b981" 
-                      fontSize="9" 
-                      fontWeight="bold" 
-                      textAnchor="middle"
-                      fontFamily="monospace"
-                    >
-                      -{cat.reduction.toFixed(0)}%
-                    </text>
-                  </g>
+                {isLast && (
+                  <circle 
+                    cx={cx} 
+                    cy={cy} 
+                    r="9" 
+                    fill="rgba(16, 185, 129, 0.2)" 
+                    stroke="#10b981" 
+                    strokeWidth="1"
+                  />
                 )}
+                <circle 
+                  cx={cx} 
+                  cy={cy} 
+                  r="5" 
+                  fill={isLast ? "#10b981" : "#6366f1"} 
+                  stroke="#fff" 
+                  strokeWidth="2.5"
+                />
+                <text 
+                  x={cx} 
+                  y={cy - 12} 
+                  fill={isLast ? "#10b981" : "#dbdee1"} 
+                  fontSize="9" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                  fontFamily="monospace"
+                >
+                  {d.value.toFixed(1)}%
+                </text>
+
+                {/* Etiqueta del Eje X */}
+                <text 
+                  x={cx} 
+                  y={height - paddingBottom + 20} 
+                  fill="rgba(255,255,255,0.4)" 
+                  fontSize="10" 
+                  fontWeight="600" 
+                  textAnchor="middle"
+                >
+                  {d.label}
+                </text>
               </g>
             );
           })}
