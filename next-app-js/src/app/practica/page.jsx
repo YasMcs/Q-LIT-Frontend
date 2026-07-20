@@ -422,20 +422,20 @@ function PracticaSQLContent() {
   useEffect(() => {
     const handlePaste = (e) => {
       e.preventDefault();
-      showAlert("Pegado Deshabilitado", "El pegado de texto externo está deshabilitado en esta práctica para garantizar un aprendizaje genuino.", "warning");
+      showAlert("Acción Deshabilitada", "El pegado de texto está deshabilitado en este editor.", "warning");
     };
 
     const handleKeyDown = (e) => {
       // Bloquear Ctrl+V o Cmd+V (keyCode 86 para la tecla 'V')
       if ((e.ctrlKey || e.metaKey) && (e.key === "v" || e.key === "V" || e.keyCode === 86)) {
         e.preventDefault();
-        showAlert("Pegado Deshabilitado", "El pegado de texto (Ctrl+V) está deshabilitado para evitar la copia externa.", "warning");
+        showAlert("Acción Deshabilitada", "El pegado de texto (Ctrl+V) está deshabilitado en este editor.", "warning");
       }
     };
 
     const handleContextMenu = (e) => {
       e.preventDefault();
-      showAlert("Menú Deshabilitado", "El clic derecho está deshabilitado en este entorno para asegurar tu esfuerzo individual.", "warning");
+      showAlert("Acción Deshabilitada", "El clic derecho está deshabilitado en este editor.", "warning");
     };
 
     document.addEventListener("paste", handlePaste);
