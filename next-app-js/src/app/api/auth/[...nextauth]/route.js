@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
@@ -17,7 +18,39 @@ export const authOptions = {
         }
       }
     }),
+    CredentialsProvider({
+      name: "Acceso Institucional",
+      credentials: {
+        email: { label: "Correo", type: "text" },
+        role: { label: "Rol", type: "text" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) return null;
+        
+        let user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
+        
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email: credentials.email,
+              name: credentials.email.split('@')[0],
+              role: credentials.role || "teacher"
+            }
+          });
+        } else if (credentials.role && user.role !== credentials.role) {
+          user = await prisma.user.update({
+            where: { id: user.id },
+            data: { role: credentials.role }
+          });
+        }
+        
+        return user;
+      }
+    })
   ],
+
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 días de duración del token
