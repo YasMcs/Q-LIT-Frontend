@@ -9,7 +9,7 @@ import { decodeId } from "@/utils/crypto";
 import "@/app/(docente)/laboratorios/dashboard-docente.css";
 import "./revisar-practica-docente.css";
 
-export default function RevisarPracticaDocentePage() {
+function RevisarPracticaDocentePageContent() {
   return (
     <Suspense fallback={
       <div className="flex h-screen bg-background overflow-hidden relative">
@@ -584,5 +584,14 @@ function RevisarPracticaDocenteContent() {
         )}
       </div>
     </div>
+  );
+}
+
+
+export default function RevisarPracticaDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Cargando...</div>}>
+      <RevisarPracticaDocentePageContent />
+    </Suspense>
   );
 }

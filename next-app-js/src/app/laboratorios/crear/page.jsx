@@ -12,7 +12,7 @@ import "./crear-practica-docente.css";
 // Los datosPorDB hardcodeados han sido eliminados.
 // Ahora se usarán los catálogos obtenidos dinámicamente desde el backend.
 
-export default function CrearPracticaDocentePage() {
+function CrearPracticaDocentePageContent() {
   return (
     <Suspense fallback={<div className="p-8 text-center flex items-center justify-center h-screen">Cargando...</div>}>
       <CrearPracticaDocenteContent />
@@ -696,5 +696,14 @@ function CrearPracticaDocenteContent() {
         </div>
       )}
     </div>
+  );
+}
+
+
+export default function CrearPracticaDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Cargando...</div>}>
+      <CrearPracticaDocentePageContent />
+    </Suspense>
   );
 }

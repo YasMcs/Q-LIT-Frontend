@@ -396,10 +396,19 @@ function PracticaSQLContent() {
   );
 }
 
-export default function PracticaSQLPage() {
+function PracticaSQLPageContent() {
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center">Cargando...</div>}>
       <PracticaSQLContent />
+    </Suspense>
+  );
+}
+
+
+export default function PracticaSQLPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Cargando...</div>}>
+      <PracticaSQLPageContent />
     </Suspense>
   );
 }

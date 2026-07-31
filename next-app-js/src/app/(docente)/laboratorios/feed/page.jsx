@@ -13,7 +13,7 @@ import CustomTimePicker from '@/components/CustomTimePicker';
 import { encodeId, decodeId } from "@/utils/crypto";
 import "./class-feed-docente.css";
 
-export default function ClassFeedDocentePage() {
+function ClassFeedDocentePageContent() {
   return (
     <Suspense fallback={<ClassFeedSkeleton isSidebarOpen={true} />}>
       <ClassFeedDocenteContent />
@@ -507,5 +507,14 @@ function ClassFeedDocenteContent() {
         }}
       />
     </>
+  );
+}
+
+
+export default function ClassFeedDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Cargando...</div>}>
+      <ClassFeedDocentePageContent />
+    </Suspense>
   );
 }

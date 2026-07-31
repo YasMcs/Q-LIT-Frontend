@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ChallengeManageCard from "@/components/ChallengeManageCard";
@@ -12,7 +12,7 @@ import studentMocks from "@/app/api/mocks/teacher/class-students.json";
 
 const mockStudents = studentMocks.students;
 
-export default function ClassFeedDocentePage() {
+function ClassFeedDocenteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const classroomId = searchParams.get("classroomId");
@@ -278,5 +278,13 @@ export default function ClassFeedDocentePage() {
         }}
       />
     </>
+  );
+}
+
+export default function ClassFeedDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Cargando...</div>}>
+      <ClassFeedDocenteContent />
+    </Suspense>
   );
 }

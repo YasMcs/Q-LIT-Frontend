@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import "./crear-practica-docente.css";
@@ -130,7 +130,7 @@ const datosPorDB = {
   }
 };
 
-export default function CrearPracticaDocentePage() {
+function CrearPracticaDocentePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
@@ -607,5 +607,14 @@ export default function CrearPracticaDocentePage() {
         </div>
       )}
     </div>
+  );
+}
+
+
+export default function CrearPracticaDocentePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Cargando...</div>}>
+      <CrearPracticaDocentePageContent />
+    </Suspense>
   );
 }
