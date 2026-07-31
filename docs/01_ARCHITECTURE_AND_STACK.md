@@ -1,6 +1,6 @@
 # Arquitectura de Software, Stack Tecnológico y Seguridad
 
-Este documento describe formalmente la arquitectura orientada a servicios (SOA) de la plataforma **Q-LIT (Query Laboratory Interactive Tool)**, justificando la selección de tecnologías y detallando los controles de seguridad implementados a nivel de infraestructura, aplicación y base de datos.
+Este documento describe formalmente la arquitectura orientada a servicios (SOA) de la plataforma, justificando la selección de tecnologías y detallando los controles de seguridad implementados a nivel de infraestructura, aplicación y base de datos.
 
 ---
 

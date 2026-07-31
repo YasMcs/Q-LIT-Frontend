@@ -101,13 +101,21 @@ async function handleProxyRequest(req, params, method) {
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       data = await response.json();
+      return NextResponse.json(data, { status: response.status });
     } else {
-      const text = await response.text();
-      throw new Error("El servidor devolvió un error inesperado: " + text.substring(0, 100));
-    }
+      // Retornar buffer crudo para archivos (Excel, PDF, etc.)
+      const buffer = await response.arrayBuffer();
+      const nextHeaders = new Headers();
+      if (contentType) nextHeaders.set("Content-Type", contentType);
+      
+      const contentDisposition = response.headers.get("content-disposition");
+      if (contentDisposition) nextHeaders.set("Content-Disposition", contentDisposition);
 
-    // 5. Devolver la respuesta al cliente
-    return NextResponse.json(data, { status: response.status });
+      return new NextResponse(buffer, {
+        status: response.status,
+        headers: nextHeaders,
+      });
+    }
   } catch (error) {
     console.error("Error en Proxy BFF:", error);
     return NextResponse.json(

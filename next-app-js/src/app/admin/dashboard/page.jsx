@@ -421,6 +421,36 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleDownloadReport = async (classroomId, classroomName) => {
+    try {
+      const res = await fetch(`/api/proxy/classrooms/${classroomId}/export-excel`);
+      if (!res.ok) {
+        throw new Error('Error al generar el reporte');
+      }
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      let filename = `Reporte_${classroomName.replace(/\s+/g, '_')}.xlsx`;
+      const disposition = res.headers.get('content-disposition');
+      if (disposition && disposition.indexOf('filename=') !== -1) {
+        const matches = /filename="?([^"]+)"?/.exec(disposition);
+        if (matches != null && matches[1]) filename = matches[1];
+      }
+      
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      showAlert('Error', 'Hubo un error al descargar el reporte.', 'error');
+    }
+  };
+
   if (loading && !metrics) {
     return <LoadingSpinner text="Cargando panel de administración..." />;
   }
@@ -863,6 +893,15 @@ export default function AdminDashboardPage() {
                           </span>
                         )}
                         
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); 
+                            handleDownloadReport(cls.id, cls.name);
+                          }}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer border-none"
+                        >
+                          <i className="fa-solid fa-file-excel"></i> Excel
+                        </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation(); // evitar expandir/colapsar card
