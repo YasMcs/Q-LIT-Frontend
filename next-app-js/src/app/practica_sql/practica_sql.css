@@ -1,0 +1,421 @@
+/* Stylesheet for Practica SQL Student Sandbox */
+
+.sql-page-body {
+  --bg-body: #f4f6f8;
+  --sidebar-bg: #fafbfc;
+  --editor-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --brand-indigo: #4338ca;
+  --border-color: #e2e8f0;
+  --radius-md: 12px;
+
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.workspace-layout-sql {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Sidebar Panel */
+.panel-sidebar-sql {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sidebar-section-sql {
+  padding: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-section-sql h3 {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #475569;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* Variant challenge instruction box */
+.instruction-box-sql {
+  background: rgba(67, 56, 202, 0.02);
+  border: 1px solid rgba(67, 56, 202, 0.06);
+  border-left: 4px solid var(--brand-indigo);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.instruction-box-sql h4 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--brand-indigo);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instruction-box-sql p {
+  font-size: 0.9rem;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.instruction-box-sql strong {
+  color: var(--brand-indigo);
+  font-weight: 700;
+  background: rgba(67, 56, 202, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Schema Dictionary Accordion list */
+.schema-container-sql {
+  padding: 24px;
+}
+
+.schema-container-sql h3 {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #475569;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.accordion-table-item-sql {
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.table-toggle-header-sql {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  background: #ffffff;
+  transition: background 0.2s ease;
+}
+
+.table-toggle-header-sql:hover {
+  background: #f8fafc;
+}
+
+.table-name-sql {
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chevron-icon-sql {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Open Accordion States */
+.accordion-table-item-sql.open {
+  border-color: rgba(67, 56, 202, 0.2);
+}
+
+.accordion-table-item-sql.open .table-name-sql {
+  color: var(--brand-indigo);
+}
+
+.accordion-table-item-sql.open .chevron-icon-sql {
+  transform: rotate(90deg);
+  color: var(--brand-indigo);
+}
+
+/* Fields list hidden by default */
+.fields-list-sql {
+  background: #ffffff;
+  padding: 4px 14px 12px 14px;
+  list-style: none;
+  display: none;
+  border-top: 1px dashed #f1f5f9;
+}
+
+.accordion-table-item-sql.open .fields-list-sql {
+  display: block;
+}
+
+.field-row-sql {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  border-bottom: 1px dashed #f1f5f9;
+}
+
+.field-row-sql:last-child {
+  border-bottom: none;
+}
+
+.field-name-sql.pk-sql::after {
+  content: ' 🔑';
+  font-size: 0.65rem;
+}
+
+.field-type-sql {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+/* Interactive right panel workspace */
+.center-workspace-sql {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-body);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Top bar with buttons */
+.editor-top-bar-sql {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.back-btn-sql {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.2s;
+}
+
+.back-btn-sql:hover {
+  color: var(--text-main);
+}
+
+.action-buttons-sql {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-sql {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.btn-secondary-sql {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.btn-secondary-sql:hover {
+  background: #cbd5e1;
+}
+
+.btn-primary-sql {
+  background: var(--brand-indigo);
+  color: white;
+}
+
+.btn-primary-sql:hover {
+  background: #3730a3;
+  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.2);
+}
+
+.btn-success-sql {
+  background: #059669;
+  color: white;
+}
+
+.btn-success-sql:hover {
+  background: #047857;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+}
+
+/* SQL editor body */
+.workspace-upper-body-sql {
+  flex: 1;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sql-textarea-sql {
+  height: 100%;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 0.96rem;
+  color: #0f172a;
+  background: #ffffff;
+  resize: none;
+  line-height: 1.6;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.01);
+  transition: border-color 0.2s;
+}
+
+.sql-textarea-sql:focus {
+  border-color: var(--brand-indigo);
+  box-shadow: 0 0 0 4px rgba(67, 56, 202, 0.05);
+}
+
+/* Resizable Console panel */
+.terminal-zone-sql {
+  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.terminal-resizer-sql {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  cursor: ns-resize;
+  background: transparent;
+  z-index: 20;
+}
+
+.terminal-resizer-sql:hover {
+  background: rgba(67, 56, 202, 0.25);
+}
+
+.terminal-header-sql {
+  background: var(--sidebar-bg);
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.drag-indicator-sql {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.terminal-body-sql {
+  flex: 1;
+  padding: 24px 32px;
+  overflow: auto;
+  background: #ffffff;
+}
+
+.terminal-placeholder-sql {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Success Query Results view styling */
+.terminal-success-view-sql {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.workbench-status-sql {
+  color: #059669;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workbench-grid-sql {
+  border-collapse: collapse;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  background: #ffffff;
+  color: var(--text-main);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  min-width: 100%;
+}
+
+.workbench-grid-sql th {
+  background: var(--sidebar-bg);
+  color: var(--brand-indigo);
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid var(--border-color);
+  z-index: 1;
+}
+
+.workbench-grid-sql td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.workbench-grid-sql tr:hover {
+  background: var(--bg-body);
+}

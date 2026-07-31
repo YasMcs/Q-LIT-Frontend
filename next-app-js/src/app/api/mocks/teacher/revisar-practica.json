@@ -1,0 +1,79 @@
+{
+  "practica": {
+    "id": 10,
+    "titulo": "Práctica 1: Filtros y Ordenamiento",
+    "funciones_requeridas": ["SELECT", "WHERE", "ORDER BY"],
+    "puntaje_total": 100
+  },
+  "lista_cotejo": [
+    { "id": 1, "criterio": "Uso correcto de la cláusula SELECT", "puntos_maximos": 40 },
+    { "id": 2, "criterio": "Filtrado preciso utilizando WHERE", "puntos_maximos": 40 },
+    { "id": 3, "criterio": "Ordenamiento adecuado mediante ORDER BY", "puntos_maximos": 20 }
+  ],
+  "entregas_alumnos": [
+    { 
+      "id": 101, 
+      "name": "Yasleb Belén Macías Sánchez", 
+      "email": "yasleb.macias@gmail.com", 
+      "submitted": true,
+      "estado_revision": "calificada",
+      "entrega": {
+        "id": 501,
+        "codigo_sql_alumno": "SELECT * FROM productos WHERE precio > 150 ORDER BY stock DESC LIMIT 5;",
+        "calificaciones_cotejo": [
+          { "lista_cotejo_id": 1, "cumple_ia": true, "cumple_docente": true },
+          { "lista_cotejo_id": 2, "cumple_ia": true, "cumple_docente": true },
+          { "lista_cotejo_id": 3, "cumple_ia": true, "cumple_docente": true }
+        ]
+      }
+    },
+    { 
+      "id": 102, 
+      "name": "Ana Torres Ramírez", 
+      "email": "ana.torres@gmail.com", 
+      "submitted": true,
+      "estado_revision": "calificada",
+      "entrega": {
+        "id": 502,
+        "codigo_sql_alumno": "SELECT * FROM productos WHERE precio > 150;",
+        "calificaciones_cotejo": [
+          { "lista_cotejo_id": 1, "cumple_ia": true, "cumple_docente": true },
+          { "lista_cotejo_id": 2, "cumple_ia": true, "cumple_docente": true },
+          { "lista_cotejo_id": 3, "cumple_ia": false, "cumple_docente": false }
+        ]
+      }
+    },
+    { 
+      "id": 103, 
+      "name": "Carlos Pérez Domínguez", 
+      "email": "carlos.perez@gmail.com", 
+      "submitted": true,
+      "estado_revision": "pendiente",
+      "entrega": {
+        "id": 503,
+        "codigo_sql_alumno": "SELECT nombre FROM productos WHERE precio > 150 ORDER BY stock LIMIT 5;",
+        "calificaciones_cotejo": [
+          { "lista_cotejo_id": 1, "cumple_ia": true, "cumple_docente": true },
+          { "lista_cotejo_id": 2, "cumple_ia": true, "cumple_docente": true },
+          { "lista_cotejo_id": 3, "cumple_ia": true, "cumple_docente": true }
+        ]
+      }
+    },
+    { 
+      "id": 104, 
+      "name": "Luis Gómez Herrera", 
+      "email": "luis.gomez@gmail.com", 
+      "submitted": false,
+      "estado_revision": "no_entregada",
+      "entrega": null
+    },
+    { 
+      "id": 105, 
+      "name": "María Fernanda López Cruz", 
+      "email": "maria.lopez@gmail.com", 
+      "submitted": false,
+      "estado_revision": "no_entregada",
+      "entrega": null
+    }
+  ]
+}
